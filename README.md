@@ -22,7 +22,7 @@ import MockFirebase from 'mock-cloud-firstore';
 const firebase = new MockFirebase(fixtureData);
 ```
 
-> Replacing the Firebase instance depends on how your app is structured. As an example, you could do `window.firebase = new MockFirebase(fixtureData)`.
+> Replacing the Firebase instance depends on how your app consumes it. As an example, you could do `window.firebase = new MockFirebase(fixtureData)`.
 
 ### Fixture Data
 
@@ -80,7 +80,7 @@ In the example above, your `MockFirebase` would have
 Not all APIs are supported. Here are some unsupported major ones
 
 - Transaction
-- `onSnapshot()` is supported by doesn't get realtime updates
+- `onSnapshot()` is supported but doesn't get realtime updates
 
 > You can look into the source code to see if an API you're using is supported. I've written it in a way that you could quickly scan the APIs.
 
