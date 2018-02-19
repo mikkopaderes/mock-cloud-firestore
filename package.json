@@ -4,8 +4,9 @@
   "description": "Mock library for Cloud Firestore",
   "main": "src/index.js",
   "scripts": {
-    "lint": "node_modules/.bin/eslint **/*.js",
-    "qunit": "node_modules/.bin/qunit src/**/*-test.js",
+    "build": "webpack",
+    "lint": "eslint **/*.js",
+    "qunit": "qunit src/**/*-test.js",
     "test": "npm-run-all --continue-on-error lint qunit"
   },
   "keywords": [
@@ -20,6 +21,7 @@
     "eslint-config-rmmmp": "^0.0.2",
     "npm-run-all": "^4.1.2",
     "qunit": "^2.5.0",
-    "sinon": "^4.3.0"
+    "sinon": "^4.3.0",
+    "webpack": "^3.11.0"
   }
 }

@@ -10,6 +10,16 @@ Install the library by running this command:
 npm install --save-dev mock-cloud-firestore
 ```
 
+### Importing
+
+#### Browsers
+
+Import the `mock-cloud-firestore.js` file from the `dist` folder in your app
+
+#### Node.js
+
+Import the library by using `require('mock-cloud-firestore')`
+
 ## Usage
 
 ### `MockFirebase`
@@ -17,12 +27,10 @@ npm install --save-dev mock-cloud-firestore
 `MockFirebase` class is provided to replace your app's Firebase instance
 
 ```javascript
-import MockFirebase from 'mock-cloud-firstore';
-
 const firebase = new MockFirebase(fixtureData);
 ```
 
-> Replacing the Firebase instance depends on how your app consumes it. As an example, you could do `window.firebase = new MockFirebase(fixtureData)`.
+> Replacing the Firebase instance depends on how your app consumes it. As an example, you could do `window.firebase = new MockFirebase(fixtureData)` on a browser environment.
 
 ### Fixture Data
 
