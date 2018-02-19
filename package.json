@@ -1,0 +1,25 @@
+{
+  "name": "mock-cloud-firestore",
+  "version": "0.0.1",
+  "description": "Mock library for Cloud Firestore",
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "node_modules/.bin/eslint **/*.js",
+    "qunit": "node_modules/.bin/qunit src/**/*-test.js",
+    "test": "npm-run-all --continue-on-error lint qunit"
+  },
+  "keywords": [
+    "firebase",
+    "cloud-firestore",
+    "mock"
+  ],
+  "author": "Mikko Paderes",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^4.17.0",
+    "eslint-config-rmmmp": "^0.0.2",
+    "npm-run-all": "^4.1.2",
+    "qunit": "^2.5.0",
+    "sinon": "^4.3.0"
+  }
+}
