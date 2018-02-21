@@ -635,20 +635,18 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         });
       });
 
-      QUnit.test('should throw an error when data does not exist', async (assert) => {
+      QUnit.test('should return undefined when data does not exist', async (assert) => {
         assert.expect(1);
 
         // Arrange
         const db = firebase.firestore();
         const snapshot = await db.collection('users').doc('user_100').get();
 
-        try {
-          // Act
-          snapshot.data();
-        } catch (e) {
-          // Assert
-          assert.ok(true);
-        }
+        // Act
+        const result = snapshot.data();
+
+        // Assert
+        assert.equal(result, undefined);
       });
     });
   });

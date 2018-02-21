@@ -20,11 +20,7 @@ class DocumentSnapshot {
   }
 
   data() {
-    if (!this.exists) {
-      throw new Error('Document doesn\'t exist');
-    }
-
-    return this._getData();
+    return this.exists ? this._getData() : undefined;
   }
 
   get(path) {
