@@ -98,14 +98,19 @@ const generateIdForRecord = __webpack_require__(11);
 const getOrSetDataNode = __webpack_require__(0);
 
 class CollectionReference {
-  constructor(id, data, parent) {
+  constructor(id, data, parent, firestore) {
     this._id = id;
     this._data = data;
     this._parent = parent;
+    this._firestore = firestore;
   }
 
   get id() {
     return this._id;
+  }
+
+  get firestore() {
+    return this._firestore;
   }
 
   get parent() {
@@ -129,7 +134,7 @@ class CollectionReference {
 
     const data = getOrSetDataNode(this._data, '__doc__', id);
 
-    return new DocumentReference(id, data, this);
+    return new DocumentReference(id, data, this, this.firestore);
   }
 
   endAt(...args) {
@@ -260,8 +265,8 @@ function where(data = {}, key, operator, value) {
     } else if (operator === '==') {
       if (value instanceof DocumentReference) {
         return (
-          data[id][key] instanceof DocumentReference
-          && buildPathFromRef(data[id][key]) === buildPathFromRef(value)
+          data[id][key].startsWith('__ref__:')
+          && data[id][key] === buildPathFromRef(value)
         );
       }
 
@@ -285,12 +290,13 @@ function querySnapshot(data, collection) {
 
   if (data) {
     for (const key in data.__doc__) {
-      if (Object.prototype.hasOwnProperty.call(data.__doc__, key)) {
+      if (data.__doc__.hasOwnProperty(key)) {
         const documentRecord = data['__doc__'][key];
         const documentReference = new DocumentReference(
           key,
           documentRecord,
-          collection
+          collection,
+          collection.firestore
         );
         const documentSnapshot = new DocumentSnapshot(
           key,
@@ -344,7 +350,7 @@ function buildPathFromRef(ref) {
     currentRef = currentRef.parent;
   }
 
-  return url.slice(0, -1);
+  return `__ref__:${url.slice(0, -1)}`;
 }
 
 module.exports = {
@@ -367,14 +373,19 @@ const DocumentSnapshot = __webpack_require__(4);
 const getOrSetDataNode = __webpack_require__(0);
 
 class DocumentReference {
-  constructor(id, data, parent) {
+  constructor(id, data, parent, firestore) {
     this._id = id;
     this._data = data;
     this._parent = parent;
+    this._firestore = firestore;
   }
 
   get id() {
     return this._id;
+  }
+
+  get firestore() {
+    return this._firestore;
   }
 
   get parent() {
@@ -385,7 +396,7 @@ class DocumentReference {
     const CollectionReference = __webpack_require__(1);
     const data = getOrSetDataNode(this._data, '__collection__', id);
 
-    return new CollectionReference(id, data, this);
+    return new CollectionReference(id, data, this, this.firestore);
   }
 
   delete() {
@@ -422,10 +433,7 @@ class DocumentReference {
   set(data, option = {}) {
     if (!option.merge) {
       for (const key in this._data) {
-        if (
-          Object.prototype.hasOwnProperty.call(this._data, key)
-          && key !== '__collection__'
-        ) {
+        if (this._data.hasOwnProperty(key) && key !== '__collection__') {
           delete this['_data'][key];
         }
       }
@@ -476,11 +484,7 @@ class DocumentSnapshot {
   }
 
   data() {
-    if (!this.exists) {
-      throw new Error('Document doesn\'t exist');
-    }
-
-    return this._getData();
+    return this.exists ? this._getData() : undefined;
   }
 
   get(path) {
@@ -506,10 +510,40 @@ class DocumentSnapshot {
   _getData() {
     const data = Object.assign({}, this._data);
 
+    for (const key in data) {
+      if (
+        data.hasOwnProperty(key)
+        && typeof data[key] === 'string'
+        && data[key].startsWith('__ref__:')
+      ) {
+        data[key] = this._buildRefFromPath(
+          this.ref.firestore,
+          data[key].replace('__ref__:', '')
+        );
+      }
+    }
+
     delete data.__isDirty__;
     delete data.__collection__;
 
     return data;
+  }
+
+  _buildRefFromPath(db, path) {
+    const nodes = path.split('/');
+    let ref = db;
+
+    nodes.forEach((node, index) => {
+      if (node) {
+        if (index % 2 === 0) {
+          ref = ref.collection(node);
+        } else {
+          ref = ref.doc(node);
+        }
+      }
+    });
+
+    return ref;
   }
 }
 
@@ -583,7 +617,7 @@ class Firestore {
   collection(id) {
     const data = getOrSetDataNode(this._data, '__collection__', id);
 
-    return new CollectionReference(id, data);
+    return new CollectionReference(id, data, null, this);
   }
 }
 
@@ -637,6 +671,10 @@ class Query {
     this._data = Object.assign({}, data);
     this._collection = collection;
     this._option = {};
+  }
+
+  get firestore() {
+    return this._collection.firestore;
   }
 
   endAt(value) {

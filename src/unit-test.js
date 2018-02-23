@@ -4,6 +4,7 @@ const CollectionReference = require('./firebase/firestore/collection-reference')
 const DocumentReference = require('./firebase/firestore/document-reference');
 const DocumentSnapshot = require('./firebase/firestore/document-snapshot');
 const FieldValue = require('./firebase/firestore/field-value');
+const Firestore = require('./firebase/firestore');
 const MockFirebase = require('./');
 const QuerySnapshot = require('./firebase/firestore/query-snapshot');
 const Query = require('./firebase/firestore/query');
@@ -29,6 +30,21 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
 
         // Assert
         assert.equal(result, 'users');
+      });
+    });
+
+    QUnit.module('getter/setter: firestore', () => {
+      QUnit.test('should return the firestore the collection is in', (assert) => {
+        assert.expect(1);
+
+        // Arrange
+        const db = firebase.firestore();
+
+        // Act
+        const result = db.collection('users').firestore;
+
+        // Assert
+        assert.ok(result instanceof Firestore);
       });
     });
 
@@ -279,6 +295,21 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
 
         // Assert
         assert.equal(result, 'user_a');
+      });
+    });
+
+    QUnit.module('getter/setter: firestore', () => {
+      QUnit.test('should return the firestore the document is in', (assert) => {
+        assert.expect(1);
+
+        // Arrange
+        const db = firebase.firestore();
+
+        // Act
+        const result = db.collection('users').doc('user_a').firestore;
+
+        // Assert
+        assert.ok(result instanceof Firestore);
       });
     });
 
@@ -584,6 +615,30 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         assert.equal(result, 15);
       });
 
+      QUnit.test('should return the reference type field', async (assert) => {
+        assert.expect(1);
+
+        // Arrange
+        const db = firebase.firestore();
+        const snapshot = await db
+          .collection('users')
+          .doc('user_a')
+          .collection('friends')
+          .doc('user_b')
+          .get();
+
+        // Act
+        const reference = snapshot.get('reference');
+
+        // Assert
+        const referenceSnapshot = await reference.get();
+
+        assert.deepEqual(referenceSnapshot.data(), {
+          age: 10,
+          username: 'user_b',
+        });
+      });
+
       QUnit.test('should return the specific field using dot notation', async (assert) => {
         assert.expect(1);
 
@@ -632,6 +687,30 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
           },
           age: 15,
           username: 'user_a',
+        });
+      });
+
+      QUnit.test('should return the data and match any reference type field appropriately', async (assert) => {
+        assert.expect(1);
+
+        // Arrange
+        const db = firebase.firestore();
+        const snapshot = await db
+          .collection('users')
+          .doc('user_a')
+          .collection('friends')
+          .doc('user_b')
+          .get();
+
+        // Act
+        const data = snapshot.data();
+
+        // Assert
+        const referenceSnapshot = await data.reference.get();
+
+        assert.deepEqual(referenceSnapshot.data(), {
+          age: 10,
+          username: 'user_b',
         });
       });
 
@@ -747,6 +826,21 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
   });
 
   QUnit.module('Query', () => {
+    QUnit.module('getter/setter: firestore', () => {
+      QUnit.test('should return the firestore the query is in', (assert) => {
+        assert.expect(1);
+
+        // Arrange
+        const db = firebase.firestore();
+
+        // Act
+        const result = db.collection('users').limit(1).firestore;
+
+        // Assert
+        assert.ok(result instanceof Firestore);
+      });
+    });
+
     QUnit.module('function: endAt', () => {
       QUnit.test('should return documents satisfying the query', async (assert) => {
         assert.expect(3);

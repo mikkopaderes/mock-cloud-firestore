@@ -14,7 +14,7 @@ class Firestore {
   collection(id) {
     const data = getOrSetDataNode(this._data, '__collection__', id);
 
-    return new CollectionReference(id, data);
+    return new CollectionReference(id, data, null, this);
   }
 }
 

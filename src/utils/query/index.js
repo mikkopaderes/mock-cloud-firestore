@@ -80,8 +80,8 @@ function where(data = {}, key, operator, value) {
     } else if (operator === '==') {
       if (value instanceof DocumentReference) {
         return (
-          data[id][key] instanceof DocumentReference
-          && buildPathFromRef(data[id][key]) === buildPathFromRef(value)
+          data[id][key].startsWith('__ref__:')
+          && data[id][key] === buildPathFromRef(value)
         );
       }
 
@@ -105,12 +105,13 @@ function querySnapshot(data, collection) {
 
   if (data) {
     for (const key in data.__doc__) {
-      if (Object.prototype.hasOwnProperty.call(data.__doc__, key)) {
+      if (data.__doc__.hasOwnProperty(key)) {
         const documentRecord = data['__doc__'][key];
         const documentReference = new DocumentReference(
           key,
           documentRecord,
-          collection
+          collection,
+          collection.firestore
         );
         const documentSnapshot = new DocumentSnapshot(
           key,
@@ -164,7 +165,7 @@ function buildPathFromRef(ref) {
     currentRef = currentRef.parent;
   }
 
-  return url.slice(0, -1);
+  return `__ref__:${url.slice(0, -1)}`;
 }
 
 module.exports = {

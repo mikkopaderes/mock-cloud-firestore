@@ -2,14 +2,19 @@ const DocumentSnapshot = require('../document-snapshot');
 const getOrSetDataNode = require('../../../utils/get-or-set-data-node');
 
 class DocumentReference {
-  constructor(id, data, parent) {
+  constructor(id, data, parent, firestore) {
     this._id = id;
     this._data = data;
     this._parent = parent;
+    this._firestore = firestore;
   }
 
   get id() {
     return this._id;
+  }
+
+  get firestore() {
+    return this._firestore;
   }
 
   get parent() {
@@ -20,7 +25,7 @@ class DocumentReference {
     const CollectionReference = require('../collection-reference');
     const data = getOrSetDataNode(this._data, '__collection__', id);
 
-    return new CollectionReference(id, data, this);
+    return new CollectionReference(id, data, this, this.firestore);
   }
 
   delete() {
@@ -57,10 +62,7 @@ class DocumentReference {
   set(data, option = {}) {
     if (!option.merge) {
       for (const key in this._data) {
-        if (
-          Object.prototype.hasOwnProperty.call(this._data, key)
-          && key !== '__collection__'
-        ) {
+        if (this._data.hasOwnProperty(key) && key !== '__collection__') {
           delete this['_data'][key];
         }
       }

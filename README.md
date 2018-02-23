@@ -48,7 +48,9 @@ const fixtureData = {
           __collection__: {
             friends: {
               __doc__: {
-                user_b: {}
+                user_b: {
+                  reference: '__ref__:users/user_b'
+                }
               }
             }
           }
@@ -61,7 +63,9 @@ const fixtureData = {
           __collection__: {
             friends: {
               __doc__: {
-                user_a: {}
+                user_a: {
+                  reference: '__ref__:users/user_a'
+                }
               }
             }
           }
@@ -77,11 +81,13 @@ const fixtureData = {
 }
 ```
 
-In the example above, your `MockFirebase` would have
+Here's whats going on with the example above
 
-- `users` collection
-- `user_a`, `user_b`, and `user_c` documents under `users` collection
-- `friends` subcollection under `user_a` and `user_b` documents
+- There will be a `users` collection
+- There will be `user_a`, `user_b`, and `user_c` documents under `users` collection
+- There will be a `friends` subcollection under `user_a` and `user_b` documents
+- `__ref__:` indicates that this is a [`Reference`](https://firebase.google.com/docs/firestore/manage-data/data-types#data_types) data type to a document
+  - `__ref__:users/user_a` will be equivalent to `firestore.collection('users').doc('user_a')`
 
 ## Caveats
 

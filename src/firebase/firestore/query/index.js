@@ -16,6 +16,10 @@ class Query {
     this._option = {};
   }
 
+  get firestore() {
+    return this._collection.firestore;
+  }
+
   endAt(value) {
     if (!this._isOrdered()) {
       throw new Error('endAt() queries requires orderBy()');

@@ -5,14 +5,19 @@ const generateIdForRecord = require('../../../utils/generate-id-for-record');
 const getOrSetDataNode = require('../../../utils/get-or-set-data-node');
 
 class CollectionReference {
-  constructor(id, data, parent) {
+  constructor(id, data, parent, firestore) {
     this._id = id;
     this._data = data;
     this._parent = parent;
+    this._firestore = firestore;
   }
 
   get id() {
     return this._id;
+  }
+
+  get firestore() {
+    return this._firestore;
   }
 
   get parent() {
@@ -36,7 +41,7 @@ class CollectionReference {
 
     const data = getOrSetDataNode(this._data, '__doc__', id);
 
-    return new DocumentReference(id, data, this);
+    return new DocumentReference(id, data, this, this.firestore);
   }
 
   endAt(...args) {
