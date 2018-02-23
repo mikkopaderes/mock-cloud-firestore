@@ -14,7 +14,9 @@ module.exports = () => {
             __collection__: {
               friends: {
                 __doc__: {
-                  user_b: {},
+                  user_b: {
+                    reference: '__ref__:users/user_b',
+                  },
                 },
               },
             },
@@ -26,7 +28,9 @@ module.exports = () => {
             __collection__: {
               friends: {
                 __doc__: {
-                  user_a: {},
+                  user_a: {
+                    reference: '__ref__:users/user_a',
+                  },
                 },
               },
             },

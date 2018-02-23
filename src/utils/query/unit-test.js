@@ -348,9 +348,9 @@ QUnit.module('Unit | Util | query', () => {
       // Arrange
       const db = new MockFirebase().firestore();
       const records = {
-        user_a: { username: db.collection('usernames').doc('user_a') },
-        user_b: { username: db.collection('usernames').doc('user_b') },
-        user_c: { username: db.collection('usernames').doc('user_c') },
+        user_a: { username: '__ref__:usernames/user_a' },
+        user_b: { username: '__ref__:usernames/user_b' },
+        user_c: { username: '__ref__:usernames/user_c' },
       };
 
       // Act

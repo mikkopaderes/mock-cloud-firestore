@@ -46,10 +46,40 @@ class DocumentSnapshot {
   _getData() {
     const data = Object.assign({}, this._data);
 
+    for (const key in data) {
+      if (
+        data.hasOwnProperty(key)
+        && typeof data[key] === 'string'
+        && data[key].startsWith('__ref__:')
+      ) {
+        data[key] = this._buildRefFromPath(
+          this.ref.firestore,
+          data[key].replace('__ref__:', '')
+        );
+      }
+    }
+
     delete data.__isDirty__;
     delete data.__collection__;
 
     return data;
+  }
+
+  _buildRefFromPath(db, path) {
+    const nodes = path.split('/');
+    let ref = db;
+
+    nodes.forEach((node, index) => {
+      if (node) {
+        if (index % 2 === 0) {
+          ref = ref.collection(node);
+        } else {
+          ref = ref.doc(node);
+        }
+      }
+    });
+
+    return ref;
   }
 }
 
