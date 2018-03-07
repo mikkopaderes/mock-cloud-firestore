@@ -265,7 +265,8 @@ function where(data = {}, key, operator, value) {
     } else if (operator === '==') {
       if (value instanceof DocumentReference) {
         return (
-          data[id][key].startsWith('__ref__:')
+          data[id][key]
+          && data[id][key].startsWith('__ref__:')
           && data[id][key] === buildPathFromRef(value)
         );
       }

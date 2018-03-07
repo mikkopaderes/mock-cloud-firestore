@@ -351,6 +351,7 @@ QUnit.module('Unit | Util | query', () => {
         user_a: { username: '__ref__:usernames/user_a' },
         user_b: { username: '__ref__:usernames/user_b' },
         user_c: { username: '__ref__:usernames/user_c' },
+        user_d: { username: null },
       };
 
       // Act
