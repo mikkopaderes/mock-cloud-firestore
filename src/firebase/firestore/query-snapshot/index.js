@@ -11,6 +11,10 @@ class QuerySnapshot {
     return this._data.length === 0 ? true : false;
   }
 
+  get size() {
+    return this._data.length;
+  }
+
   forEach(callback) {
     for (const data of this._data) {
       callback(data);
