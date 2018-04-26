@@ -807,6 +807,22 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
       });
     });
 
+    QUnit.module('getter/setter: size', () => {
+      QUnit.test('should return the number of documents for the query snapshot', async (assert) => {
+        assert.expect(1);
+
+        // Arrange
+        const db = firebase.firestore();
+        const snapshot = await db.collection('users').get();
+
+        // Act
+        const result = snapshot.size;
+
+        // Assert
+        assert.equal(result, 3);
+      });
+    });
+
     QUnit.module('function: forEach', () => {
       QUnit.test('should fire callback per each data', async (assert) => {
         assert.expect(1);
