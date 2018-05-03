@@ -61,7 +61,7 @@ var MockFirebase =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -93,8 +93,8 @@ module.exports = getOrSetDataNode;
 
 const { querySnapshot } = __webpack_require__(2);
 const DocumentReference = __webpack_require__(3);
-const Query = __webpack_require__(10);
-const generateIdForRecord = __webpack_require__(11);
+const Query = __webpack_require__(11);
+const generateIdForRecord = __webpack_require__(12);
 const getOrSetDataNode = __webpack_require__(0);
 
 class CollectionReference {
@@ -185,7 +185,8 @@ module.exports = CollectionReference;
 
 const DocumentReference = __webpack_require__(3);
 const DocumentSnapshot = __webpack_require__(4);
-const QuerySnapshot = __webpack_require__(9);
+const QuerySnapshot = __webpack_require__(10);
+const buildPathFromRef = __webpack_require__(5);
 
 function endAt(data, prop, value) {
   return filterByCursor(data, prop, value, 'endAt');
@@ -336,24 +337,6 @@ function filterByCursor(data, prop, value, cursor) {
   return filteredData;
 }
 
-function buildPathFromRef(ref) {
-  let url = '';
-  let currentRef = ref;
-  let hasParentRef = true;
-
-  while (hasParentRef) {
-    url = `${currentRef.id}/${url}`;
-
-    if (!currentRef.parent) {
-      hasParentRef = false;
-    }
-
-    currentRef = currentRef.parent;
-  }
-
-  return `__ref__:${url.slice(0, -1)}`;
-}
-
 module.exports = {
   endAt,
   endBefore,
@@ -371,6 +354,7 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 const DocumentSnapshot = __webpack_require__(4);
+const buildPathFromRef = __webpack_require__(5);
 const getOrSetDataNode = __webpack_require__(0);
 
 class DocumentReference {
@@ -440,6 +424,12 @@ class DocumentReference {
       }
     }
 
+    for (const field of Object.keys(data)) {
+      if (data[field] instanceof DocumentReference) {
+        data[field] = buildPathFromRef(data[field]);
+      }
+    }
+
     Object.assign(this._data, data, { __isDirty__: false });
 
     return Promise.resolve();
@@ -448,6 +438,12 @@ class DocumentReference {
   update(data) {
     if (this._data.__isDirty__ || this._data.__isDeleted__) {
       throw new Error('Document doesn\'t exist');
+    }
+
+    for (const field of Object.keys(data)) {
+      if (data[field] instanceof DocumentReference) {
+        data[field] = buildPathFromRef(data[field]);
+      }
     }
 
     Object.assign(this._data, data);
@@ -553,19 +549,44 @@ module.exports = DocumentSnapshot;
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const MockFirebase = __webpack_require__(6);
+function buildPathFromRef(ref) {
+  let url = '';
+  let currentRef = ref;
+  let hasParentRef = true;
 
-module.exports = MockFirebase;
+  while (hasParentRef) {
+    url = `${currentRef.id}/${url}`;
+
+    if (!currentRef.parent) {
+      hasParentRef = false;
+    }
+
+    currentRef = currentRef.parent;
+  }
+
+  return `__ref__:${url.slice(0, -1)}`;
+}
+
+module.exports = buildPathFromRef;
 
 
 /***/ }),
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const FieldValue = __webpack_require__(7);
-const Firestore = __webpack_require__(8);
+const MockFirebase = __webpack_require__(7);
+
+module.exports = MockFirebase;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const FieldValue = __webpack_require__(8);
+const Firestore = __webpack_require__(9);
 
 class MockFirebase {
   constructor(data) {
@@ -586,7 +607,7 @@ module.exports = MockFirebase;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 class FieldValue {
@@ -599,11 +620,11 @@ module.exports = FieldValue;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const CollectionReference = __webpack_require__(1);
-const WriteBatch = __webpack_require__(12);
+const WriteBatch = __webpack_require__(13);
 const getOrSetDataNode = __webpack_require__(0);
 
 class Firestore {
@@ -626,7 +647,7 @@ module.exports = Firestore;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 class QuerySnapshot {
@@ -657,7 +678,7 @@ module.exports = QuerySnapshot;
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const {
@@ -778,7 +799,7 @@ module.exports = Query;
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 function generateIdForRecord() {
@@ -789,7 +810,7 @@ module.exports = generateIdForRecord;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 class WriteBatch {

@@ -445,12 +445,15 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         const ref = db.collection('users').doc('user_a');
 
         // Act
-        await ref.set({ name: 'user_a' });
+        await ref.set({ name: 'user_a', dad: db.collection('users').doc('user_b') });
 
         // Assert
         const snapshot = await ref.get();
 
-        assert.deepEqual(snapshot.data(), { name: 'user_a' });
+        assert.deepEqual(snapshot.data(), {
+          name: 'user_a',
+          dad: db.collection('users').doc('user_b'),
+        });
       });
 
       QUnit.test('should set the data using the default options when it does not exists', async (assert) => {
@@ -461,12 +464,15 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         const ref = db.collection('users').doc('user_100');
 
         // Act
-        await ref.set({ username: 'user_100' });
+        await ref.set({ username: 'user_100', dad: db.collection('users').doc('user_b') });
 
         // Assert
         const snapshot = await ref.get();
 
-        assert.deepEqual(snapshot.data(), { username: 'user_100' });
+        assert.deepEqual(snapshot.data(), {
+          username: 'user_100',
+          dad: db.collection('users').doc('user_b'),
+        });
       });
 
       QUnit.test('should set the data using the merge option', async (assert) => {
@@ -477,7 +483,10 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         const ref = db.collection('users').doc('user_a');
 
         // Act
-        await ref.set({ name: 'user_a' }, { merge: true });
+        await ref.set({
+          name: 'user_a',
+          dad: db.collection('users').doc('user_b'),
+        }, { merge: true });
 
         // Assert
         const snapshot = await ref.get();
@@ -490,6 +499,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
           age: 15,
           name: 'user_a',
           username: 'user_a',
+          dad: db.collection('users').doc('user_b'),
         });
       });
     });
@@ -503,7 +513,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         const ref = db.collection('users').doc('user_a');
 
         // Act
-        await ref.update({ name: 'user_a' });
+        await ref.update({ name: 'user_a', dad: db.collection('users').doc('user_b') });
 
         // Assert
         const snapshot = await ref.get();
@@ -516,6 +526,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
           age: 15,
           name: 'user_a',
           username: 'user_a',
+          dad: db.collection('users').doc('user_b'),
         });
       });
 

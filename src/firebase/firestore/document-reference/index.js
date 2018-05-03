@@ -1,4 +1,5 @@
 const DocumentSnapshot = require('../document-snapshot');
+const buildPathFromRef = require('../../../utils/build-path-from-ref');
 const getOrSetDataNode = require('../../../utils/get-or-set-data-node');
 
 class DocumentReference {
@@ -68,6 +69,12 @@ class DocumentReference {
       }
     }
 
+    for (const field of Object.keys(data)) {
+      if (data[field] instanceof DocumentReference) {
+        data[field] = buildPathFromRef(data[field]);
+      }
+    }
+
     Object.assign(this._data, data, { __isDirty__: false });
 
     return Promise.resolve();
@@ -76,6 +83,12 @@ class DocumentReference {
   update(data) {
     if (this._data.__isDirty__ || this._data.__isDeleted__) {
       throw new Error('Document doesn\'t exist');
+    }
+
+    for (const field of Object.keys(data)) {
+      if (data[field] instanceof DocumentReference) {
+        data[field] = buildPathFromRef(data[field]);
+      }
     }
 
     Object.assign(this._data, data);

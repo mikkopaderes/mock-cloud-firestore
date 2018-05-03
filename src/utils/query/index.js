@@ -1,6 +1,7 @@
 const DocumentReference = require('../../firebase/firestore/document-reference');
 const DocumentSnapshot = require('../../firebase/firestore/document-snapshot');
 const QuerySnapshot = require('../../firebase/firestore/query-snapshot');
+const buildPathFromRef = require('../build-path-from-ref');
 
 function endAt(data, prop, value) {
   return filterByCursor(data, prop, value, 'endAt');
@@ -149,24 +150,6 @@ function filterByCursor(data, prop, value, cursor) {
   }
 
   return filteredData;
-}
-
-function buildPathFromRef(ref) {
-  let url = '';
-  let currentRef = ref;
-  let hasParentRef = true;
-
-  while (hasParentRef) {
-    url = `${currentRef.id}/${url}`;
-
-    if (!currentRef.parent) {
-      hasParentRef = false;
-    }
-
-    currentRef = currentRef.parent;
-  }
-
-  return `__ref__:${url.slice(0, -1)}`;
 }
 
 module.exports = {
