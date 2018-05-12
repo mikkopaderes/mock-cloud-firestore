@@ -61,11 +61,75 @@ var MockFirebase =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports) {
+
+function buildPathFromReference(ref) {
+  let url = '';
+  let currentRef = ref;
+  let hasParentRef = true;
+
+  while (hasParentRef) {
+    if (currentRef.id) {
+      url = `${currentRef.id}/${url}`;
+
+      if (!currentRef.parent) {
+        hasParentRef = false;
+      }
+
+      currentRef = currentRef.parent;
+    } else {
+      break;
+    }
+  }
+
+  return `__ref__:${url.slice(0, -1)}`;
+}
+
+function cleanPath(path) {
+  if (path.startsWith('/')) {
+    // Remove staring slash
+    return path.substr(1);
+  }
+
+  return path;
+}
+
+function validatePath(path) {
+  if (path.includes('//')) {
+    throw new Error(`Invalid path (${path}). Paths must not contain // in them.`);
+  }
+}
+
+module.exports = { buildPathFromReference, cleanPath, validatePath };
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const { buildPathFromReference } = __webpack_require__(0);
+
+function validateReference(ref, type) {
+  const path = buildPathFromReference(ref).substr(8);
+  const pathNodes = path.split('/');
+
+  if (type === 'collection' && pathNodes.length % 2 !== 1) {
+    throw new Error(`Invalid collection reference. Collection references must have an odd number of segments, but ${path} has ${pathNodes.length}`);
+  } else if (type === 'doc' && pathNodes.length % 2 !== 0) {
+    throw new Error(`Invalid document reference. Document references must have an even number of segments, but ${path} has ${pathNodes.length}`);
+  }
+}
+
+module.exports = { validateReference };
+
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports) {
 
 function getOrSetDataNode(data = {}, path, id) {
@@ -88,14 +152,16 @@ module.exports = getOrSetDataNode;
 
 
 /***/ }),
-/* 1 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const { querySnapshot } = __webpack_require__(2);
-const DocumentReference = __webpack_require__(3);
-const Query = __webpack_require__(11);
-const generateIdForRecord = __webpack_require__(12);
-const getOrSetDataNode = __webpack_require__(0);
+const { cleanPath, validatePath } = __webpack_require__(0);
+const { querySnapshot } = __webpack_require__(4);
+const { validateReference } = __webpack_require__(1);
+const DocumentReference = __webpack_require__(5);
+const Query = __webpack_require__(12);
+const generateIdForRecord = __webpack_require__(13);
+const getOrSetDataNode = __webpack_require__(2);
 
 class CollectionReference {
   constructor(id, data, parent, firestore) {
@@ -132,9 +198,7 @@ class CollectionReference {
       id = generateIdForRecord();
     }
 
-    const data = getOrSetDataNode(this._data, '__doc__', id);
-
-    return new DocumentReference(id, data, this, this.firestore);
+    return this._getDocumentReference(id);
   }
 
   endAt(...args) {
@@ -174,19 +238,45 @@ class CollectionReference {
   where(...args) {
     return new Query(this._data, this).where(...args);
   }
+
+  _doc(id) {
+    const data = getOrSetDataNode(this._data, '__doc__', id);
+
+    return new DocumentReference(id, data, this, this.firestore);
+  }
+
+  _getDocumentReference(path) {
+    validatePath(path);
+
+    const cleanedPath = cleanPath(path);
+    const nodes = cleanedPath.split('/');
+    let ref = this;
+
+    nodes.forEach((node, index) => {
+      if (index % 2 === 0) {
+        ref = ref._doc(node);
+      } else {
+        ref = ref.collection(node);
+      }
+    });
+
+    validateReference(ref);
+
+    return ref;
+  }
 }
 
 module.exports = CollectionReference;
 
 
 /***/ }),
-/* 2 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const DocumentReference = __webpack_require__(3);
-const DocumentSnapshot = __webpack_require__(4);
-const QuerySnapshot = __webpack_require__(10);
-const buildPathFromRef = __webpack_require__(5);
+const { buildPathFromReference } = __webpack_require__(0);
+const DocumentReference = __webpack_require__(5);
+const DocumentSnapshot = __webpack_require__(6);
+const QuerySnapshot = __webpack_require__(11);
 
 function endAt(data, prop, value) {
   return filterByCursor(data, prop, value, 'endAt');
@@ -268,7 +358,7 @@ function where(data = {}, key, operator, value) {
         return (
           data[id][key]
           && data[id][key].startsWith('__ref__:')
-          && data[id][key] === buildPathFromRef(value)
+          && data[id][key] === buildPathFromReference(value)
         );
       }
 
@@ -350,12 +440,13 @@ module.exports = {
 
 
 /***/ }),
-/* 3 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const DocumentSnapshot = __webpack_require__(4);
-const buildPathFromRef = __webpack_require__(5);
-const getOrSetDataNode = __webpack_require__(0);
+const { buildPathFromReference, cleanPath, validatePath } = __webpack_require__(0);
+const { validateReference } = __webpack_require__(1);
+const DocumentSnapshot = __webpack_require__(6);
+const getOrSetDataNode = __webpack_require__(2);
 
 class DocumentReference {
   constructor(id, data, parent, firestore) {
@@ -378,10 +469,7 @@ class DocumentReference {
   }
 
   collection(id) {
-    const CollectionReference = __webpack_require__(1);
-    const data = getOrSetDataNode(this._data, '__collection__', id);
-
-    return new CollectionReference(id, data, this, this.firestore);
+    return this._getCollectionReference(id);
   }
 
   delete() {
@@ -426,7 +514,7 @@ class DocumentReference {
 
     for (const field of Object.keys(data)) {
       if (data[field] instanceof DocumentReference) {
-        data[field] = buildPathFromRef(data[field]);
+        data[field] = buildPathFromReference(data[field]);
       }
     }
 
@@ -442,7 +530,7 @@ class DocumentReference {
 
     for (const field of Object.keys(data)) {
       if (data[field] instanceof DocumentReference) {
-        data[field] = buildPathFromRef(data[field]);
+        data[field] = buildPathFromReference(data[field]);
       }
     }
 
@@ -450,13 +538,40 @@ class DocumentReference {
 
     return Promise.resolve();
   }
+
+  _collection(id) {
+    const CollectionReference = __webpack_require__(3);
+    const data = getOrSetDataNode(this._data, '__collection__', id);
+
+    return new CollectionReference(id, data, this, this.firestore);
+  }
+
+  _getCollectionReference(path) {
+    validatePath(path);
+
+    const cleanedPath = cleanPath(path);
+    const nodes = cleanedPath.split('/');
+    let ref = this;
+
+    nodes.forEach((node, index) => {
+      if (index % 2 === 0) {
+        ref = ref._collection(node);
+      } else {
+        ref = ref.doc(node);
+      }
+    });
+
+    validateReference(ref);
+
+    return ref;
+  }
 }
 
 module.exports = DocumentReference;
 
 
 /***/ }),
-/* 4 */
+/* 6 */
 /***/ (function(module, exports) {
 
 class DocumentSnapshot {
@@ -548,45 +663,20 @@ module.exports = DocumentSnapshot;
 
 
 /***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-function buildPathFromRef(ref) {
-  let url = '';
-  let currentRef = ref;
-  let hasParentRef = true;
-
-  while (hasParentRef) {
-    url = `${currentRef.id}/${url}`;
-
-    if (!currentRef.parent) {
-      hasParentRef = false;
-    }
-
-    currentRef = currentRef.parent;
-  }
-
-  return `__ref__:${url.slice(0, -1)}`;
-}
-
-module.exports = buildPathFromRef;
-
-
-/***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const MockFirebase = __webpack_require__(7);
+const MockFirebase = __webpack_require__(8);
 
 module.exports = MockFirebase;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const FieldValue = __webpack_require__(8);
-const Firestore = __webpack_require__(9);
+const FieldValue = __webpack_require__(9);
+const Firestore = __webpack_require__(10);
 
 class MockFirebase {
   constructor(data) {
@@ -607,7 +697,7 @@ module.exports = MockFirebase;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 class FieldValue {
@@ -620,12 +710,14 @@ module.exports = FieldValue;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const CollectionReference = __webpack_require__(1);
-const WriteBatch = __webpack_require__(13);
-const getOrSetDataNode = __webpack_require__(0);
+const { cleanPath, validatePath } = __webpack_require__(0);
+const { validateReference } = __webpack_require__(1);
+const CollectionReference = __webpack_require__(3);
+const WriteBatch = __webpack_require__(14);
+const getOrSetDataNode = __webpack_require__(2);
 
 class Firestore {
   constructor(data) {
@@ -637,9 +729,45 @@ class Firestore {
   }
 
   collection(id) {
+    return this._getReference(id);
+  }
+
+  doc(id) {
+    return this._getReference(id);
+  }
+
+  settings(settings) {
+    this._settings = settings;
+  }
+
+  _collection(id) {
     const data = getOrSetDataNode(this._data, '__collection__', id);
 
     return new CollectionReference(id, data, null, this);
+  }
+
+  _getReference(path) {
+    validatePath(path);
+
+    const cleanedPath = cleanPath(path);
+    const nodes = cleanedPath.split('/');
+    let ref = this;
+
+    nodes.forEach((node, index) => {
+      if (index % 2 === 0) {
+        if (ref.batch) {
+          ref = ref._collection(node);
+        } else {
+          ref = ref.collection(node);
+        }
+      } else {
+        ref = ref.doc(node);
+      }
+    });
+
+    validateReference(ref);
+
+    return ref;
   }
 }
 
@@ -647,7 +775,7 @@ module.exports = Firestore;
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 class QuerySnapshot {
@@ -678,7 +806,7 @@ module.exports = QuerySnapshot;
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const {
@@ -690,7 +818,7 @@ const {
   startAfter,
   startAt,
   where,
-} = __webpack_require__(2);
+} = __webpack_require__(4);
 
 class Query {
   constructor(data, collection) {
@@ -799,7 +927,7 @@ module.exports = Query;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 function generateIdForRecord() {
@@ -810,7 +938,7 @@ module.exports = generateIdForRecord;
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 class WriteBatch {
