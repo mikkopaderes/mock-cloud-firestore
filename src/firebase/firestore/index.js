@@ -21,6 +21,10 @@ class Firestore {
     return this._getReference(id);
   }
 
+  settings(settings) {
+    this._settings = settings;
+  }
+
   _collection(id) {
     const data = getOrSetDataNode(this._data, '__collection__', id);
 
