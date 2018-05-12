@@ -1,7 +1,7 @@
+const { buildPathFromReference } = require('../path');
 const DocumentReference = require('../../firebase/firestore/document-reference');
 const DocumentSnapshot = require('../../firebase/firestore/document-snapshot');
 const QuerySnapshot = require('../../firebase/firestore/query-snapshot');
-const buildPathFromRef = require('../build-path-from-ref');
 
 function endAt(data, prop, value) {
   return filterByCursor(data, prop, value, 'endAt');
@@ -83,7 +83,7 @@ function where(data = {}, key, operator, value) {
         return (
           data[id][key]
           && data[id][key].startsWith('__ref__:')
-          && data[id][key] === buildPathFromRef(value)
+          && data[id][key] === buildPathFromReference(value)
         );
       }
 

@@ -100,7 +100,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
     });
 
     QUnit.module('function: doc', () => {
-      QUnit.test('should return the document reference', (assert) => {
+      QUnit.test('should return the document reference using an ID', (assert) => {
         assert.expect(1);
 
         // Arrange
@@ -111,6 +111,20 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
 
         // Assert
         assert.ok(result instanceof DocumentReference);
+      });
+
+      QUnit.test('should return the document reference using a path', (assert) => {
+        assert.expect(2);
+
+        // Arrange
+        const db = firebase.firestore();
+
+        // Act
+        const result = db.collection('users').doc('user_a/friends/user_b');
+
+        // Assert
+        assert.ok(result instanceof DocumentReference);
+        assert.equal(result.id, 'user_b');
       });
 
       QUnit.test('should create document reference when not providing an ID', (assert) => {
@@ -332,7 +346,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
     });
 
     QUnit.module('function: collection', () => {
-      QUnit.test('should return the collection reference', (assert) => {
+      QUnit.test('should return the collection reference of an ID', (assert) => {
         assert.expect(1);
 
         // Arrange
@@ -346,6 +360,23 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
 
         // Assert
         assert.ok(result instanceof CollectionReference);
+      });
+
+      QUnit.test('should return the collection reference of a path', (assert) => {
+        assert.expect(2);
+
+        // Arrange
+        const db = firebase.firestore();
+
+        // Act
+        const result = db
+          .collection('users')
+          .doc('user_a')
+          .collection('friends/user_b/wew_so_deep');
+
+        // Assert
+        assert.ok(result instanceof CollectionReference);
+        assert.equal(result.id, 'wew_so_deep');
       });
     });
 
@@ -765,6 +796,38 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
 
         // Assert
         assert.ok(result instanceof FieldValue);
+      });
+    });
+
+    QUnit.module('function: collection', () => {
+      QUnit.test('should return the collection reference using a path', (assert) => {
+        assert.expect(2);
+
+        // Arrange
+        const db = firebase.firestore();
+
+        // Act
+        const result = db.doc('users/user_a/friends');
+
+        // Assert
+        assert.ok(result instanceof CollectionReference);
+        assert.equal(result.id, 'friends');
+      });
+    });
+
+    QUnit.module('function: doc', () => {
+      QUnit.test('should return the document reference using a path', (assert) => {
+        assert.expect(2);
+
+        // Arrange
+        const db = firebase.firestore();
+
+        // Act
+        const result = db.doc('users/user_a');
+
+        // Assert
+        assert.ok(result instanceof DocumentReference);
+        assert.equal(result.id, 'user_a');
       });
     });
   });

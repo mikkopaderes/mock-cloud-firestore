@@ -1,4 +1,6 @@
+const { cleanPath, validatePath } = require('../../../utils/path');
 const { querySnapshot } = require('../../../utils/query');
+const { validateReference } = require('../../../utils/reference');
 const DocumentReference = require('../document-reference');
 const Query = require('../query');
 const generateIdForRecord = require('../../../utils/generate-id-for-record');
@@ -39,9 +41,7 @@ class CollectionReference {
       id = generateIdForRecord();
     }
 
-    const data = getOrSetDataNode(this._data, '__doc__', id);
-
-    return new DocumentReference(id, data, this, this.firestore);
+    return this._getDocumentReference(id);
   }
 
   endAt(...args) {
@@ -80,6 +80,32 @@ class CollectionReference {
 
   where(...args) {
     return new Query(this._data, this).where(...args);
+  }
+
+  _doc(id) {
+    const data = getOrSetDataNode(this._data, '__doc__', id);
+
+    return new DocumentReference(id, data, this, this.firestore);
+  }
+
+  _getDocumentReference(path) {
+    validatePath(path);
+
+    const cleanedPath = cleanPath(path);
+    const nodes = cleanedPath.split('/');
+    let ref = this;
+
+    nodes.forEach((node, index) => {
+      if (index % 2 === 0) {
+        ref = ref._doc(node);
+      } else {
+        ref = ref.collection(node);
+      }
+    });
+
+    validateReference(ref);
+
+    return ref;
   }
 }
 
