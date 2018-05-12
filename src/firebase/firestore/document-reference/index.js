@@ -1,5 +1,6 @@
+const { buildPathFromReference, cleanPath, validatePath } = require('../../../utils/path');
+const { validateReference } = require('../../../utils/reference');
 const DocumentSnapshot = require('../document-snapshot');
-const buildPathFromRef = require('../../../utils/build-path-from-ref');
 const getOrSetDataNode = require('../../../utils/get-or-set-data-node');
 
 class DocumentReference {
@@ -23,10 +24,7 @@ class DocumentReference {
   }
 
   collection(id) {
-    const CollectionReference = require('../collection-reference');
-    const data = getOrSetDataNode(this._data, '__collection__', id);
-
-    return new CollectionReference(id, data, this, this.firestore);
+    return this._getCollectionReference(id);
   }
 
   delete() {
@@ -71,7 +69,7 @@ class DocumentReference {
 
     for (const field of Object.keys(data)) {
       if (data[field] instanceof DocumentReference) {
-        data[field] = buildPathFromRef(data[field]);
+        data[field] = buildPathFromReference(data[field]);
       }
     }
 
@@ -87,13 +85,40 @@ class DocumentReference {
 
     for (const field of Object.keys(data)) {
       if (data[field] instanceof DocumentReference) {
-        data[field] = buildPathFromRef(data[field]);
+        data[field] = buildPathFromReference(data[field]);
       }
     }
 
     Object.assign(this._data, data);
 
     return Promise.resolve();
+  }
+
+  _collection(id) {
+    const CollectionReference = require('../collection-reference');
+    const data = getOrSetDataNode(this._data, '__collection__', id);
+
+    return new CollectionReference(id, data, this, this.firestore);
+  }
+
+  _getCollectionReference(path) {
+    validatePath(path);
+
+    const cleanedPath = cleanPath(path);
+    const nodes = cleanedPath.split('/');
+    let ref = this;
+
+    nodes.forEach((node, index) => {
+      if (index % 2 === 0) {
+        ref = ref._collection(node);
+      } else {
+        ref = ref.doc(node);
+      }
+    });
+
+    validateReference(ref);
+
+    return ref;
   }
 }
 
