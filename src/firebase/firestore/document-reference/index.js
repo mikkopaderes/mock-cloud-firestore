@@ -37,21 +37,13 @@ class DocumentReference {
   }
 
   get() {
-    const documentSnapshot = new DocumentSnapshot(
-      this._id,
-      this._data,
-      this
-    );
+    const documentSnapshot = new DocumentSnapshot(this._id, this._data, this);
 
     return Promise.resolve(documentSnapshot);
   }
 
   onSnapshot(onNext) {
-    const documentSnapshot = new DocumentSnapshot(
-      this._id,
-      this._data,
-      this
-    );
+    const documentSnapshot = new DocumentSnapshot(this._id, this._data, this);
 
     onNext(documentSnapshot);
 
@@ -60,20 +52,22 @@ class DocumentReference {
 
   set(data, option = {}) {
     if (!option.merge) {
-      for (const key in this._data) {
-        if (this._data.hasOwnProperty(key) && key !== '__collection__') {
-          delete this['_data'][key];
+      for (const key of Object.keys(this._data)) {
+        if (key !== '__collection__') {
+          delete this._data[key];
         }
       }
     }
 
-    for (const field of Object.keys(data)) {
-      if (data[field] instanceof DocumentReference) {
-        data[field] = buildPathFromReference(data[field]);
+    const parsedData = Object.assign({}, data);
+
+    for (const field of Object.keys(parsedData)) {
+      if (parsedData[field] instanceof DocumentReference) {
+        parsedData[field] = buildPathFromReference(parsedData[field]);
       }
     }
 
-    Object.assign(this._data, data, { __isDirty__: false });
+    Object.assign(this._data, parsedData, { __isDirty__: false });
 
     return Promise.resolve();
   }
@@ -83,18 +77,21 @@ class DocumentReference {
       throw new Error('Document doesn\'t exist');
     }
 
-    for (const field of Object.keys(data)) {
-      if (data[field] instanceof DocumentReference) {
-        data[field] = buildPathFromReference(data[field]);
+    const parsedData = Object.assign({}, data);
+
+    for (const field of Object.keys(parsedData)) {
+      if (parsedData[field] instanceof DocumentReference) {
+        parsedData[field] = buildPathFromReference(parsedData[field]);
       }
     }
 
-    Object.assign(this._data, data);
+    Object.assign(this._data, parsedData);
 
     return Promise.resolve();
   }
 
   _collection(id) {
+    // eslint-disable-next-line global-require
     const CollectionReference = require('../collection-reference');
     const data = getOrSetDataNode(this._data, '__collection__', id);
 

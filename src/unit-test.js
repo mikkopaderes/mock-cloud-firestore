@@ -12,7 +12,7 @@ const fixtureData = require('./utils/test-helpers/fixture-data');
 
 let firebase;
 
-QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
+QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
   hooks.beforeEach(() => {
     firebase = new MockFirebase(fixtureData());
   });
@@ -56,11 +56,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         const db = firebase.firestore();
 
         // Act
-        const result = db
-          .collection('users')
-          .doc('user_a')
-          .collection('friends')
-          .parent;
+        const result = db.collection('users').doc('user_a').collection('friends').parent;
 
         // Assert
         assert.ok(result instanceof DocumentReference);
@@ -88,9 +84,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         const db = firebase.firestore();
 
         // Act
-        const ref = await db.collection('users').add({
-          username: 'new_user',
-        });
+        const ref = await db.collection('users').add({ username: 'new_user' });
 
         // Assert
         const snapshot = await ref.get();
@@ -284,11 +278,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         const db = firebase.firestore();
 
         // Act
-        const result = db.collection('users').orderBy('age').where(
-          'name',
-          '==',
-          'Foo'
-        );
+        const result = db.collection('users').orderBy('age').where('name', '==', 'Foo');
 
         // Assert
         assert.ok(result instanceof Query);
@@ -335,10 +325,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         const db = firebase.firestore();
 
         // Act
-        const result = db
-          .collection('users')
-          .doc('user_a')
-          .parent;
+        const result = db.collection('users').doc('user_a').parent;
 
         // Assert
         assert.ok(result instanceof CollectionReference);
@@ -353,10 +340,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         const db = firebase.firestore();
 
         // Act
-        const result = db
-          .collection('users')
-          .doc('user_a')
-          .collection('friends');
+        const result = db.collection('users').doc('user_a').collection('friends');
 
         // Assert
         assert.ok(result instanceof CollectionReference);
@@ -402,10 +386,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
 
         // Arrange
         const db = firebase.firestore();
-        const querySnapshot = await db
-          .collection('users')
-          .where('age', '==', 15)
-          .get();
+        const querySnapshot = await db.collection('users').where('age', '==', 15).get();
 
         // Act
         querySnapshot.forEach(async (docSnapshot) => {
@@ -442,10 +423,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         const db = firebase.firestore();
 
         // Act
-        const result = db
-          .collection('users')
-          .doc('user_a')
-          .onSnapshot(() => {});
+        const result = db.collection('users').doc('user_a').onSnapshot(() => {});
 
         // Assert
         assert.ok(typeof result === 'function');
@@ -948,11 +926,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         const db = firebase.firestore();
 
         // Act
-        const snapshot = await db
-          .collection('users')
-          .orderBy('age')
-          .endAt(15)
-          .get();
+        const snapshot = await db.collection('users').orderBy('age').endAt(15).get();
 
         // Assert
         assert.equal(snapshot.docs.length, 2);
@@ -984,11 +958,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         const db = firebase.firestore();
 
         // Act
-        const snapshot = await db
-          .collection('users')
-          .orderBy('age')
-          .endBefore(15)
-          .get();
+        const snapshot = await db.collection('users').orderBy('age').endBefore(15).get();
 
         // Assert
         assert.equal(snapshot.docs.length, 1);
@@ -1036,10 +1006,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         const db = firebase.firestore();
 
         // Act
-        const result = db
-          .collection('users')
-          .orderBy('age')
-          .onSnapshot(() => {});
+        const result = db.collection('users').orderBy('age').onSnapshot(() => {});
 
         // Assert
         assert.ok(typeof result === 'function');
@@ -1086,11 +1053,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         const db = firebase.firestore();
 
         // Act
-        const snapshot = await db
-          .collection('users')
-          .orderBy('age')
-          .startAfter(15)
-          .get();
+        const snapshot = await db.collection('users').orderBy('age').startAfter(15).get();
 
         // Assert
         assert.equal(snapshot.docs.length, 1);
@@ -1121,11 +1084,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         const db = firebase.firestore();
 
         // Act
-        const snapshot = await db
-          .collection('users')
-          .orderBy('age')
-          .startAt(15)
-          .get();
+        const snapshot = await db.collection('users').orderBy('age').startAt(15).get();
 
         // Assert
         assert.equal(snapshot.docs.length, 2);
@@ -1157,10 +1116,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
         const db = firebase.firestore();
 
         // Act
-        const snapshot = await db
-          .collection('users')
-          .where('age', '==', 15)
-          .get();
+        const snapshot = await db.collection('users').where('age', '==', 15).get();
 
         // Assert
         assert.equal(snapshot.docs.length, 1);

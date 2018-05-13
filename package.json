@@ -12,14 +12,16 @@
   },
   "keywords": [
     "firebase",
-    "cloud-firestore",
+    "firestore",
     "mock"
   ],
   "author": "Mikko Paderes",
   "license": "MIT",
   "devDependencies": {
     "eslint": "^4.17.0",
-    "eslint-config-rmmmp": "^0.0.2",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-rmmmp": "^0.2.2",
+    "eslint-plugin-import": "^2.7.0",
     "npm-run-all": "^4.1.2",
     "qunit": "^2.5.0",
     "sinon": "^4.3.0",

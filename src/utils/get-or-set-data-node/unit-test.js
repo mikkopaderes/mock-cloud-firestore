@@ -1,6 +1,6 @@
 const getOrSetDataNode = require('./');
 
-QUnit.module('Unit | Util | get or set data node', () => {
+QUnit.module('Unit | Util | get-or-set-data-node', () => {
   QUnit.module('function: getOrSetDataNode', () => {
     QUnit.test('should create an empty __collection__ data node object when it does not exist', (assert) => {
       assert.expect(1);

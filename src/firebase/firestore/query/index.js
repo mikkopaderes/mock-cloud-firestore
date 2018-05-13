@@ -36,11 +36,7 @@ class Query {
       throw new Error('endBefore() queries requires orderBy()');
     }
 
-    this._data.__doc__ = endBefore(
-      this._data.__doc__,
-      this._option.orderBy,
-      value
-    );
+    this._data.__doc__ = endBefore(this._data.__doc__, this._option.orderBy, value);
     this._option.endBefore = value;
 
     return this;
@@ -75,11 +71,7 @@ class Query {
       throw new Error('startAfter queries requires orderBy()');
     }
 
-    this._data.__doc__ = startAfter(
-      this._data.__doc__,
-      this._option.orderBy,
-      value
-    );
+    this._data.__doc__ = startAfter(this._data.__doc__, this._option.orderBy, value);
     this._option.startAfter = value;
 
     return this;
@@ -90,11 +82,7 @@ class Query {
       throw new Error('startAt() queries requires orderBy()');
     }
 
-    this._data.__doc__ = startAt(
-      this._data.__doc__,
-      this._option.orderBy,
-      value
-    );
+    this._data.__doc__ = startAt(this._data.__doc__, this._option.orderBy, value);
     this._option.startAt = value;
 
     return this;
@@ -108,7 +96,7 @@ class Query {
   }
 
   _isOrdered() {
-    return this._option.orderBy ? true : false;
+    return this._option.orderBy;
   }
 }
 
