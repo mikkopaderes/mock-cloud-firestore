@@ -501,8 +501,18 @@ class DocumentReference {
     const parsedData = Object.assign({}, data);
 
     for (const field of Object.keys(parsedData)) {
-      if (parsedData[field] instanceof DocumentReference) {
-        parsedData[field] = buildPathFromReference(parsedData[field]);
+      if (parsedData[field]) {
+        if (parsedData[field] instanceof DocumentReference) {
+          parsedData[field] = buildPathFromReference(parsedData[field]);
+        }
+
+        if (
+          typeof parsedData[field] === 'object'
+          && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName')
+          && parsedData[field].methodName === 'FieldValue.serverTimestamp'
+        ) {
+          parsedData[field] = new Date();
+        }
       }
     }
 
@@ -519,8 +529,18 @@ class DocumentReference {
     const parsedData = Object.assign({}, data);
 
     for (const field of Object.keys(parsedData)) {
-      if (parsedData[field] instanceof DocumentReference) {
-        parsedData[field] = buildPathFromReference(parsedData[field]);
+      if (parsedData[field]) {
+        if (parsedData[field] instanceof DocumentReference) {
+          parsedData[field] = buildPathFromReference(parsedData[field]);
+        }
+
+        if (
+          typeof parsedData[field] === 'object'
+          && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName')
+          && parsedData[field].methodName === 'FieldValue.serverTimestamp'
+        ) {
+          parsedData[field] = new Date();
+        }
       }
     }
 

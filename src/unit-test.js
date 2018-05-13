@@ -8,13 +8,14 @@ const Firestore = require('./firebase/firestore');
 const MockFirebase = require('./');
 const QuerySnapshot = require('./firebase/firestore/query-snapshot');
 const Query = require('./firebase/firestore/query');
+const firebase = require('firebase');
 const fixtureData = require('./utils/test-helpers/fixture-data');
 
-let firebase;
+let mockFirebase;
 
-QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
+QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
   hooks.beforeEach(() => {
-    firebase = new MockFirebase(fixtureData());
+    mockFirebase = new MockFirebase(fixtureData());
   });
 
   QUnit.module('CollectionReference', () => {
@@ -23,7 +24,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').id;
@@ -38,7 +39,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').firestore;
@@ -53,7 +54,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').doc('user_a').collection('friends').parent;
@@ -66,7 +67,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').parent;
@@ -81,7 +82,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const ref = await db.collection('users').add({ username: 'new_user' });
@@ -98,7 +99,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').doc('user_a');
@@ -111,7 +112,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(2);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').doc('user_a/friends/user_b');
@@ -125,7 +126,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').doc();
@@ -140,7 +141,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').orderBy('age').endAt(15);
@@ -155,7 +156,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').orderBy('age').endBefore(15);
@@ -170,7 +171,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = await db.collection('users').get();
@@ -185,7 +186,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').orderBy('age').limit(15);
@@ -200,7 +201,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').onSnapshot(() => {});
@@ -214,7 +215,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
 
         // Arrange
         const done = assert.async();
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         db.collection('users').onSnapshot((snapshot) => {
@@ -230,7 +231,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').orderBy('age');
@@ -245,7 +246,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').orderBy('age').startAfter(15);
@@ -260,7 +261,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').orderBy('age').startAt(15);
@@ -275,7 +276,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').orderBy('age').where('name', '==', 'Foo');
@@ -292,7 +293,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').doc('user_a').id;
@@ -307,7 +308,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').doc('user_a').firestore;
@@ -322,7 +323,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').doc('user_a').parent;
@@ -337,7 +338,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').doc('user_a').collection('friends');
@@ -350,7 +351,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(2);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db
@@ -369,7 +370,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const ref = db.collection('users').doc('user_a');
 
         // Act
@@ -385,7 +386,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const querySnapshot = await db.collection('users').where('age', '==', 15).get();
 
         // Act
@@ -405,7 +406,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = await db.collection('users').doc('user_a').get();
@@ -420,7 +421,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').doc('user_a').onSnapshot(() => {});
@@ -434,7 +435,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
 
         // Arrange
         const done = assert.async();
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         db.collection('users').doc('user_a').onSnapshot((snapshot) => {
@@ -447,54 +448,63 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
 
     QUnit.module('function: set', () => {
       QUnit.test('should set the data using the default options when it exist', async (assert) => {
-        assert.expect(1);
+        assert.expect(3);
 
         // Arrange
-        const db = firebase.firestore();
-        const ref = db.collection('users').doc('user_a');
-
-        // Act
-        await ref.set({ name: 'user_a', dad: db.collection('users').doc('user_b') });
-
-        // Assert
-        const snapshot = await ref.get();
-
-        assert.deepEqual(snapshot.data(), {
-          name: 'user_a',
-          dad: db.collection('users').doc('user_b'),
-        });
-      });
-
-      QUnit.test('should set the data using the default options when it does not exists', async (assert) => {
-        assert.expect(1);
-
-        // Arrange
-        const db = firebase.firestore();
-        const ref = db.collection('users').doc('user_100');
-
-        // Act
-        await ref.set({ username: 'user_100', dad: db.collection('users').doc('user_b') });
-
-        // Assert
-        const snapshot = await ref.get();
-
-        assert.deepEqual(snapshot.data(), {
-          username: 'user_100',
-          dad: db.collection('users').doc('user_b'),
-        });
-      });
-
-      QUnit.test('should set the data using the merge option', async (assert) => {
-        assert.expect(6);
-
-        // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const ref = db.collection('users').doc('user_a');
 
         // Act
         await ref.set({
           name: 'user_a',
           dad: db.collection('users').doc('user_b'),
+          modifiedOn: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+
+        // Assert
+        const snapshot = await ref.get();
+        const { dad, modifiedOn, name } = snapshot.data();
+
+        assert.deepEqual(dad, db.collection('users').doc('user_b'));
+        assert.ok(modifiedOn.toDate() instanceof Date);
+        assert.equal(name, 'user_a');
+      });
+
+      QUnit.test('should set the data using the default options when it does not exists', async (assert) => {
+        assert.expect(3);
+
+        // Arrange
+        const db = mockFirebase.firestore();
+        const ref = db.collection('users').doc('user_100');
+
+        // Act
+        await ref.set({
+          dad: db.collection('users').doc('user_b'),
+          modifiedOn: firebase.firestore.FieldValue.serverTimestamp(),
+          username: 'user_100',
+        });
+
+        // Assert
+        const snapshot = await ref.get();
+        const { dad, modifiedOn, username } = snapshot.data();
+
+        assert.deepEqual(dad, db.collection('users').doc('user_b'));
+        assert.ok(modifiedOn.toDate() instanceof Date);
+        assert.equal(username, 'user_100');
+      });
+
+      QUnit.test('should set the data using the merge option', async (assert) => {
+        assert.expect(7);
+
+        // Arrange
+        const db = mockFirebase.firestore();
+        const ref = db.collection('users').doc('user_a');
+
+        // Act
+        await ref.set({
+          dad: db.collection('users').doc('user_b'),
+          modifiedOn: firebase.firestore.FieldValue.serverTimestamp(),
+          name: 'user_a',
         }, { merge: true });
 
         // Assert
@@ -503,30 +513,36 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
           address,
           age,
           createdOn,
+          dad,
+          modifiedOn,
           name,
           username,
-          dad,
         } = snapshot.data();
 
         assert.deepEqual(address, { home: 'San Francisco', work: 'Silicon Valley' });
         assert.equal(age, 15);
         assert.deepEqual(createdOn.toDate(), new Date('2017-01-01'));
+        assert.deepEqual(dad, db.collection('users').doc('user_b'));
+        assert.ok(modifiedOn.toDate() instanceof Date);
         assert.equal(name, 'user_a');
         assert.equal(username, 'user_a');
-        assert.deepEqual(dad, db.collection('users').doc('user_b'));
       });
     });
 
     QUnit.module('function: update', () => {
       QUnit.test('should update the data', async (assert) => {
-        assert.expect(6);
+        assert.expect(7);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const ref = db.collection('users').doc('user_a');
 
         // Act
-        await ref.update({ name: 'user_a', dad: db.collection('users').doc('user_b') });
+        await ref.update({
+          dad: db.collection('users').doc('user_b'),
+          modifiedOn: firebase.firestore.FieldValue.serverTimestamp(),
+          name: 'user_a',
+        });
 
         // Assert
         const snapshot = await ref.get();
@@ -534,24 +550,26 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
           address,
           age,
           createdOn,
+          dad,
+          modifiedOn,
           name,
           username,
-          dad,
         } = snapshot.data();
 
         assert.deepEqual(address, { home: 'San Francisco', work: 'Silicon Valley' });
         assert.equal(age, 15);
         assert.deepEqual(createdOn.toDate(), new Date('2017-01-01'));
+        assert.deepEqual(dad, db.collection('users').doc('user_b'));
+        assert.ok(modifiedOn.toDate() instanceof Date);
         assert.equal(name, 'user_a');
         assert.equal(username, 'user_a');
-        assert.deepEqual(dad, db.collection('users').doc('user_b'));
       });
 
       QUnit.test('should throw error when updating data that does not exist', async (assert) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const ref = db.collection('users').doc('user_100');
 
         try {
@@ -571,7 +589,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const snapshot = await db.collection('users').doc('user_a').get();
 
         // Act
@@ -585,7 +603,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const snapshot = await db.collection('users').doc('user_100').get();
 
         // Act
@@ -601,7 +619,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const snapshot = await db.collection('users').doc('user_a').get();
 
         // Act
@@ -617,7 +635,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const snapshot = await db.collection('users').doc('user_a').get();
 
         // Act
@@ -633,7 +651,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const snapshot = await db.collection('users').doc('user_a').get();
 
         // Act
@@ -647,7 +665,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(3);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const snapshot = await db
           .collection('users')
           .doc('user_a')
@@ -671,7 +689,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const snapshot = await db.collection('users').doc('user_a').get();
 
         // Act
@@ -685,7 +703,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const snapshot = await db.collection('users').doc('user_a').get();
 
         // Act
@@ -701,7 +719,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(4);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const snapshot = await db.collection('users').doc('user_a').get();
 
         // Act
@@ -723,7 +741,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(3);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const snapshot = await db
           .collection('users')
           .doc('user_a')
@@ -747,7 +765,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const snapshot = await db.collection('users').doc('user_100').get();
 
         // Act
@@ -765,7 +783,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Act
-        const result = firebase.firestore.FieldValue.serverTimestamp();
+        const result = mockFirebase.firestore.FieldValue.serverTimestamp();
 
         // Assert
         assert.ok(result instanceof Date);
@@ -779,7 +797,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Act
-        const result = firebase.firestore.FieldValue;
+        const result = mockFirebase.firestore.FieldValue;
 
         // Assert
         assert.ok(result instanceof FieldValue);
@@ -791,7 +809,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(2);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.doc('users/user_a/friends');
@@ -807,7 +825,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(2);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.doc('users/user_a');
@@ -825,7 +843,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(3);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const snapshot = await db.collection('users').get();
 
         // Act
@@ -843,7 +861,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const snapshot = await db.collection('foobar').get();
 
         // Act
@@ -857,7 +875,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const snapshot = await db.collection('users').get();
 
         // Act
@@ -873,7 +891,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const snapshot = await db.collection('users').get();
 
         // Act
@@ -890,7 +908,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
 
         // Arrange
         const stub = sinon.stub();
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const snapshot = await db.collection('users').get();
 
         // Act
@@ -908,7 +926,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').limit(1).firestore;
@@ -923,7 +941,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(3);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const snapshot = await db.collection('users').orderBy('age').endAt(15).get();
@@ -938,7 +956,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         try {
           // Act
@@ -955,7 +973,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(2);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const snapshot = await db.collection('users').orderBy('age').endBefore(15).get();
@@ -969,7 +987,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         try {
           // Act
@@ -986,7 +1004,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(3);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const snapshot = await db.collection('users').limit(2).get();
@@ -1003,7 +1021,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const result = db.collection('users').orderBy('age').onSnapshot(() => {});
@@ -1017,7 +1035,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
 
         // Arrange
         const done = assert.async();
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         db.collection('users').orderBy('age').onSnapshot((snapshot) => {
@@ -1033,7 +1051,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(3);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const snapshot = await db.collection('users').orderBy('age').get();
@@ -1050,7 +1068,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(2);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const snapshot = await db.collection('users').orderBy('age').startAfter(15).get();
@@ -1064,7 +1082,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         try {
           // Act
@@ -1081,7 +1099,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(3);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const snapshot = await db.collection('users').orderBy('age').startAt(15).get();
@@ -1096,7 +1114,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(1);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         try {
           // Act
@@ -1113,7 +1131,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(2);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
 
         // Act
         const snapshot = await db.collection('users').where('age', '==', 15).get();
@@ -1131,7 +1149,7 @@ QUnit.module('Unit | Firebase | mock-cloud-firestore', (hooks) => {
         assert.expect(7);
 
         // Arrange
-        const db = firebase.firestore();
+        const db = mockFirebase.firestore();
         const batch = db.batch();
         const ref1 = db.collection('users').doc();
         const ref2 = db.collection('users').doc('user_a');
