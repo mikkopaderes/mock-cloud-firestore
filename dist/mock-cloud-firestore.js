@@ -632,6 +632,14 @@ class DocumentSnapshot {
           this.ref.firestore,
           data[key].replace('__ref__:', '')
         );
+      } else if (data[key] instanceof Date) {
+        const date = data[key];
+
+        data[key] = {
+          toDate() {
+            return date;
+          },
+        };
       }
     }
 
