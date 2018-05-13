@@ -364,7 +364,7 @@ QUnit.module('Unit | Util | query', () => {
 
       // Assert
       assert.equal(Object.keys(result).length, 1);
-      assert.ok(result.hasOwnProperty('user_b'));
+      assert.ok(result.user_b);
     });
 
     QUnit.test('should return records matching the >= filter', (assert) => {

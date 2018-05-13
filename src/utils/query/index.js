@@ -3,6 +3,27 @@ const DocumentReference = require('../../firebase/firestore/document-reference')
 const DocumentSnapshot = require('../../firebase/firestore/document-snapshot');
 const QuerySnapshot = require('../../firebase/firestore/query-snapshot');
 
+function filterByCursor(data, prop, value, cursor) {
+  const filteredData = {};
+  const ids = Object.keys(data).filter((id) => {
+    if (cursor === 'endAt') {
+      return data[id][prop] <= value;
+    } else if (cursor === 'endBefore') {
+      return data[id][prop] < value;
+    } else if (cursor === 'startAfter') {
+      return data[id][prop] > value;
+    }
+
+    return data[id][prop] >= value;
+  });
+
+  for (const id of ids) {
+    filteredData[id] = data[id];
+  }
+
+  return filteredData;
+}
+
 function endAt(data, prop, value) {
   return filterByCursor(data, prop, value, 'endAt');
 }
@@ -30,29 +51,27 @@ function orderBy(data, key, order) {
     ids = Object.keys(data).slice().sort((a, b) => {
       if (typeof data[a][key] === 'number') {
         return data[b][key] - data[a][key];
-      } else {
-        if (data[a][key] > data[b][key]) {
-          return -1;
-        } else if (data[a][key] < data[b][key]) {
-          return 1;
-        } else {
-          return 0;
-        }
       }
+      if (data[a][key] > data[b][key]) {
+        return -1;
+      } else if (data[a][key] < data[b][key]) {
+        return 1;
+      }
+
+      return 0;
     });
   } else {
     ids = Object.keys(data).slice().sort((a, b) => {
       if (typeof data[a][key] === 'number') {
         return data[a][key] - data[b][key];
-      } else {
-        if (data[a][key] < data[b][key]) {
-          return -1;
-        } else if (data[a][key] > data[b][key]) {
-          return 1;
-        } else {
-          return 0;
-        }
       }
+      if (data[a][key] < data[b][key]) {
+        return -1;
+      } else if (data[a][key] > data[b][key]) {
+        return 1;
+      }
+
+      return 0;
     });
   }
 
@@ -90,9 +109,9 @@ function where(data = {}, key, operator, value) {
       return data[id][key] === value;
     } else if (operator === '>=') {
       return data[id][key] >= value;
-    } else if (operator === '>') {
-      return data[id][key] > value;
     }
+
+    return data[id][key] > value;
   });
 
   for (const id of ids) {
@@ -105,51 +124,28 @@ function where(data = {}, key, operator, value) {
 function querySnapshot(data, collection) {
   const documentSnapshots = [];
 
-  if (data) {
-    for (const key in data.__doc__) {
-      if (data.__doc__.hasOwnProperty(key)) {
-        const documentRecord = data['__doc__'][key];
-        const documentReference = new DocumentReference(
-          key,
-          documentRecord,
-          collection,
-          collection.firestore
-        );
-        const documentSnapshot = new DocumentSnapshot(
-          key,
-          documentRecord,
-          documentReference
-        );
+  if (data && Object.prototype.hasOwnProperty.call(data, '__doc__')) {
+    for (const key of Object.keys(data.__doc__)) {
+      const documentRecord = data.__doc__[key];
+      const documentReference = new DocumentReference(
+        key,
+        documentRecord,
+        collection,
+        collection.firestore
+      );
+      const documentSnapshot = new DocumentSnapshot(
+        key,
+        documentRecord,
+        documentReference
+      );
 
-        documentSnapshots.push(documentSnapshot);
-      }
+      documentSnapshots.push(documentSnapshot);
     }
   }
 
-  const querySnapshot = new QuerySnapshot(documentSnapshots);
+  const snapshot = new QuerySnapshot(documentSnapshots);
 
-  return querySnapshot;
-}
-
-function filterByCursor(data, prop, value, cursor) {
-  const filteredData = {};
-  const ids = Object.keys(data).filter((id) => {
-    if (cursor === 'endAt') {
-      return data[id][prop] <= value;
-    } else if (cursor === 'endBefore') {
-      return data[id][prop] < value;
-    } else if (cursor === 'startAfter') {
-      return data[id][prop] > value;
-    } else if (cursor === 'startAt') {
-      return data[id][prop] >= value;
-    }
-  });
-
-  for (const id of ids) {
-    filteredData[id] = data[id];
-  }
-
-  return filteredData;
+  return snapshot;
 }
 
 module.exports = {

@@ -7,7 +7,7 @@ module.exports = {
     },
     sourceType: 'module'
   },
-  extends: ['rmmmp/base'],
+  extends: ['airbnb-base', 'rmmmp/base'],
   env: {
     es6: true,
     node: true,
@@ -24,5 +24,7 @@ module.exports = {
       'functions': 'never',
     }],
     'require-jsdoc': 'off',
+    'no-underscore-dangle': 'off',
+    'class-methods-use-this': 'off',
   },
 };

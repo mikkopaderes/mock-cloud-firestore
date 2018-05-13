@@ -36,11 +36,7 @@ class CollectionReference {
     return ref;
   }
 
-  doc(id) {
-    if (!id) {
-      id = generateIdForRecord();
-    }
-
+  doc(id = generateIdForRecord()) {
     return this._getDocumentReference(id);
   }
 

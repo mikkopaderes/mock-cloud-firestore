@@ -132,12 +132,14 @@ module.exports = { validateReference };
 /* 2 */
 /***/ (function(module, exports) {
 
+/* eslint no-param-reassign: 'off' */
+
 function getOrSetDataNode(data = {}, path, id) {
-  if (!data.hasOwnProperty(path)) {
+  if (!Object.prototype.hasOwnProperty.call(data, path)) {
     data[path] = {};
   }
 
-  if (!data[path].hasOwnProperty(id)) {
+  if (!Object.prototype.hasOwnProperty.call(data[path], id)) {
     if (path === '__collection__') {
       data[path][id] = {};
     } else {
@@ -193,11 +195,7 @@ class CollectionReference {
     return ref;
   }
 
-  doc(id) {
-    if (!id) {
-      id = generateIdForRecord();
-    }
-
+  doc(id = generateIdForRecord()) {
     return this._getDocumentReference(id);
   }
 
@@ -278,6 +276,27 @@ const DocumentReference = __webpack_require__(5);
 const DocumentSnapshot = __webpack_require__(6);
 const QuerySnapshot = __webpack_require__(11);
 
+function filterByCursor(data, prop, value, cursor) {
+  const filteredData = {};
+  const ids = Object.keys(data).filter((id) => {
+    if (cursor === 'endAt') {
+      return data[id][prop] <= value;
+    } else if (cursor === 'endBefore') {
+      return data[id][prop] < value;
+    } else if (cursor === 'startAfter') {
+      return data[id][prop] > value;
+    }
+
+    return data[id][prop] >= value;
+  });
+
+  for (const id of ids) {
+    filteredData[id] = data[id];
+  }
+
+  return filteredData;
+}
+
 function endAt(data, prop, value) {
   return filterByCursor(data, prop, value, 'endAt');
 }
@@ -305,29 +324,27 @@ function orderBy(data, key, order) {
     ids = Object.keys(data).slice().sort((a, b) => {
       if (typeof data[a][key] === 'number') {
         return data[b][key] - data[a][key];
-      } else {
-        if (data[a][key] > data[b][key]) {
-          return -1;
-        } else if (data[a][key] < data[b][key]) {
-          return 1;
-        } else {
-          return 0;
-        }
       }
+      if (data[a][key] > data[b][key]) {
+        return -1;
+      } else if (data[a][key] < data[b][key]) {
+        return 1;
+      }
+
+      return 0;
     });
   } else {
     ids = Object.keys(data).slice().sort((a, b) => {
       if (typeof data[a][key] === 'number') {
         return data[a][key] - data[b][key];
-      } else {
-        if (data[a][key] < data[b][key]) {
-          return -1;
-        } else if (data[a][key] > data[b][key]) {
-          return 1;
-        } else {
-          return 0;
-        }
       }
+      if (data[a][key] < data[b][key]) {
+        return -1;
+      } else if (data[a][key] > data[b][key]) {
+        return 1;
+      }
+
+      return 0;
     });
   }
 
@@ -365,9 +382,9 @@ function where(data = {}, key, operator, value) {
       return data[id][key] === value;
     } else if (operator === '>=') {
       return data[id][key] >= value;
-    } else if (operator === '>') {
-      return data[id][key] > value;
     }
+
+    return data[id][key] > value;
   });
 
   for (const id of ids) {
@@ -380,51 +397,28 @@ function where(data = {}, key, operator, value) {
 function querySnapshot(data, collection) {
   const documentSnapshots = [];
 
-  if (data) {
-    for (const key in data.__doc__) {
-      if (data.__doc__.hasOwnProperty(key)) {
-        const documentRecord = data['__doc__'][key];
-        const documentReference = new DocumentReference(
-          key,
-          documentRecord,
-          collection,
-          collection.firestore
-        );
-        const documentSnapshot = new DocumentSnapshot(
-          key,
-          documentRecord,
-          documentReference
-        );
+  if (data && Object.prototype.hasOwnProperty.call(data, '__doc__')) {
+    for (const key of Object.keys(data.__doc__)) {
+      const documentRecord = data.__doc__[key];
+      const documentReference = new DocumentReference(
+        key,
+        documentRecord,
+        collection,
+        collection.firestore
+      );
+      const documentSnapshot = new DocumentSnapshot(
+        key,
+        documentRecord,
+        documentReference
+      );
 
-        documentSnapshots.push(documentSnapshot);
-      }
+      documentSnapshots.push(documentSnapshot);
     }
   }
 
-  const querySnapshot = new QuerySnapshot(documentSnapshots);
+  const snapshot = new QuerySnapshot(documentSnapshots);
 
-  return querySnapshot;
-}
-
-function filterByCursor(data, prop, value, cursor) {
-  const filteredData = {};
-  const ids = Object.keys(data).filter((id) => {
-    if (cursor === 'endAt') {
-      return data[id][prop] <= value;
-    } else if (cursor === 'endBefore') {
-      return data[id][prop] < value;
-    } else if (cursor === 'startAfter') {
-      return data[id][prop] > value;
-    } else if (cursor === 'startAt') {
-      return data[id][prop] >= value;
-    }
-  });
-
-  for (const id of ids) {
-    filteredData[id] = data[id];
-  }
-
-  return filteredData;
+  return snapshot;
 }
 
 module.exports = {
@@ -482,21 +476,13 @@ class DocumentReference {
   }
 
   get() {
-    const documentSnapshot = new DocumentSnapshot(
-      this._id,
-      this._data,
-      this
-    );
+    const documentSnapshot = new DocumentSnapshot(this._id, this._data, this);
 
     return Promise.resolve(documentSnapshot);
   }
 
   onSnapshot(onNext) {
-    const documentSnapshot = new DocumentSnapshot(
-      this._id,
-      this._data,
-      this
-    );
+    const documentSnapshot = new DocumentSnapshot(this._id, this._data, this);
 
     onNext(documentSnapshot);
 
@@ -505,20 +491,22 @@ class DocumentReference {
 
   set(data, option = {}) {
     if (!option.merge) {
-      for (const key in this._data) {
-        if (this._data.hasOwnProperty(key) && key !== '__collection__') {
-          delete this['_data'][key];
+      for (const key of Object.keys(this._data)) {
+        if (key !== '__collection__') {
+          delete this._data[key];
         }
       }
     }
 
-    for (const field of Object.keys(data)) {
-      if (data[field] instanceof DocumentReference) {
-        data[field] = buildPathFromReference(data[field]);
+    const parsedData = Object.assign({}, data);
+
+    for (const field of Object.keys(parsedData)) {
+      if (parsedData[field] instanceof DocumentReference) {
+        parsedData[field] = buildPathFromReference(parsedData[field]);
       }
     }
 
-    Object.assign(this._data, data, { __isDirty__: false });
+    Object.assign(this._data, parsedData, { __isDirty__: false });
 
     return Promise.resolve();
   }
@@ -528,18 +516,21 @@ class DocumentReference {
       throw new Error('Document doesn\'t exist');
     }
 
-    for (const field of Object.keys(data)) {
-      if (data[field] instanceof DocumentReference) {
-        data[field] = buildPathFromReference(data[field]);
+    const parsedData = Object.assign({}, data);
+
+    for (const field of Object.keys(parsedData)) {
+      if (parsedData[field] instanceof DocumentReference) {
+        parsedData[field] = buildPathFromReference(parsedData[field]);
       }
     }
 
-    Object.assign(this._data, data);
+    Object.assign(this._data, parsedData);
 
     return Promise.resolve();
   }
 
   _collection(id) {
+    // eslint-disable-next-line global-require
     const CollectionReference = __webpack_require__(3);
     const data = getOrSetDataNode(this._data, '__collection__', id);
 
@@ -584,7 +575,7 @@ class DocumentSnapshot {
   get exists() {
     const data = this._data;
 
-    return data.__isDirty__ || data.__isDeleted__ ? false : true;
+    return !(data.__isDirty__ || data.__isDeleted__);
   }
 
   get id() {
@@ -602,36 +593,28 @@ class DocumentSnapshot {
   get(path) {
     if (!this.exists) {
       return undefined;
-    } else {
-      const keys = path.split('.');
-      let data = this._getData();
-
-      for (const key of keys) {
-        if (data.hasOwnProperty(key)) {
-          data = data[key];
-        } else {
-          data = undefined;
-          break;
-        }
-      }
-
-      return data;
     }
+    const keys = path.split('.');
+    let data = this._getData();
+
+    for (const key of keys) {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+        data = data[key];
+      } else {
+        data = undefined;
+        break;
+      }
+    }
+
+    return data;
   }
 
   _getData() {
     const data = Object.assign({}, this._data);
 
-    for (const key in data) {
-      if (
-        data.hasOwnProperty(key)
-        && typeof data[key] === 'string'
-        && data[key].startsWith('__ref__:')
-      ) {
-        data[key] = this._buildRefFromPath(
-          this.ref.firestore,
-          data[key].replace('__ref__:', '')
-        );
+    for (const key of Object.keys(data)) {
+      if (typeof data[key] === 'string' && data[key].startsWith('__ref__:')) {
+        data[key] = this._buildRefFromPath(this.ref.firestore, data[key].replace('__ref__:', ''));
       } else if (data[key] instanceof Date) {
         const date = data[key];
 
@@ -796,7 +779,7 @@ class QuerySnapshot {
   }
 
   get empty() {
-    return this._data.length === 0 ? true : false;
+    return this._data.length === 0;
   }
 
   get size() {
@@ -855,11 +838,7 @@ class Query {
       throw new Error('endBefore() queries requires orderBy()');
     }
 
-    this._data.__doc__ = endBefore(
-      this._data.__doc__,
-      this._option.orderBy,
-      value
-    );
+    this._data.__doc__ = endBefore(this._data.__doc__, this._option.orderBy, value);
     this._option.endBefore = value;
 
     return this;
@@ -894,11 +873,7 @@ class Query {
       throw new Error('startAfter queries requires orderBy()');
     }
 
-    this._data.__doc__ = startAfter(
-      this._data.__doc__,
-      this._option.orderBy,
-      value
-    );
+    this._data.__doc__ = startAfter(this._data.__doc__, this._option.orderBy, value);
     this._option.startAfter = value;
 
     return this;
@@ -909,11 +884,7 @@ class Query {
       throw new Error('startAt() queries requires orderBy()');
     }
 
-    this._data.__doc__ = startAt(
-      this._data.__doc__,
-      this._option.orderBy,
-      value
-    );
+    this._data.__doc__ = startAt(this._data.__doc__, this._option.orderBy, value);
     this._option.startAt = value;
 
     return this;
@@ -927,7 +898,7 @@ class Query {
   }
 
   _isOrdered() {
-    return this._option.orderBy ? true : false;
+    return this._option.orderBy;
   }
 }
 

@@ -8,7 +8,7 @@ class DocumentSnapshot {
   get exists() {
     const data = this._data;
 
-    return data.__isDirty__ || data.__isDeleted__ ? false : true;
+    return !(data.__isDirty__ || data.__isDeleted__);
   }
 
   get id() {
@@ -26,36 +26,28 @@ class DocumentSnapshot {
   get(path) {
     if (!this.exists) {
       return undefined;
-    } else {
-      const keys = path.split('.');
-      let data = this._getData();
-
-      for (const key of keys) {
-        if (data.hasOwnProperty(key)) {
-          data = data[key];
-        } else {
-          data = undefined;
-          break;
-        }
-      }
-
-      return data;
     }
+    const keys = path.split('.');
+    let data = this._getData();
+
+    for (const key of keys) {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+        data = data[key];
+      } else {
+        data = undefined;
+        break;
+      }
+    }
+
+    return data;
   }
 
   _getData() {
     const data = Object.assign({}, this._data);
 
-    for (const key in data) {
-      if (
-        data.hasOwnProperty(key)
-        && typeof data[key] === 'string'
-        && data[key].startsWith('__ref__:')
-      ) {
-        data[key] = this._buildRefFromPath(
-          this.ref.firestore,
-          data[key].replace('__ref__:', '')
-        );
+    for (const key of Object.keys(data)) {
+      if (typeof data[key] === 'string' && data[key].startsWith('__ref__:')) {
+        data[key] = this._buildRefFromPath(this.ref.firestore, data[key].replace('__ref__:', ''));
       } else if (data[key] instanceof Date) {
         const date = data[key];
 

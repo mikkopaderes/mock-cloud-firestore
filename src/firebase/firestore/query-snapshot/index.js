@@ -8,7 +8,7 @@ class QuerySnapshot {
   }
 
   get empty() {
-    return this._data.length === 0 ? true : false;
+    return this._data.length === 0;
   }
 
   get size() {
