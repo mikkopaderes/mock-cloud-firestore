@@ -507,7 +507,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
       });
 
       QUnit.test('should set the data using the merge option', async (assert) => {
-        assert.expect(1);
+        assert.expect(6);
 
         // Arrange
         const db = firebase.firestore();
@@ -521,23 +521,27 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
 
         // Assert
         const snapshot = await ref.get();
+        const {
+          address,
+          age,
+          createdOn,
+          name,
+          username,
+          dad,
+        } = snapshot.data();
 
-        assert.deepEqual(snapshot.data(), {
-          address: {
-            home: 'San Francisco',
-            work: 'Silicon Valley',
-          },
-          age: 15,
-          name: 'user_a',
-          username: 'user_a',
-          dad: db.collection('users').doc('user_b'),
-        });
+        assert.deepEqual(address, { home: 'San Francisco', work: 'Silicon Valley' });
+        assert.equal(age, 15);
+        assert.deepEqual(createdOn.toDate(), new Date('2017-01-01'));
+        assert.equal(name, 'user_a');
+        assert.equal(username, 'user_a');
+        assert.deepEqual(dad, db.collection('users').doc('user_b'));
       });
     });
 
     QUnit.module('function: update', () => {
       QUnit.test('should update the data', async (assert) => {
-        assert.expect(1);
+        assert.expect(6);
 
         // Arrange
         const db = firebase.firestore();
@@ -548,17 +552,21 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
 
         // Assert
         const snapshot = await ref.get();
+        const {
+          address,
+          age,
+          createdOn,
+          name,
+          username,
+          dad,
+        } = snapshot.data();
 
-        assert.deepEqual(snapshot.data(), {
-          address: {
-            home: 'San Francisco',
-            work: 'Silicon Valley',
-          },
-          age: 15,
-          name: 'user_a',
-          username: 'user_a',
-          dad: db.collection('users').doc('user_b'),
-        });
+        assert.deepEqual(address, { home: 'San Francisco', work: 'Silicon Valley' });
+        assert.equal(age, 15);
+        assert.deepEqual(createdOn.toDate(), new Date('2017-01-01'));
+        assert.equal(name, 'user_a');
+        assert.equal(username, 'user_a');
+        assert.deepEqual(dad, db.collection('users').doc('user_b'));
       });
 
       QUnit.test('should throw error when updating data that does not exist', async (assert) => {
@@ -658,7 +666,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
       });
 
       QUnit.test('should return the reference type field', async (assert) => {
-        assert.expect(1);
+        assert.expect(3);
 
         // Arrange
         const db = firebase.firestore();
@@ -674,11 +682,11 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
 
         // Assert
         const referenceSnapshot = await reference.get();
+        const { age, createdOn, username } = referenceSnapshot.data();
 
-        assert.deepEqual(referenceSnapshot.data(), {
-          age: 10,
-          username: 'user_b',
-        });
+        assert.equal(age, 10);
+        assert.deepEqual(createdOn.toDate(), new Date('2017-01-01'));
+        assert.equal(username, 'user_b');
       });
 
       QUnit.test('should return the specific field using dot notation', async (assert) => {
@@ -712,28 +720,29 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
 
     QUnit.module('function: data', () => {
       QUnit.test('should return the data', async (assert) => {
-        assert.expect(1);
+        assert.expect(4);
 
         // Arrange
         const db = firebase.firestore();
         const snapshot = await db.collection('users').doc('user_a').get();
 
         // Act
-        const result = snapshot.data();
+        const {
+          address,
+          age,
+          createdOn,
+          username,
+        } = snapshot.data();
 
         // Assert
-        assert.deepEqual(result, {
-          address: {
-            home: 'San Francisco',
-            work: 'Silicon Valley',
-          },
-          age: 15,
-          username: 'user_a',
-        });
+        assert.deepEqual(address, { home: 'San Francisco', work: 'Silicon Valley' });
+        assert.equal(age, 15);
+        assert.deepEqual(createdOn.toDate(), new Date('2017-01-01'));
+        assert.equal(username, 'user_a');
       });
 
       QUnit.test('should return the data and match any reference type field appropriately', async (assert) => {
-        assert.expect(1);
+        assert.expect(3);
 
         // Arrange
         const db = firebase.firestore();
@@ -745,15 +754,15 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
           .get();
 
         // Act
-        const data = snapshot.data();
+        const { reference } = snapshot.data();
 
         // Assert
-        const referenceSnapshot = await data.reference.get();
+        const referenceSnapshot = await reference.get();
+        const { age, createdOn, username } = referenceSnapshot.data();
 
-        assert.deepEqual(referenceSnapshot.data(), {
-          age: 10,
-          username: 'user_b',
-        });
+        assert.equal(age, 10);
+        assert.deepEqual(createdOn.toDate(), new Date('2017-01-01'));
+        assert.equal(username, 'user_b');
       });
 
       QUnit.test('should return undefined when data does not exist', async (assert) => {
@@ -1163,7 +1172,7 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
   QUnit.module('WriteBatch', () => {
     QUnit.module('function: commit', () => {
       QUnit.test('should commit all of the writes in the write batch', async (assert) => {
-        assert.expect(4);
+        assert.expect(7);
 
         // Arrange
         const db = firebase.firestore();
@@ -1189,11 +1198,18 @@ QUnit.module('Unit | Firebase | Cloud Firestore', (hooks) => {
 
         assert.deepEqual(snapshot1.data(), { username: 'new_user' });
         assert.equal(snapshot2.exists, false);
-        assert.deepEqual(snapshot3.data(), {
-          age: 10,
-          name: 'user-b',
-          username: 'user_b',
-        });
+
+        const {
+          age: snapshot3Age,
+          createdOn: snapshot3CreatedOn,
+          name: snapshot3Name,
+          username: snapshot3Username,
+        } = snapshot3.data();
+
+        assert.equal(snapshot3Age, 10);
+        assert.deepEqual(snapshot3CreatedOn.toDate(), new Date('2017-01-01'));
+        assert.equal(snapshot3Name, 'user-b');
+        assert.equal(snapshot3Username, 'user_b');
         assert.deepEqual(snapshot4.data(), { username: 'user_100' });
       });
     });

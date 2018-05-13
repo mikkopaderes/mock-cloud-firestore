@@ -9,6 +9,7 @@ module.exports = () => {
               work: 'Silicon Valley',
             },
             age: 15,
+            createdOn: new Date('2017-01-01'),
             username: 'user_a',
 
             __collection__: {
@@ -23,6 +24,7 @@ module.exports = () => {
           },
           user_b: {
             age: 10,
+            createdOn: new Date('2017-01-01'),
             username: 'user_b',
 
             __collection__: {
@@ -37,6 +39,7 @@ module.exports = () => {
           },
           user_c: {
             age: 20,
+            createdOn: new Date('2017-01-01'),
             username: 'user_c',
           },
         },
