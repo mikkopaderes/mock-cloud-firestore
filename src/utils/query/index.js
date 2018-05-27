@@ -127,19 +127,22 @@ export function querySnapshot(data, collection) {
   if (data && Object.prototype.hasOwnProperty.call(data, '__doc__')) {
     for (const key of Object.keys(data.__doc__)) {
       const documentRecord = data.__doc__[key];
-      const documentReference = new DocumentReference(
-        key,
-        documentRecord,
-        collection,
-        collection.firestore,
-      );
-      const documentSnapshot = new DocumentSnapshot(
-        key,
-        documentRecord,
-        documentReference,
-      );
 
-      documentSnapshots.push(documentSnapshot);
+      if (!documentRecord.__isDeleted__) {
+        const documentReference = new DocumentReference(
+          key,
+          documentRecord,
+          collection,
+          collection.firestore,
+        );
+        const documentSnapshot = new DocumentSnapshot(
+          key,
+          documentRecord,
+          documentReference,
+        );
+
+        documentSnapshots.push(documentSnapshot);
+      }
     }
   }
 

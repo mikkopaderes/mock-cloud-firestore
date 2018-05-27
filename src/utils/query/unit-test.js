@@ -3,6 +3,7 @@ import {
   endBefore,
   limit,
   orderBy,
+  querySnapshot,
   startAfter,
   startAt,
   where,
@@ -404,6 +405,34 @@ QUnit.module('Unit | Util | query', () => {
       assert.deepEqual(result, {
         user_c: { age: 20 },
       });
+    });
+  });
+
+  QUnit.module('function: querySnapshot', () => {
+    QUnit.test('should return QuerySnapshot of undeleted documents', (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const data = {
+        __doc__: {
+          user_a: {
+            name: 'User A',
+          },
+          user_b: {
+            name: 'User B',
+            __isDeleted__: true,
+          },
+          user_c: {
+            name: 'User C',
+          },
+        },
+      };
+
+      // Act
+      const result = querySnapshot(data, {});
+
+      // Assert
+      assert.equal(result.size, 2);
     });
   });
 });

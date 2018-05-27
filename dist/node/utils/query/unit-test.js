@@ -400,4 +400,32 @@ QUnit.module('Unit | Util | query', () => {
       });
     });
   });
+
+  QUnit.module('function: querySnapshot', () => {
+    QUnit.test('should return undeleted documents', assert => {
+      assert.expect(1);
+
+      // Arrange
+      const data = {
+        __doc__: {
+          user_a: {
+            name: 'User A'
+          },
+          user_b: {
+            name: 'User B',
+            __isDeleted__: true
+          },
+          user_c: {
+            name: 'User C'
+          }
+        }
+      };
+
+      // Act
+      const result = (0, _.querySnapshot)(data, {});
+
+      // Assert
+      assert.equal(result.size, 2);
+    });
+  });
 });
