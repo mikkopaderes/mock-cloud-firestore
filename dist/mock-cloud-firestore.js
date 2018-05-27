@@ -107,7 +107,6 @@ function validatePath(path) {
 
 module.exports = { buildPathFromReference, cleanPath, validatePath };
 
-
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -126,7 +125,6 @@ function validateReference(ref, type) {
 }
 
 module.exports = { validateReference };
-
 
 /***/ }),
 /* 2 */
@@ -152,10 +150,11 @@ function getOrSetDataNode(data = {}, path, id) {
 
 module.exports = getOrSetDataNode;
 
-
 /***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 const { cleanPath, validatePath } = __webpack_require__(0);
 const { querySnapshot } = __webpack_require__(4);
@@ -185,14 +184,18 @@ class CollectionReference {
     return this._parent;
   }
 
-  async add(data) {
-    const id = generateIdForRecord();
-    const dataNode = getOrSetDataNode(this._data, '__doc__', id);
-    const ref = new DocumentReference(id, dataNode, this);
+  add(data) {
+    var _this = this;
 
-    await ref.set(data);
+    return _asyncToGenerator(function* () {
+      const id = generateIdForRecord();
+      const dataNode = getOrSetDataNode(_this._data, '__doc__', id);
+      const ref = new DocumentReference(id, dataNode, _this);
 
-    return ref;
+      yield ref.set(data);
+
+      return ref;
+    })();
   }
 
   doc(id = generateIdForRecord()) {
@@ -266,7 +269,6 @@ class CollectionReference {
 
 module.exports = CollectionReference;
 
-
 /***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -278,7 +280,7 @@ const QuerySnapshot = __webpack_require__(11);
 
 function filterByCursor(data, prop, value, cursor) {
   const filteredData = {};
-  const ids = Object.keys(data).filter((id) => {
+  const ids = Object.keys(data).filter(id => {
     if (cursor === 'endAt') {
       return data[id][prop] <= value;
     } else if (cursor === 'endBefore') {
@@ -365,18 +367,14 @@ function startAt(data, prop, value) {
 
 function where(data = {}, key, operator, value) {
   const filteredData = {};
-  const ids = Object.keys(data).filter((id) => {
+  const ids = Object.keys(data).filter(id => {
     if (operator === '<') {
       return data[id][key] < value;
     } else if (operator === '<=') {
       return data[id][key] <= value;
     } else if (operator === '==') {
       if (value instanceof DocumentReference) {
-        return (
-          data[id][key]
-          && data[id][key].startsWith('__ref__:')
-          && data[id][key] === buildPathFromReference(value)
-        );
+        return data[id][key] && data[id][key].startsWith('__ref__:') && data[id][key] === buildPathFromReference(value);
       }
 
       return data[id][key] === value;
@@ -400,17 +398,8 @@ function querySnapshot(data, collection) {
   if (data && Object.prototype.hasOwnProperty.call(data, '__doc__')) {
     for (const key of Object.keys(data.__doc__)) {
       const documentRecord = data.__doc__[key];
-      const documentReference = new DocumentReference(
-        key,
-        documentRecord,
-        collection,
-        collection.firestore
-      );
-      const documentSnapshot = new DocumentSnapshot(
-        key,
-        documentRecord,
-        documentReference
-      );
+      const documentReference = new DocumentReference(key, documentRecord, collection, collection.firestore);
+      const documentSnapshot = new DocumentSnapshot(key, documentRecord, documentReference);
 
       documentSnapshots.push(documentSnapshot);
     }
@@ -429,9 +418,8 @@ module.exports = {
   querySnapshot,
   startAfter,
   startAt,
-  where,
+  where
 };
-
 
 /***/ }),
 /* 5 */
@@ -506,11 +494,7 @@ class DocumentReference {
           parsedData[field] = buildPathFromReference(parsedData[field]);
         }
 
-        if (
-          typeof parsedData[field] === 'object'
-          && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName')
-          && parsedData[field].methodName === 'FieldValue.serverTimestamp'
-        ) {
+        if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName') && parsedData[field].methodName === 'FieldValue.serverTimestamp') {
           parsedData[field] = new Date();
         }
       }
@@ -534,11 +518,7 @@ class DocumentReference {
           parsedData[field] = buildPathFromReference(parsedData[field]);
         }
 
-        if (
-          typeof parsedData[field] === 'object'
-          && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName')
-          && parsedData[field].methodName === 'FieldValue.serverTimestamp'
-        ) {
+        if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName') && parsedData[field].methodName === 'FieldValue.serverTimestamp') {
           parsedData[field] = new Date();
         }
       }
@@ -579,7 +559,6 @@ class DocumentReference {
 }
 
 module.exports = DocumentReference;
-
 
 /***/ }),
 /* 6 */
@@ -641,7 +620,7 @@ class DocumentSnapshot {
         data[key] = {
           toDate() {
             return date;
-          },
+          }
         };
       }
     }
@@ -672,7 +651,6 @@ class DocumentSnapshot {
 
 module.exports = DocumentSnapshot;
 
-
 /***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -680,7 +658,6 @@ module.exports = DocumentSnapshot;
 const MockFirebase = __webpack_require__(8);
 
 module.exports = MockFirebase;
-
 
 /***/ }),
 /* 8 */
@@ -706,7 +683,6 @@ class MockFirebase {
 
 module.exports = MockFirebase;
 
-
 /***/ }),
 /* 9 */
 /***/ (function(module, exports) {
@@ -718,7 +694,6 @@ class FieldValue {
 }
 
 module.exports = FieldValue;
-
 
 /***/ }),
 /* 10 */
@@ -784,7 +759,6 @@ class Firestore {
 
 module.exports = Firestore;
 
-
 /***/ }),
 /* 11 */
 /***/ (function(module, exports) {
@@ -815,7 +789,6 @@ class QuerySnapshot {
 
 module.exports = QuerySnapshot;
 
-
 /***/ }),
 /* 12 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -828,7 +801,7 @@ const {
   querySnapshot,
   startAfter,
   startAt,
-  where,
+  where
 } = __webpack_require__(4);
 
 class Query {
@@ -924,7 +897,6 @@ class Query {
 
 module.exports = Query;
 
-
 /***/ }),
 /* 13 */
 /***/ (function(module, exports) {
@@ -934,7 +906,6 @@ function generateIdForRecord() {
 }
 
 module.exports = generateIdForRecord;
-
 
 /***/ }),
 /* 14 */
@@ -975,7 +946,6 @@ class WriteBatch {
 }
 
 module.exports = WriteBatch;
-
 
 /***/ })
 /******/ ]);
