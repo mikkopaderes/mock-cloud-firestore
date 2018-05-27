@@ -66,8 +66,17 @@ var MockFirebase =
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.buildPathFromReference = buildPathFromReference;
+exports.cleanPath = cleanPath;
+exports.validatePath = validatePath;
 function buildPathFromReference(ref) {
   let url = '';
   let currentRef = ref;
@@ -105,33 +114,17 @@ function validatePath(path) {
   }
 }
 
-module.exports = { buildPathFromReference, cleanPath, validatePath };
-
-
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const { buildPathFromReference } = __webpack_require__(0);
-
-function validateReference(ref, type) {
-  const path = buildPathFromReference(ref).substr(8);
-  const pathNodes = path.split('/');
-
-  if (type === 'collection' && pathNodes.length % 2 !== 1) {
-    throw new Error(`Invalid collection reference. Collection references must have an odd number of segments, but ${path} has ${pathNodes.length}`);
-  } else if (type === 'doc' && pathNodes.length % 2 !== 0) {
-    throw new Error(`Invalid document reference. Document references must have an even number of segments, but ${path} has ${pathNodes.length}`);
-  }
-}
-
-module.exports = { validateReference };
+"use strict";
 
 
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = getOrSetDataNode;
 /* eslint no-param-reassign: 'off' */
 
 function getOrSetDataNode(data = {}, path, id) {
@@ -150,20 +143,69 @@ function getOrSetDataNode(data = {}, path, id) {
   return data[path][id];
 }
 
-module.exports = getOrSetDataNode;
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = validateReference;
+
+var _path = __webpack_require__(0);
+
+function validateReference(ref, type) {
+  const path = (0, _path.buildPathFromReference)(ref).substr(8);
+  const pathNodes = path.split('/');
+
+  if (type === 'collection' && pathNodes.length % 2 !== 1) {
+    throw new Error(`Invalid collection reference. Collection references must have an odd number of segments, but ${path} has ${pathNodes.length}`);
+  } else if (type === 'doc' && pathNodes.length % 2 !== 0) {
+    throw new Error(`Invalid document reference. Document references must have an even number of segments, but ${path} has ${pathNodes.length}`);
+  }
+}
 
 /***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const { cleanPath, validatePath } = __webpack_require__(0);
-const { querySnapshot } = __webpack_require__(4);
-const { validateReference } = __webpack_require__(1);
-const DocumentReference = __webpack_require__(5);
-const Query = __webpack_require__(12);
-const generateIdForRecord = __webpack_require__(13);
-const getOrSetDataNode = __webpack_require__(2);
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _path = __webpack_require__(0);
+
+var _query = __webpack_require__(4);
+
+var _documentReference = __webpack_require__(5);
+
+var _documentReference2 = _interopRequireDefault(_documentReference);
+
+var _query2 = __webpack_require__(12);
+
+var _query3 = _interopRequireDefault(_query2);
+
+var _generateIdForRecord = __webpack_require__(13);
+
+var _generateIdForRecord2 = _interopRequireDefault(_generateIdForRecord);
+
+var _getOrSetDataNode = __webpack_require__(1);
+
+var _getOrSetDataNode2 = _interopRequireDefault(_getOrSetDataNode);
+
+var _reference = __webpack_require__(2);
+
+var _reference2 = _interopRequireDefault(_reference);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 class CollectionReference {
   constructor(id, data, parent, firestore) {
@@ -185,68 +227,72 @@ class CollectionReference {
     return this._parent;
   }
 
-  async add(data) {
-    const id = generateIdForRecord();
-    const dataNode = getOrSetDataNode(this._data, '__doc__', id);
-    const ref = new DocumentReference(id, dataNode, this);
+  add(data) {
+    var _this = this;
 
-    await ref.set(data);
+    return _asyncToGenerator(function* () {
+      const id = (0, _generateIdForRecord2.default)();
+      const dataNode = (0, _getOrSetDataNode2.default)(_this._data, '__doc__', id);
+      const ref = new _documentReference2.default(id, dataNode, _this);
 
-    return ref;
+      yield ref.set(data);
+
+      return ref;
+    })();
   }
 
-  doc(id = generateIdForRecord()) {
+  doc(id = (0, _generateIdForRecord2.default)()) {
     return this._getDocumentReference(id);
   }
 
   endAt(...args) {
-    return new Query(this._data, this).endAt(...args);
+    return new _query3.default(this._data, this).endAt(...args);
   }
 
   endBefore(...args) {
-    return new Query(this._data, this).endBefore(...args);
+    return new _query3.default(this._data, this).endBefore(...args);
   }
 
   get() {
-    return Promise.resolve(querySnapshot(this._data, this));
+    return Promise.resolve((0, _query.querySnapshot)(this._data, this));
   }
 
   limit(...args) {
-    return new Query(this._data, this).limit(...args);
+    return new _query3.default(this._data, this).limit(...args);
   }
 
   onSnapshot(onNext) {
-    onNext(querySnapshot(this._data, this));
+    onNext((0, _query.querySnapshot)(this._data, this));
 
     return () => {};
   }
 
   orderBy(...args) {
-    return new Query(this._data, this).orderBy(...args);
+    return new _query3.default(this._data, this).orderBy(...args);
   }
 
   startAfter(...args) {
-    return new Query(this._data, this).startAfter(...args);
+    return new _query3.default(this._data, this).startAfter(...args);
   }
 
   startAt(...args) {
-    return new Query(this._data, this).startAt(...args);
+    return new _query3.default(this._data, this).startAt(...args);
   }
 
   where(...args) {
-    return new Query(this._data, this).where(...args);
+    return new _query3.default(this._data, this).where(...args);
   }
 
   _doc(id) {
-    const data = getOrSetDataNode(this._data, '__doc__', id);
+    const data = (0, _getOrSetDataNode2.default)(this._data, '__doc__', id);
 
-    return new DocumentReference(id, data, this, this.firestore);
+    return new _documentReference2.default(id, data, this, this.firestore);
   }
 
   _getDocumentReference(path) {
-    validatePath(path);
+    (0, _path.validatePath)(path);
 
-    const cleanedPath = cleanPath(path);
+    const cleanedPath = (0, _path.cleanPath)(path);
     const nodes = cleanedPath.split('/');
     let ref = this;
 
@@ -258,27 +304,51 @@ class CollectionReference {
       }
     });
 
-    validateReference(ref);
+    (0, _reference2.default)(ref);
 
     return ref;
   }
 }
-
-module.exports = CollectionReference;
-
+exports.default = CollectionReference;
 
 /***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const { buildPathFromReference } = __webpack_require__(0);
-const DocumentReference = __webpack_require__(5);
-const DocumentSnapshot = __webpack_require__(6);
-const QuerySnapshot = __webpack_require__(11);
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.endAt = endAt;
+exports.endBefore = endBefore;
+exports.limit = limit;
+exports.orderBy = orderBy;
+exports.startAfter = startAfter;
+exports.startAt = startAt;
+exports.where = where;
+exports.querySnapshot = querySnapshot;
+
+var _path = __webpack_require__(0);
+
+var _documentReference = __webpack_require__(5);
+
+var _documentReference2 = _interopRequireDefault(_documentReference);
+
+var _documentSnapshot = __webpack_require__(6);
+
+var _documentSnapshot2 = _interopRequireDefault(_documentSnapshot);
+
+var _querySnapshot = __webpack_require__(11);
+
+var _querySnapshot2 = _interopRequireDefault(_querySnapshot);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function filterByCursor(data, prop, value, cursor) {
   const filteredData = {};
-  const ids = Object.keys(data).filter((id) => {
+  const ids = Object.keys(data).filter(id => {
     if (cursor === 'endAt') {
       return data[id][prop] <= value;
     } else if (cursor === 'endBefore') {
@@ -365,18 +435,14 @@ function startAt(data, prop, value) {
 
 function where(data = {}, key, operator, value) {
   const filteredData = {};
-  const ids = Object.keys(data).filter((id) => {
+  const ids = Object.keys(data).filter(id => {
     if (operator === '<') {
       return data[id][key] < value;
     } else if (operator === '<=') {
       return data[id][key] <= value;
     } else if (operator === '==') {
-      if (value instanceof DocumentReference) {
-        return (
-          data[id][key]
-          && data[id][key].startsWith('__ref__:')
-          && data[id][key] === buildPathFromReference(value)
-        );
+      if (value instanceof _documentReference2.default) {
+        return data[id][key] && data[id][key].startsWith('__ref__:') && data[id][key] === (0, _path.buildPathFromReference)(value);
       }
 
       return data[id][key] === value;
@@ -400,47 +466,48 @@ function querySnapshot(data, collection) {
   if (data && Object.prototype.hasOwnProperty.call(data, '__doc__')) {
     for (const key of Object.keys(data.__doc__)) {
       const documentRecord = data.__doc__[key];
-      const documentReference = new DocumentReference(
-        key,
-        documentRecord,
-        collection,
-        collection.firestore
-      );
-      const documentSnapshot = new DocumentSnapshot(
-        key,
-        documentRecord,
-        documentReference
-      );
+      const documentReference = new _documentReference2.default(key, documentRecord, collection, collection.firestore);
+      const documentSnapshot = new _documentSnapshot2.default(key, documentRecord, documentReference);
 
       documentSnapshots.push(documentSnapshot);
     }
   }
 
-  const snapshot = new QuerySnapshot(documentSnapshots);
+  const snapshot = new _querySnapshot2.default(documentSnapshots);
 
   return snapshot;
 }
-
-module.exports = {
-  endAt,
-  endBefore,
-  limit,
-  orderBy,
-  querySnapshot,
-  startAfter,
-  startAt,
-  where,
-};
-
 
 /***/ }),
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const { buildPathFromReference, cleanPath, validatePath } = __webpack_require__(0);
-const { validateReference } = __webpack_require__(1);
-const DocumentSnapshot = __webpack_require__(6);
-const getOrSetDataNode = __webpack_require__(2);
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _path = __webpack_require__(0);
+
+var _collectionReference = __webpack_require__(3);
+
+var _collectionReference2 = _interopRequireDefault(_collectionReference);
+
+var _documentSnapshot = __webpack_require__(6);
+
+var _documentSnapshot2 = _interopRequireDefault(_documentSnapshot);
+
+var _getOrSetDataNode = __webpack_require__(1);
+
+var _getOrSetDataNode2 = _interopRequireDefault(_getOrSetDataNode);
+
+var _reference = __webpack_require__(2);
+
+var _reference2 = _interopRequireDefault(_reference);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class DocumentReference {
   constructor(id, data, parent, firestore) {
@@ -476,13 +543,13 @@ class DocumentReference {
   }
 
   get() {
-    const documentSnapshot = new DocumentSnapshot(this._id, this._data, this);
+    const documentSnapshot = new _documentSnapshot2.default(this._id, this._data, this);
 
     return Promise.resolve(documentSnapshot);
   }
 
   onSnapshot(onNext) {
-    const documentSnapshot = new DocumentSnapshot(this._id, this._data, this);
+    const documentSnapshot = new _documentSnapshot2.default(this._id, this._data, this);
 
     onNext(documentSnapshot);
 
@@ -503,14 +570,10 @@ class DocumentReference {
     for (const field of Object.keys(parsedData)) {
       if (parsedData[field]) {
         if (parsedData[field] instanceof DocumentReference) {
-          parsedData[field] = buildPathFromReference(parsedData[field]);
+          parsedData[field] = (0, _path.buildPathFromReference)(parsedData[field]);
         }
 
-        if (
-          typeof parsedData[field] === 'object'
-          && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName')
-          && parsedData[field].methodName === 'FieldValue.serverTimestamp'
-        ) {
+        if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName') && parsedData[field].methodName === 'FieldValue.serverTimestamp') {
           parsedData[field] = new Date();
         }
       }
@@ -531,14 +594,10 @@ class DocumentReference {
     for (const field of Object.keys(parsedData)) {
       if (parsedData[field]) {
         if (parsedData[field] instanceof DocumentReference) {
-          parsedData[field] = buildPathFromReference(parsedData[field]);
+          parsedData[field] = (0, _path.buildPathFromReference)(parsedData[field]);
         }
 
-        if (
-          typeof parsedData[field] === 'object'
-          && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName')
-          && parsedData[field].methodName === 'FieldValue.serverTimestamp'
-        ) {
+        if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName') && parsedData[field].methodName === 'FieldValue.serverTimestamp') {
           parsedData[field] = new Date();
         }
       }
@@ -550,17 +609,15 @@ class DocumentReference {
   }
 
   _collection(id) {
-    // eslint-disable-next-line global-require
-    const CollectionReference = __webpack_require__(3);
-    const data = getOrSetDataNode(this._data, '__collection__', id);
+    const data = (0, _getOrSetDataNode2.default)(this._data, '__collection__', id);
 
-    return new CollectionReference(id, data, this, this.firestore);
+    return new _collectionReference2.default(id, data, this, this.firestore);
   }
 
   _getCollectionReference(path) {
-    validatePath(path);
+    (0, _path.validatePath)(path);
 
-    const cleanedPath = cleanPath(path);
+    const cleanedPath = (0, _path.cleanPath)(path);
     const nodes = cleanedPath.split('/');
     let ref = this;
 
@@ -572,19 +629,23 @@ class DocumentReference {
       }
     });
 
-    validateReference(ref);
+    (0, _reference2.default)(ref);
 
     return ref;
   }
 }
-
-module.exports = DocumentReference;
-
+exports.default = DocumentReference;
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 class DocumentSnapshot {
   constructor(id, data, ref) {
     this._id = id;
@@ -641,7 +702,7 @@ class DocumentSnapshot {
         data[key] = {
           toDate() {
             return date;
-          },
+          }
         };
       }
     }
@@ -669,30 +730,52 @@ class DocumentSnapshot {
     return ref;
   }
 }
-
-module.exports = DocumentSnapshot;
-
+exports.default = DocumentSnapshot;
 
 /***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const MockFirebase = __webpack_require__(8);
+"use strict";
 
-module.exports = MockFirebase;
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _firebase = __webpack_require__(8);
+
+var _firebase2 = _interopRequireDefault(_firebase);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _firebase2.default;
 
 /***/ }),
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const FieldValue = __webpack_require__(9);
-const Firestore = __webpack_require__(10);
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _fieldValue = __webpack_require__(9);
+
+var _fieldValue2 = _interopRequireDefault(_fieldValue);
+
+var _firestore = __webpack_require__(10);
+
+var _firestore2 = _interopRequireDefault(_firestore);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class MockFirebase {
   constructor(data) {
     this._data = data;
-    this.firestore.FieldValue = new FieldValue();
+    this.firestore.FieldValue = new _fieldValue2.default();
   }
 
   initializeApp() {
@@ -700,35 +783,58 @@ class MockFirebase {
   }
 
   firestore() {
-    return new Firestore(this._data);
+    return new _firestore2.default(this._data);
   }
 }
-
-module.exports = MockFirebase;
-
+exports.default = MockFirebase;
 
 /***/ }),
 /* 9 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 class FieldValue {
   serverTimestamp() {
     return new Date();
   }
 }
-
-module.exports = FieldValue;
-
+exports.default = FieldValue;
 
 /***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const { cleanPath, validatePath } = __webpack_require__(0);
-const { validateReference } = __webpack_require__(1);
-const CollectionReference = __webpack_require__(3);
-const WriteBatch = __webpack_require__(14);
-const getOrSetDataNode = __webpack_require__(2);
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _path = __webpack_require__(0);
+
+var _collectionReference = __webpack_require__(3);
+
+var _collectionReference2 = _interopRequireDefault(_collectionReference);
+
+var _writeBatch = __webpack_require__(14);
+
+var _writeBatch2 = _interopRequireDefault(_writeBatch);
+
+var _getOrSetDataNode = __webpack_require__(1);
+
+var _getOrSetDataNode2 = _interopRequireDefault(_getOrSetDataNode);
+
+var _reference = __webpack_require__(2);
+
+var _reference2 = _interopRequireDefault(_reference);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class Firestore {
   constructor(data) {
@@ -736,7 +842,7 @@ class Firestore {
   }
 
   batch() {
-    return new WriteBatch();
+    return new _writeBatch2.default();
   }
 
   collection(id) {
@@ -752,15 +858,15 @@ class Firestore {
   }
 
   _collection(id) {
-    const data = getOrSetDataNode(this._data, '__collection__', id);
+    const data = (0, _getOrSetDataNode2.default)(this._data, '__collection__', id);
 
-    return new CollectionReference(id, data, null, this);
+    return new _collectionReference2.default(id, data, null, this);
   }
 
   _getReference(path) {
-    validatePath(path);
+    (0, _path.validatePath)(path);
 
-    const cleanedPath = cleanPath(path);
+    const cleanedPath = (0, _path.cleanPath)(path);
     const nodes = cleanedPath.split('/');
     let ref = this;
 
@@ -776,19 +882,23 @@ class Firestore {
       }
     });
 
-    validateReference(ref);
+    (0, _reference2.default)(ref);
 
     return ref;
   }
 }
-
-module.exports = Firestore;
-
+exports.default = Firestore;
 
 /***/ }),
 /* 11 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 class QuerySnapshot {
   constructor(data) {
     this._data = data;
@@ -812,24 +922,20 @@ class QuerySnapshot {
     }
   }
 }
-
-module.exports = QuerySnapshot;
-
+exports.default = QuerySnapshot;
 
 /***/ }),
 /* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const {
-  endAt,
-  endBefore,
-  limit,
-  orderBy,
-  querySnapshot,
-  startAfter,
-  startAt,
-  where,
-} = __webpack_require__(4);
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _query = __webpack_require__(4);
 
 class Query {
   constructor(data, collection) {
@@ -847,7 +953,7 @@ class Query {
       throw new Error('endAt() queries requires orderBy()');
     }
 
-    this._data.__doc__ = endAt(this._data.__doc__, this._option.orderBy, value);
+    this._data.__doc__ = (0, _query.endAt)(this._data.__doc__, this._option.orderBy, value);
     this._option.endAt = value;
 
     return this;
@@ -858,31 +964,31 @@ class Query {
       throw new Error('endBefore() queries requires orderBy()');
     }
 
-    this._data.__doc__ = endBefore(this._data.__doc__, this._option.orderBy, value);
+    this._data.__doc__ = (0, _query.endBefore)(this._data.__doc__, this._option.orderBy, value);
     this._option.endBefore = value;
 
     return this;
   }
 
   get() {
-    return Promise.resolve(querySnapshot(this._data, this._collection));
+    return Promise.resolve((0, _query.querySnapshot)(this._data, this._collection));
   }
 
   limit(threshold) {
-    this._data.__doc__ = limit(this._data.__doc__, threshold);
+    this._data.__doc__ = (0, _query.limit)(this._data.__doc__, threshold);
     this._option.limit = threshold;
 
     return this;
   }
 
   onSnapshot(onNext) {
-    onNext(querySnapshot(this._data, this._collection));
+    onNext((0, _query.querySnapshot)(this._data, this._collection));
 
     return () => {};
   }
 
   orderBy(key, order) {
-    this._data.__doc__ = orderBy(this._data.__doc__, key, order);
+    this._data.__doc__ = (0, _query.orderBy)(this._data.__doc__, key, order);
     this._option.orderBy = key;
 
     return this;
@@ -893,7 +999,7 @@ class Query {
       throw new Error('startAfter queries requires orderBy()');
     }
 
-    this._data.__doc__ = startAfter(this._data.__doc__, this._option.orderBy, value);
+    this._data.__doc__ = (0, _query.startAfter)(this._data.__doc__, this._option.orderBy, value);
     this._option.startAfter = value;
 
     return this;
@@ -904,14 +1010,14 @@ class Query {
       throw new Error('startAt() queries requires orderBy()');
     }
 
-    this._data.__doc__ = startAt(this._data.__doc__, this._option.orderBy, value);
+    this._data.__doc__ = (0, _query.startAt)(this._data.__doc__, this._option.orderBy, value);
     this._option.startAt = value;
 
     return this;
   }
 
   where(prop, operator, value) {
-    this._data.__doc__ = where(this._data.__doc__, prop, operator, value);
+    this._data.__doc__ = (0, _query.where)(this._data.__doc__, prop, operator, value);
     this._option.where = { prop: { operator, value } };
 
     return this;
@@ -921,25 +1027,33 @@ class Query {
     return this._option.orderBy;
   }
 }
-
-module.exports = Query;
-
+exports.default = Query;
 
 /***/ }),
 /* 13 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = generateIdForRecord;
 function generateIdForRecord() {
   return Math.random().toString(32).slice(2).substr(0, 5);
 }
 
-module.exports = generateIdForRecord;
-
-
 /***/ }),
 /* 14 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 class WriteBatch {
   constructor() {
     this._writeBatch = { delete: [], set: [], update: [] };
@@ -973,9 +1087,7 @@ class WriteBatch {
     this._writeBatch.update.push({ ref, data });
   }
 }
-
-module.exports = WriteBatch;
-
+exports.default = WriteBatch;
 
 /***/ })
 /******/ ]);

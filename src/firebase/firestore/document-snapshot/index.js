@@ -1,4 +1,4 @@
-class DocumentSnapshot {
+export default class DocumentSnapshot {
   constructor(id, data, ref) {
     this._id = id;
     this._data = data;
@@ -82,5 +82,3 @@ class DocumentSnapshot {
     return ref;
   }
 }
-
-module.exports = DocumentSnapshot;

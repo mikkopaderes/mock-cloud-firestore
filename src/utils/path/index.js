@@ -1,4 +1,4 @@
-function buildPathFromReference(ref) {
+export function buildPathFromReference(ref) {
   let url = '';
   let currentRef = ref;
   let hasParentRef = true;
@@ -20,7 +20,7 @@ function buildPathFromReference(ref) {
   return `__ref__:${url.slice(0, -1)}`;
 }
 
-function cleanPath(path) {
+export function cleanPath(path) {
   if (path.startsWith('/')) {
     // Remove staring slash
     return path.substr(1);
@@ -29,10 +29,8 @@ function cleanPath(path) {
   return path;
 }
 
-function validatePath(path) {
+export function validatePath(path) {
   if (path.includes('//')) {
     throw new Error(`Invalid path (${path}). Paths must not contain // in them.`);
   }
 }
-
-module.exports = { buildPathFromReference, cleanPath, validatePath };

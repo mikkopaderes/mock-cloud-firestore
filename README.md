@@ -14,7 +14,7 @@ npm install --save-dev mock-cloud-firestore
 
 #### Browsers
 
-Import the `mock-cloud-firestore.js` file from the `dist` folder in your app
+Import the `mock-cloud-firestore.js` file from the `dist/browser` folder in your app
 
 #### Node.js
 

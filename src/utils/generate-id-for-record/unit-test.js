@@ -1,4 +1,4 @@
-const generateIdForRecord = require('./');
+import generateIdForRecord from './';
 
 QUnit.module('Unit | Util | generate-id-for-record', () => {
   QUnit.module('function: generateIdForRecord', () => {

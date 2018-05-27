@@ -1,4 +1,4 @@
-class QuerySnapshot {
+export default class QuerySnapshot {
   constructor(data) {
     this._data = data;
   }
@@ -21,5 +21,3 @@ class QuerySnapshot {
     }
   }
 }
-
-module.exports = QuerySnapshot;

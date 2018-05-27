@@ -1,6 +1,6 @@
-const { buildPathFromReference } = require('../path');
+import { buildPathFromReference } from '../path';
 
-function validateReference(ref, type) {
+export default function validateReference(ref, type) {
   const path = buildPathFromReference(ref).substr(8);
   const pathNodes = path.split('/');
 
@@ -10,5 +10,3 @@ function validateReference(ref, type) {
     throw new Error(`Invalid document reference. Document references must have an even number of segments, but ${path} has ${pathNodes.length}`);
   }
 }
-
-module.exports = { validateReference };

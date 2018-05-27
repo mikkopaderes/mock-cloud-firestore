@@ -1,7 +1,7 @@
-const { buildPathFromReference } = require('../path');
-const DocumentReference = require('../../firebase/firestore/document-reference');
-const DocumentSnapshot = require('../../firebase/firestore/document-snapshot');
-const QuerySnapshot = require('../../firebase/firestore/query-snapshot');
+import { buildPathFromReference } from '../path';
+import DocumentReference from '../../firebase/firestore/document-reference';
+import DocumentSnapshot from '../../firebase/firestore/document-snapshot';
+import QuerySnapshot from '../../firebase/firestore/query-snapshot';
 
 function filterByCursor(data, prop, value, cursor) {
   const filteredData = {};
@@ -24,15 +24,15 @@ function filterByCursor(data, prop, value, cursor) {
   return filteredData;
 }
 
-function endAt(data, prop, value) {
+export function endAt(data, prop, value) {
   return filterByCursor(data, prop, value, 'endAt');
 }
 
-function endBefore(data, prop, value) {
+export function endBefore(data, prop, value) {
   return filterByCursor(data, prop, value, 'endBefore');
 }
 
-function limit(data, threshold) {
+export function limit(data, threshold) {
   const filteredData = {};
   const ids = Object.keys(data).slice(0, threshold);
 
@@ -43,7 +43,7 @@ function limit(data, threshold) {
   return filteredData;
 }
 
-function orderBy(data, key, order) {
+export function orderBy(data, key, order) {
   const filteredData = {};
   let ids;
 
@@ -82,15 +82,15 @@ function orderBy(data, key, order) {
   return filteredData;
 }
 
-function startAfter(data, prop, value) {
+export function startAfter(data, prop, value) {
   return filterByCursor(data, prop, value, 'startAfter');
 }
 
-function startAt(data, prop, value) {
+export function startAt(data, prop, value) {
   return filterByCursor(data, prop, value, 'startAt');
 }
 
-function where(data = {}, key, operator, value) {
+export function where(data = {}, key, operator, value) {
   const filteredData = {};
   const ids = Object.keys(data).filter((id) => {
     if (operator === '<') {
@@ -121,7 +121,7 @@ function where(data = {}, key, operator, value) {
   return filteredData;
 }
 
-function querySnapshot(data, collection) {
+export function querySnapshot(data, collection) {
   const documentSnapshots = [];
 
   if (data && Object.prototype.hasOwnProperty.call(data, '__doc__')) {
@@ -131,12 +131,12 @@ function querySnapshot(data, collection) {
         key,
         documentRecord,
         collection,
-        collection.firestore
+        collection.firestore,
       );
       const documentSnapshot = new DocumentSnapshot(
         key,
         documentRecord,
-        documentReference
+        documentReference,
       );
 
       documentSnapshots.push(documentSnapshot);
@@ -147,14 +147,3 @@ function querySnapshot(data, collection) {
 
   return snapshot;
 }
-
-module.exports = {
-  endAt,
-  endBefore,
-  limit,
-  orderBy,
-  querySnapshot,
-  startAfter,
-  startAt,
-  where,
-};

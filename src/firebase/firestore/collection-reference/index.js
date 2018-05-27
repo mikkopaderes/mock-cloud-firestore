@@ -1,12 +1,12 @@
-const { cleanPath, validatePath } = require('../../../utils/path');
-const { querySnapshot } = require('../../../utils/query');
-const { validateReference } = require('../../../utils/reference');
-const DocumentReference = require('../document-reference');
-const Query = require('../query');
-const generateIdForRecord = require('../../../utils/generate-id-for-record');
-const getOrSetDataNode = require('../../../utils/get-or-set-data-node');
+import { cleanPath, validatePath } from '../../../utils/path';
+import { querySnapshot } from '../../../utils/query';
+import DocumentReference from '../document-reference';
+import Query from '../query';
+import generateIdForRecord from '../../../utils/generate-id-for-record';
+import getOrSetDataNode from '../../../utils/get-or-set-data-node';
+import validateReference from '../../../utils/reference';
 
-class CollectionReference {
+export default class CollectionReference {
   constructor(id, data, parent, firestore) {
     this._id = id;
     this._data = data;
@@ -104,5 +104,3 @@ class CollectionReference {
     return ref;
   }
 }
-
-module.exports = CollectionReference;

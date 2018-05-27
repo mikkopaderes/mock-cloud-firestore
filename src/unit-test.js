@@ -1,15 +1,15 @@
-const sinon = require('sinon');
+import sinon from 'sinon';
 
-const CollectionReference = require('./firebase/firestore/collection-reference');
-const DocumentReference = require('./firebase/firestore/document-reference');
-const DocumentSnapshot = require('./firebase/firestore/document-snapshot');
-const FieldValue = require('./firebase/firestore/field-value');
-const Firestore = require('./firebase/firestore');
-const MockFirebase = require('./');
-const QuerySnapshot = require('./firebase/firestore/query-snapshot');
-const Query = require('./firebase/firestore/query');
-const firebase = require('firebase');
-const fixtureData = require('./utils/test-helpers/fixture-data');
+import CollectionReference from './firebase/firestore/collection-reference';
+import DocumentReference from './firebase/firestore/document-reference';
+import DocumentSnapshot from './firebase/firestore/document-snapshot';
+import FieldValue from './firebase/firestore/field-value';
+import Firestore from './firebase/firestore';
+import MockFirebase from './';
+import QuerySnapshot from './firebase/firestore/query-snapshot';
+import Query from './firebase/firestore/query';
+import firebase from 'firebase';
+import fixtureData from './utils/test-helpers/fixture-data';
 
 let mockFirebase;
 
