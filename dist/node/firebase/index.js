@@ -29,3 +29,4 @@ class MockFirebase {
   }
 }
 exports.default = MockFirebase;
+module.exports = exports['default'];

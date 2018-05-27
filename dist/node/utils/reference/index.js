@@ -17,3 +17,4 @@ function validateReference(ref, type) {
     throw new Error(`Invalid document reference. Document references must have an even number of segments, but ${path} has ${pathNodes.length}`);
   }
 }
+module.exports = exports['default'];

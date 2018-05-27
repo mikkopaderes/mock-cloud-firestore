@@ -11,3 +11,4 @@ var _firebase2 = _interopRequireDefault(_firebase);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = _firebase2.default;
+module.exports = exports['default'];

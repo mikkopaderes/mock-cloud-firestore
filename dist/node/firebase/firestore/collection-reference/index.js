@@ -135,3 +135,4 @@ class CollectionReference {
   }
 }
 exports.default = CollectionReference;
+module.exports = exports['default'];

@@ -76,3 +76,4 @@ class Firestore {
   }
 }
 exports.default = Firestore;
+module.exports = exports['default'];

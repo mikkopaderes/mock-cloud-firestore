@@ -2,9 +2,6 @@ module.exports = {
   root: true,
   parserOptions: {
     ecmaVersion: 2017,
-    ecmaFeatures: {
-      experimentalObjectRestSpread : true,
-    },
     sourceType: 'module'
   },
   extends: ['airbnb-base', 'rmmmp/base'],

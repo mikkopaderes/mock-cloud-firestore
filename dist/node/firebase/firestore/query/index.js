@@ -97,3 +97,4 @@ class Query {
   }
 }
 exports.default = Query;
+module.exports = exports['default'];

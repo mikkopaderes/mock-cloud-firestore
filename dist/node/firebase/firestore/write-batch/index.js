@@ -37,3 +37,4 @@ class WriteBatch {
   }
 }
 exports.default = WriteBatch;
+module.exports = exports["default"];

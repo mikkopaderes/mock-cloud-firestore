@@ -88,3 +88,4 @@ class DocumentSnapshot {
   }
 }
 exports.default = DocumentSnapshot;
+module.exports = exports['default'];

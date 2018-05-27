@@ -27,3 +27,4 @@ class QuerySnapshot {
   }
 }
 exports.default = QuerySnapshot;
+module.exports = exports["default"];

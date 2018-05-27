@@ -21,3 +21,4 @@ function getOrSetDataNode(data = {}, path, id) {
 
   return data[path][id];
 }
+module.exports = exports['default'];

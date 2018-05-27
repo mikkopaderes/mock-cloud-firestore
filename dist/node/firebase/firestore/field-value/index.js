@@ -9,3 +9,4 @@ class FieldValue {
   }
 }
 exports.default = FieldValue;
+module.exports = exports["default"];

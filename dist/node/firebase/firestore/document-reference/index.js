@@ -150,3 +150,4 @@ class DocumentReference {
   }
 }
 exports.default = DocumentReference;
+module.exports = exports['default'];

@@ -53,3 +53,4 @@ function fixtureData() {
     }
   };
 }
+module.exports = exports['default'];

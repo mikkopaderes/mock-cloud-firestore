@@ -142,6 +142,7 @@ function getOrSetDataNode(data = {}, path, id) {
 
   return data[path][id];
 }
+module.exports = exports['default'];
 
 /***/ }),
 /* 2 */
@@ -167,6 +168,7 @@ function validateReference(ref, type) {
     throw new Error(`Invalid document reference. Document references must have an even number of segments, but ${path} has ${pathNodes.length}`);
   }
 }
+module.exports = exports['default'];
 
 /***/ }),
 /* 3 */
@@ -310,6 +312,7 @@ class CollectionReference {
   }
 }
 exports.default = CollectionReference;
+module.exports = exports['default'];
 
 /***/ }),
 /* 4 */
@@ -635,6 +638,7 @@ class DocumentReference {
   }
 }
 exports.default = DocumentReference;
+module.exports = exports['default'];
 
 /***/ }),
 /* 6 */
@@ -731,6 +735,7 @@ class DocumentSnapshot {
   }
 }
 exports.default = DocumentSnapshot;
+module.exports = exports['default'];
 
 /***/ }),
 /* 7 */
@@ -750,6 +755,7 @@ var _firebase2 = _interopRequireDefault(_firebase);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = _firebase2.default;
+module.exports = exports['default'];
 
 /***/ }),
 /* 8 */
@@ -787,6 +793,7 @@ class MockFirebase {
   }
 }
 exports.default = MockFirebase;
+module.exports = exports['default'];
 
 /***/ }),
 /* 9 */
@@ -804,6 +811,7 @@ class FieldValue {
   }
 }
 exports.default = FieldValue;
+module.exports = exports["default"];
 
 /***/ }),
 /* 10 */
@@ -888,6 +896,7 @@ class Firestore {
   }
 }
 exports.default = Firestore;
+module.exports = exports['default'];
 
 /***/ }),
 /* 11 */
@@ -923,6 +932,7 @@ class QuerySnapshot {
   }
 }
 exports.default = QuerySnapshot;
+module.exports = exports["default"];
 
 /***/ }),
 /* 12 */
@@ -1028,6 +1038,7 @@ class Query {
   }
 }
 exports.default = Query;
+module.exports = exports['default'];
 
 /***/ }),
 /* 13 */
@@ -1043,6 +1054,7 @@ exports.default = generateIdForRecord;
 function generateIdForRecord() {
   return Math.random().toString(32).slice(2).substr(0, 5);
 }
+module.exports = exports["default"];
 
 /***/ }),
 /* 14 */
@@ -1088,6 +1100,7 @@ class WriteBatch {
   }
 }
 exports.default = WriteBatch;
+module.exports = exports["default"];
 
 /***/ })
 /******/ ]);
