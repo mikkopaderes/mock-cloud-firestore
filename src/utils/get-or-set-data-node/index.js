@@ -1,6 +1,6 @@
 /* eslint no-param-reassign: 'off' */
 
-function getOrSetDataNode(data = {}, path, id) {
+export default function getOrSetDataNode(data = {}, path, id) {
   if (!Object.prototype.hasOwnProperty.call(data, path)) {
     data[path] = {};
   }
@@ -15,5 +15,3 @@ function getOrSetDataNode(data = {}, path, id) {
 
   return data[path][id];
 }
-
-module.exports = getOrSetDataNode;

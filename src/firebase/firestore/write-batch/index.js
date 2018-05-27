@@ -1,4 +1,4 @@
-class WriteBatch {
+export default class WriteBatch {
   constructor() {
     this._writeBatch = { delete: [], set: [], update: [] };
   }
@@ -31,5 +31,3 @@ class WriteBatch {
     this._writeBatch.update.push({ ref, data });
   }
 }
-
-module.exports = WriteBatch;

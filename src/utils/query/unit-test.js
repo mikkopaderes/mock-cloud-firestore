@@ -1,4 +1,4 @@
-const {
+import {
   endAt,
   endBefore,
   limit,
@@ -6,8 +6,8 @@ const {
   startAfter,
   startAt,
   where,
-} = require('./');
-const MockFirebase = require('../../');
+} from './';
+import MockFirebase from '../../';
 
 QUnit.module('Unit | Util | query', () => {
   QUnit.module('function: endAt', () => {
@@ -359,7 +359,7 @@ QUnit.module('Unit | Util | query', () => {
         records,
         'username',
         '==',
-        db.collection('usernames').doc('user_b')
+        db.collection('usernames').doc('user_b'),
       );
 
       // Assert

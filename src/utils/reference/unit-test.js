@@ -1,4 +1,4 @@
-const { validateReference } = require('./');
+import validateReference from './';
 
 QUnit.module('Unit | Util | reference', () => {
   QUnit.module('function: validateReference', () => {

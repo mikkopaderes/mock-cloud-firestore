@@ -2,13 +2,15 @@
   "name": "mock-cloud-firestore",
   "version": "0.3.2",
   "description": "Mock library for Cloud Firestore",
-  "main": "src/index.js",
+  "main": "dist/node/index.js",
   "repository": "https://github.com/rmmmp/mock-cloud-firestore",
   "scripts": {
-    "build": "webpack",
-    "lint": "eslint **/*.js",
-    "qunit": "qunit src/**/*-test.js",
-    "test": "npm-run-all --continue-on-error lint qunit"
+    "build-browser": "webpack",
+    "build-node": "del-cli dist/**/* && babel src -d dist/node",
+    "build": "npm-run-all build-node build-browser",
+    "lint": "eslint src/**/*.js",
+    "qunit": "qunit dist/node/**/*-test.js",
+    "test": "npm-run-all --continue-on-error build lint qunit"
   },
   "keywords": [
     "firebase",
@@ -18,6 +20,10 @@
   "author": "Mikko Paderes",
   "license": "MIT",
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-env": "^1.7.0",
+    "del-cli": "^1.1.0",
     "eslint": "^4.17.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-config-rmmmp": "^0.2.2",

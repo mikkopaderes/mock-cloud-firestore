@@ -1,4 +1,4 @@
-const { buildPathFromReference, cleanPath, validatePath } = require('./');
+import { buildPathFromReference, cleanPath, validatePath } from './';
 
 QUnit.module('Unit | Util | path', () => {
   QUnit.module('function: buildPathFromReference', () => {

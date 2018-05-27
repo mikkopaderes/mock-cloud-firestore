@@ -1,10 +1,10 @@
-const { cleanPath, validatePath } = require('../../utils/path');
-const { validateReference } = require('../../utils/reference');
-const CollectionReference = require('./collection-reference');
-const WriteBatch = require('./write-batch');
-const getOrSetDataNode = require('../../utils/get-or-set-data-node');
+import { cleanPath, validatePath } from '../../utils/path';
+import CollectionReference from './collection-reference';
+import WriteBatch from './write-batch';
+import getOrSetDataNode from '../../utils/get-or-set-data-node';
+import validateReference from '../../utils/reference';
 
-class Firestore {
+export default class Firestore {
   constructor(data) {
     this._data = data;
   }
@@ -55,5 +55,3 @@ class Firestore {
     return ref;
   }
 }
-
-module.exports = Firestore;

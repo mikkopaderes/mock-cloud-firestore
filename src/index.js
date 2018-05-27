@@ -1,3 +1,3 @@
-const MockFirebase = require('./firebase');
+import MockFirebase from './firebase';
 
-module.exports = MockFirebase;
+export default MockFirebase;

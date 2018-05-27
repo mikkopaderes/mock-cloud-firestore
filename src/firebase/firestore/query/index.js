@@ -1,4 +1,4 @@
-const {
+import {
   endAt,
   endBefore,
   limit,
@@ -7,9 +7,9 @@ const {
   startAfter,
   startAt,
   where,
-} = require('../../../utils/query');
+} from '../../../utils/query';
 
-class Query {
+export default class Query {
   constructor(data, collection) {
     this._data = Object.assign({}, data);
     this._collection = collection;
@@ -99,5 +99,3 @@ class Query {
     return this._option.orderBy;
   }
 }
-
-module.exports = Query;

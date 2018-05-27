@@ -1,9 +1,10 @@
-const { buildPathFromReference, cleanPath, validatePath } = require('../../../utils/path');
-const { validateReference } = require('../../../utils/reference');
-const DocumentSnapshot = require('../document-snapshot');
-const getOrSetDataNode = require('../../../utils/get-or-set-data-node');
+import { buildPathFromReference, cleanPath, validatePath } from '../../../utils/path';
+import CollectionReference from '../collection-reference';
+import DocumentSnapshot from '../document-snapshot';
+import getOrSetDataNode from '../../../utils/get-or-set-data-node';
+import validateReference from '../../../utils/reference';
 
-class DocumentReference {
+export default class DocumentReference {
   constructor(id, data, parent, firestore) {
     this._id = id;
     this._data = data;
@@ -111,8 +112,6 @@ class DocumentReference {
   }
 
   _collection(id) {
-    // eslint-disable-next-line global-require
-    const CollectionReference = require('../collection-reference');
     const data = getOrSetDataNode(this._data, '__collection__', id);
 
     return new CollectionReference(id, data, this, this.firestore);
@@ -138,5 +137,3 @@ class DocumentReference {
     return ref;
   }
 }
-
-module.exports = DocumentReference;
