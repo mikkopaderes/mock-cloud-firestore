@@ -48,26 +48,42 @@ class DocumentSnapshot {
   }
 
   _getData() {
-    const data = Object.assign({}, this._data);
-
-    for (const key of Object.keys(data)) {
-      if (typeof data[key] === 'string' && data[key].startsWith('__ref__:')) {
-        data[key] = this._buildRefFromPath(this.ref.firestore, data[key].replace('__ref__:', ''));
-      } else if (data[key] instanceof Date) {
-        const date = data[key];
-
-        data[key] = {
-          toDate() {
-            return date;
-          }
-        };
-      }
-    }
+    const data = this._traverseObject(Object.assign({}, this._data));
 
     delete data.__isDirty__;
     delete data.__collection__;
 
     return data;
+  }
+
+  _traverseObject(o) {
+    if (typeof o === 'string') {
+      if (o.startsWith('__ref__:')) {
+        return this._buildRefFromPath(this.ref.firestore, o.replace('__ref__:', ''));
+      }
+      return o;
+    } else if (typeof o === 'object' && o !== null) {
+      if (o.constructor === Object) {
+        return Object.entries(o).reduce((accumulator, [key, value]) => {
+          if (key === '__collection__' || key === '__doc__') {
+            return Object.assign({}, accumulator, this._traverseObject.call(this, value));
+          } else {
+            return Object.assign({}, accumulator, {
+              [key]: this._traverseObject.call(this, value)
+            });
+          }
+        }, {});
+      } else if (o.constructor === Array) {
+        return o.map(this._traverseObject.bind(this));
+      } else if (o.constructor === Date) {
+        return {
+          toDate() {
+            return o;
+          }
+        };
+      }
+    }
+    return o;
   }
 
   _buildRefFromPath(db, path) {
