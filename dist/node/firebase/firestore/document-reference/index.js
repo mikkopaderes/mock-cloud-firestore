@@ -73,23 +73,65 @@ class DocumentReference {
 
   set(data, option = {}) {
     if (!option.merge) {
-      for (const key of Object.keys(this._data)) {
-        if (key !== '__collection__') {
-          delete this._data[key];
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = Object.keys(this._data)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          const key = _step.value;
+
+          if (key !== '__collection__') {
+            delete this._data[key];
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
         }
       }
     }
 
     const parsedData = Object.assign({}, data);
 
-    for (const field of Object.keys(parsedData)) {
-      if (parsedData[field]) {
-        if (parsedData[field] instanceof DocumentReference) {
-          parsedData[field] = (0, _path.buildPathFromReference)(parsedData[field]);
-        }
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
 
-        if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName') && parsedData[field].methodName === 'FieldValue.serverTimestamp') {
-          parsedData[field] = new Date();
+    try {
+      for (var _iterator2 = Object.keys(parsedData)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        const field = _step2.value;
+
+        if (parsedData[field]) {
+          if (parsedData[field] instanceof DocumentReference) {
+            parsedData[field] = (0, _path.buildPathFromReference)(parsedData[field]);
+          }
+
+          if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName') && parsedData[field].methodName === 'FieldValue.serverTimestamp') {
+            parsedData[field] = new Date();
+          }
+        }
+      }
+    } catch (err) {
+      _didIteratorError2 = true;
+      _iteratorError2 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+          _iterator2.return();
+        }
+      } finally {
+        if (_didIteratorError2) {
+          throw _iteratorError2;
         }
       }
     }
@@ -106,14 +148,35 @@ class DocumentReference {
 
     const parsedData = Object.assign({}, data);
 
-    for (const field of Object.keys(parsedData)) {
-      if (parsedData[field]) {
-        if (parsedData[field] instanceof DocumentReference) {
-          parsedData[field] = (0, _path.buildPathFromReference)(parsedData[field]);
-        }
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
 
-        if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName') && parsedData[field].methodName === 'FieldValue.serverTimestamp') {
-          parsedData[field] = new Date();
+    try {
+      for (var _iterator3 = Object.keys(parsedData)[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        const field = _step3.value;
+
+        if (parsedData[field]) {
+          if (parsedData[field] instanceof DocumentReference) {
+            parsedData[field] = (0, _path.buildPathFromReference)(parsedData[field]);
+          }
+
+          if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName') && parsedData[field].methodName === 'FieldValue.serverTimestamp') {
+            parsedData[field] = new Date();
+          }
+        }
+      }
+    } catch (err) {
+      _didIteratorError3 = true;
+      _iteratorError3 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion3 && _iterator3.return) {
+          _iterator3.return();
+        }
+      } finally {
+        if (_didIteratorError3) {
+          throw _iteratorError3;
         }
       }
     }

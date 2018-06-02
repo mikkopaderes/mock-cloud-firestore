@@ -737,6 +737,20 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         assert.equal(username, 'user_a');
       });
 
+      QUnit.test('should flatten nested data', async (assert) => {
+        assert.expect(2);
+        // Arrange
+        const db = mockFirebase.firestore();
+        const snapshot = await db.collection('users').doc('user_d').get();
+        const {
+          location,
+          family,
+        } = snapshot.data();
+
+        assert.deepEqual(location, { country: 'Australia', state: 'VIC' });
+        assert.ok(family.parent instanceof DocumentReference);
+      });
+
       QUnit.test('should return the data and match any reference type field appropriately', async (assert) => {
         assert.expect(3);
 
@@ -898,7 +912,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         const result = snapshot.size;
 
         // Assert
-        assert.equal(result, 3);
+        assert.equal(result, 4);
       });
     });
 
@@ -915,7 +929,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         snapshot.forEach(stub);
 
         // Assert
-        assert.ok(stub.calledThrice);
+        assert.equal(4, stub.callCount);
       });
     });
   });
@@ -1065,7 +1079,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
 
     QUnit.module('function: startAfter', () => {
       QUnit.test('should return documents satisfying the query', async (assert) => {
-        assert.expect(2);
+        assert.expect(3);
 
         // Arrange
         const db = mockFirebase.firestore();
@@ -1074,8 +1088,9 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         const snapshot = await db.collection('users').orderBy('age').startAfter(15).get();
 
         // Assert
-        assert.equal(snapshot.docs.length, 1);
+        assert.equal(snapshot.docs.length, 2);
         assert.equal(snapshot.docs[0].id, 'user_c');
+        assert.equal(snapshot.docs[1].id, 'user_d');
       });
 
       QUnit.test('should error when not doing orderBy()', async (assert) => {
@@ -1096,7 +1111,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
 
     QUnit.module('function: startAt', () => {
       QUnit.test('should return documents satisfying the query', async (assert) => {
-        assert.expect(3);
+        assert.expect(4);
 
         // Arrange
         const db = mockFirebase.firestore();
@@ -1105,9 +1120,10 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         const snapshot = await db.collection('users').orderBy('age').startAt(15).get();
 
         // Assert
-        assert.equal(snapshot.docs.length, 2);
+        assert.equal(snapshot.docs.length, 3);
         assert.equal(snapshot.docs[0].id, 'user_a');
         assert.equal(snapshot.docs[1].id, 'user_c');
+        assert.equal(snapshot.docs[2].id, 'user_d');
       });
 
       QUnit.test('should error when not doing orderBy()', async (assert) => {

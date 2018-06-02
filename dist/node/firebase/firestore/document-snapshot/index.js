@@ -1,8 +1,15 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+(Object.defineProperty(exports, "__esModule", {
   value: true
-});
+}), function _objectEntries(obj) {
+  var entries = [];
+  var keys = Object.keys(obj);
+
+  for (var k = 0; k < keys.length; ++k) entries.push([keys[k], obj[keys[k]]]);
+
+  return entries;
+})
 class DocumentSnapshot {
   constructor(id, data, ref) {
     this._id = id;
@@ -35,12 +42,33 @@ class DocumentSnapshot {
     const keys = path.split('.');
     let data = this._getData();
 
-    for (const key of keys) {
-      if (Object.prototype.hasOwnProperty.call(data, key)) {
-        data = data[key];
-      } else {
-        data = undefined;
-        break;
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        const key = _step.value;
+
+        if (Object.prototype.hasOwnProperty.call(data, key)) {
+          data = data[key];
+        } else {
+          data = undefined;
+          break;
+        }
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
       }
     }
 
@@ -48,26 +76,42 @@ class DocumentSnapshot {
   }
 
   _getData() {
-    const data = Object.assign({}, this._data);
-
-    for (const key of Object.keys(data)) {
-      if (typeof data[key] === 'string' && data[key].startsWith('__ref__:')) {
-        data[key] = this._buildRefFromPath(this.ref.firestore, data[key].replace('__ref__:', ''));
-      } else if (data[key] instanceof Date) {
-        const date = data[key];
-
-        data[key] = {
-          toDate() {
-            return date;
-          }
-        };
-      }
-    }
+    const data = this._traverseObject(Object.assign({}, this._data));
 
     delete data.__isDirty__;
     delete data.__collection__;
 
     return data;
+  }
+
+  _traverseObject(o) {
+    if (typeof o === 'string') {
+      if (o.startsWith('__ref__:')) {
+        return this._buildRefFromPath(this.ref.firestore, o.replace('__ref__:', ''));
+      }
+      return o;
+    } else if (typeof o === 'object' && o !== null) {
+      if (o.constructor === Object) {
+        return _objectEntries(o).reduce((accumulator, [key, value]) => {
+          if (key === '__collection__' || key === '__doc__') {
+            return Object.assign({}, accumulator, this._traverseObject.call(this, value));
+          } else {
+            return Object.assign({}, accumulator, {
+              [key]: this._traverseObject.call(this, value)
+            });
+          }
+        }, {});
+      } else if (o.constructor === Array) {
+        return o.map(this._traverseObject.bind(this));
+      } else if (o.constructor === Date) {
+        return {
+          toDate() {
+            return o;
+          }
+        };
+      }
+    }
+    return o;
   }
 
   _buildRefFromPath(db, path) {

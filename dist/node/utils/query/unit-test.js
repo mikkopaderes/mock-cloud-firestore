@@ -402,7 +402,7 @@ QUnit.module('Unit | Util | query', () => {
   });
 
   QUnit.module('function: querySnapshot', () => {
-    QUnit.test('should return undeleted documents', assert => {
+    QUnit.test('should return QuerySnapshot of undeleted documents', assert => {
       assert.expect(1);
 
       // Arrange

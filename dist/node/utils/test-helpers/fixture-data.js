@@ -32,7 +32,6 @@ function fixtureData() {
             age: 10,
             createdOn: new Date('2017-01-01'),
             username: 'user_b',
-
             __collection__: {
               friends: {
                 __doc__: {
@@ -47,6 +46,27 @@ function fixtureData() {
             age: 20,
             createdOn: new Date('2017-01-01'),
             username: 'user_c'
+          },
+          user_d: {
+            age: 20,
+            createdOn: new Date('2017-01-01'),
+            username: 'user_b',
+            phone: [{
+              number: '04123-2345',
+              type: 'mobile'
+            }],
+            family: {
+              parent: '__ref__:users/user_a'
+            },
+            __collection__: {
+              location: {
+                __doc__: {
+                  country: 'Australia',
+                  state: 'VIC'
+                }
+              }
+            }
+
           }
         }
       }
