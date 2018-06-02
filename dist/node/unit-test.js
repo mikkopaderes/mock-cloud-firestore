@@ -534,7 +534,13 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
 
           // Assert
           const snapshot = yield ref.get();
-          const { dad, modifiedOn, name } = snapshot.data();
+
+          var _snapshot$data = snapshot.data();
+
+          const dad = _snapshot$data.dad,
+                modifiedOn = _snapshot$data.modifiedOn,
+                name = _snapshot$data.name;
+
 
           assert.deepEqual(dad, db.collection('users').doc('user_b'));
           assert.ok(modifiedOn.toDate() instanceof Date);
@@ -563,7 +569,13 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
 
           // Assert
           const snapshot = yield ref.get();
-          const { dad, modifiedOn, username } = snapshot.data();
+
+          var _snapshot$data2 = snapshot.data();
+
+          const dad = _snapshot$data2.dad,
+                modifiedOn = _snapshot$data2.modifiedOn,
+                username = _snapshot$data2.username;
+
 
           assert.deepEqual(dad, db.collection('users').doc('user_b'));
           assert.ok(modifiedOn.toDate() instanceof Date);
@@ -592,15 +604,17 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
 
           // Assert
           const snapshot = yield ref.get();
-          const {
-            address,
-            age,
-            createdOn,
-            dad,
-            modifiedOn,
-            name,
-            username
-          } = snapshot.data();
+
+          var _snapshot$data3 = snapshot.data();
+
+          const address = _snapshot$data3.address,
+                age = _snapshot$data3.age,
+                createdOn = _snapshot$data3.createdOn,
+                dad = _snapshot$data3.dad,
+                modifiedOn = _snapshot$data3.modifiedOn,
+                name = _snapshot$data3.name,
+                username = _snapshot$data3.username;
+
 
           assert.deepEqual(address, { home: 'San Francisco', work: 'Silicon Valley' });
           assert.equal(age, 15);
@@ -635,15 +649,17 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
 
           // Assert
           const snapshot = yield ref.get();
-          const {
-            address,
-            age,
-            createdOn,
-            dad,
-            modifiedOn,
-            name,
-            username
-          } = snapshot.data();
+
+          var _snapshot$data4 = snapshot.data();
+
+          const address = _snapshot$data4.address,
+                age = _snapshot$data4.age,
+                createdOn = _snapshot$data4.createdOn,
+                dad = _snapshot$data4.dad,
+                modifiedOn = _snapshot$data4.modifiedOn,
+                name = _snapshot$data4.name,
+                username = _snapshot$data4.username;
+
 
           assert.deepEqual(address, { home: 'San Francisco', work: 'Silicon Valley' });
           assert.equal(age, 15);
@@ -804,7 +820,13 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
 
           // Assert
           const referenceSnapshot = yield reference.get();
-          const { age, createdOn, username } = referenceSnapshot.data();
+
+          var _referenceSnapshot$da = referenceSnapshot.data();
+
+          const age = _referenceSnapshot$da.age,
+                createdOn = _referenceSnapshot$da.createdOn,
+                username = _referenceSnapshot$da.username;
+
 
           assert.equal(age, 10);
           assert.deepEqual(createdOn.toDate(), new Date('2017-01-01'));
@@ -867,14 +889,16 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
           const snapshot = yield db.collection('users').doc('user_a').get();
 
           // Act
-          const {
-            address,
-            age,
-            createdOn,
-            username
-          } = snapshot.data();
+
+          var _snapshot$data5 = snapshot.data();
+
+          const address = _snapshot$data5.address,
+                age = _snapshot$data5.age,
+                createdOn = _snapshot$data5.createdOn,
+                username = _snapshot$data5.username;
 
           // Assert
+
           assert.deepEqual(address, { home: 'San Francisco', work: 'Silicon Valley' });
           assert.equal(age, 15);
           assert.deepEqual(createdOn.toDate(), new Date('2017-01-01'));
@@ -892,10 +916,12 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
           // Arrange
           const db = mockFirebase.firestore();
           const snapshot = yield db.collection('users').doc('user_d').get();
-          const {
-            location,
-            family
-          } = snapshot.data();
+
+          var _snapshot$data6 = snapshot.data();
+
+          const location = _snapshot$data6.location,
+                family = _snapshot$data6.family;
+
 
           assert.deepEqual(location, { country: 'Australia', state: 'VIC' });
           assert.ok(family.parent instanceof _documentReference2.default);
@@ -915,11 +941,21 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
           const snapshot = yield db.collection('users').doc('user_a').collection('friends').doc('user_b').get();
 
           // Act
-          const { reference } = snapshot.data();
+
+          var _snapshot$data7 = snapshot.data();
+
+          const reference = _snapshot$data7.reference;
 
           // Assert
+
           const referenceSnapshot = yield reference.get();
-          const { age, createdOn, username } = referenceSnapshot.data();
+
+          var _referenceSnapshot$da2 = referenceSnapshot.data();
+
+          const age = _referenceSnapshot$da2.age,
+                createdOn = _referenceSnapshot$da2.createdOn,
+                username = _referenceSnapshot$da2.username;
+
 
           assert.equal(age, 10);
           assert.deepEqual(createdOn.toDate(), new Date('2017-01-01'));
@@ -1448,12 +1484,13 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
           assert.deepEqual(snapshot1.data(), { username: 'new_user' });
           assert.equal(snapshot2.exists, false);
 
-          const {
-            age: snapshot3Age,
-            createdOn: snapshot3CreatedOn,
-            name: snapshot3Name,
-            username: snapshot3Username
-          } = snapshot3.data();
+          var _snapshot3$data = snapshot3.data();
+
+          const snapshot3Age = _snapshot3$data.age,
+                snapshot3CreatedOn = _snapshot3$data.createdOn,
+                snapshot3Name = _snapshot3$data.name,
+                snapshot3Username = _snapshot3$data.username;
+
 
           assert.equal(snapshot3Age, 10);
           assert.deepEqual(snapshot3CreatedOn.toDate(), new Date('2017-01-01'));

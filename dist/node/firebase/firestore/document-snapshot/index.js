@@ -1,8 +1,15 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+(Object.defineProperty(exports, "__esModule", {
   value: true
-});
+}), function _objectEntries(obj) {
+  var entries = [];
+  var keys = Object.keys(obj);
+
+  for (var k = 0; k < keys.length; ++k) entries.push([keys[k], obj[keys[k]]]);
+
+  return entries;
+})
 class DocumentSnapshot {
   constructor(id, data, ref) {
     this._id = id;
@@ -35,12 +42,33 @@ class DocumentSnapshot {
     const keys = path.split('.');
     let data = this._getData();
 
-    for (const key of keys) {
-      if (Object.prototype.hasOwnProperty.call(data, key)) {
-        data = data[key];
-      } else {
-        data = undefined;
-        break;
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        const key = _step.value;
+
+        if (Object.prototype.hasOwnProperty.call(data, key)) {
+          data = data[key];
+        } else {
+          data = undefined;
+          break;
+        }
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
       }
     }
 
@@ -64,7 +92,7 @@ class DocumentSnapshot {
       return o;
     } else if (typeof o === 'object' && o !== null) {
       if (o.constructor === Object) {
-        return Object.entries(o).reduce((accumulator, [key, value]) => {
+        return _objectEntries(o).reduce((accumulator, [key, value]) => {
           if (key === '__collection__' || key === '__doc__') {
             return Object.assign({}, accumulator, this._traverseObject.call(this, value));
           } else {
