@@ -90,28 +90,34 @@ export function startAt(data, prop, value) {
   return filterByCursor(data, prop, value, 'startAt');
 }
 
+const getPath = (p, o) => p.reduce((xs, x) => (xs && xs[x]) ? xs[x] : null, o);
+
 export function where(data = {}, key, operator, value) {
   const filteredData = {};
   const ids = Object.keys(data).filter((id) => {
+    //Allow us to handle nested values
+    const path = [id].concat(key.split('.'));
+    const foundValue = getPath(path, data);
+
     if (operator === '<') {
-      return data[id][key] < value;
+      return foundValue < value;
     } else if (operator === '<=') {
-      return data[id][key] <= value;
+      return foundValue <= value;
     } else if (operator === '==') {
       if (value instanceof DocumentReference) {
         return (
-          data[id][key]
-          && data[id][key].startsWith('__ref__:')
-          && data[id][key] === buildPathFromReference(value)
+          foundValue
+          && foundValue.startsWith('__ref__:')
+          && foundValue === buildPathFromReference(value)
         );
       }
 
-      return data[id][key] === value;
+      return foundValue === value;
     } else if (operator === '>=') {
-      return data[id][key] >= value;
+      return foundValue >= value;
     }
 
-    return data[id][key] > value;
+    return foundValue > value;
   });
 
   for (const id of ids) {
