@@ -300,7 +300,7 @@ QUnit.module('Unit | Util | query', () => {
 
       //Assert
       assert.deepEqual(result, {
-        user_a: { age: 10, preferences: { enjoysIcecream: true }, 
+        user_a: { age: 10, preferences: { enjoysIcecream: true }}, 
       });
     });
 
