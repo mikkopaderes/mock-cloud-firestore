@@ -144,7 +144,7 @@ class DocumentReference {
       }
     });
 
-    (0, _reference2.default)(ref);
+    (0, _reference2.default)(ref, 'collection');
 
     return ref;
   }

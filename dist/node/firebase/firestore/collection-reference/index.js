@@ -129,7 +129,7 @@ class CollectionReference {
       }
     });
 
-    (0, _reference2.default)(ref);
+    (0, _reference2.default)(ref, 'doc');
 
     return ref;
   }

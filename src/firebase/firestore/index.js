@@ -14,11 +14,11 @@ export default class Firestore {
   }
 
   collection(id) {
-    return this._getReference(id);
+    return this._getReference(id, 'collection');
   }
 
   doc(id) {
-    return this._getReference(id);
+    return this._getReference(id, 'doc');
   }
 
   settings(settings) {
@@ -31,7 +31,7 @@ export default class Firestore {
     return new CollectionReference(id, data, null, this);
   }
 
-  _getReference(path) {
+  _getReference(path, type) {
     validatePath(path);
 
     const cleanedPath = cleanPath(path);
@@ -50,7 +50,7 @@ export default class Firestore {
       }
     });
 
-    validateReference(ref);
+    validateReference(ref, type);
 
     return ref;
   }

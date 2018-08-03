@@ -132,7 +132,7 @@ export default class DocumentReference {
       }
     });
 
-    validateReference(ref);
+    validateReference(ref, 'collection');
 
     return ref;
   }

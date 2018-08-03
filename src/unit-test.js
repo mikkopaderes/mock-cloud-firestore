@@ -122,6 +122,21 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         assert.equal(result.id, 'user_b');
       });
 
+      QUnit.test('should throw an error when getting doc reference on an odd number of segment', (assert) => {
+        assert.expect(1);
+
+        // Arrange
+        const db = mockFirebase.firestore();
+
+        try {
+          // Act
+          db.collection('users').doc('user_a/friends');
+        } catch (error) {
+          // Assert
+          assert.equal(error.message, 'Invalid document reference. Document references must have an even number of segments, but users/user_a/friends has 3.');
+        }
+      });
+
       QUnit.test('should create document reference when not providing an ID', (assert) => {
         assert.expect(1);
 
@@ -362,6 +377,21 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         // Assert
         assert.ok(result instanceof CollectionReference);
         assert.equal(result.id, 'wew_so_deep');
+      });
+
+      QUnit.test('should throw an error when getting collection reference on an even number of segment', (assert) => {
+        assert.expect(1);
+
+        // Arrange
+        const db = mockFirebase.firestore();
+
+        try {
+          // Act
+          db.collection('users').doc('user_a').collection('friends/user_b');
+        } catch (error) {
+          // Assert
+          assert.equal(error.message, 'Invalid collection reference. Collection references must have an odd number of segments, but users/user_a/friends/user_b has 4.');
+        }
       });
     });
 
@@ -812,11 +842,26 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         const db = mockFirebase.firestore();
 
         // Act
-        const result = db.doc('users/user_a/friends');
+        const result = db.collection('users/user_a/friends');
 
         // Assert
         assert.ok(result instanceof CollectionReference);
         assert.equal(result.id, 'friends');
+      });
+
+      QUnit.test('should throw an error when getting collection reference on an even number of segment', (assert) => {
+        assert.expect(1);
+
+        // Arrange
+        const db = mockFirebase.firestore();
+
+        try {
+          // Act
+          db.collection('users/user_a');
+        } catch (error) {
+          // Assert
+          assert.equal(error.message, 'Invalid collection reference. Collection references must have an odd number of segments, but users/user_a has 2.');
+        }
       });
     });
 
@@ -833,6 +878,21 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         // Assert
         assert.ok(result instanceof DocumentReference);
         assert.equal(result.id, 'user_a');
+      });
+
+      QUnit.test('should throw an error when getting doc reference on an even number of segment', (assert) => {
+        assert.expect(1);
+
+        // Arrange
+        const db = mockFirebase.firestore();
+
+        try {
+          // Act
+          db.doc('users/user_a/friends');
+        } catch (error) {
+          // Assert
+          assert.equal(error.message, 'Invalid document reference. Document references must have an even number of segments, but users/user_a/friends has 3.');
+        }
       });
     });
   });
