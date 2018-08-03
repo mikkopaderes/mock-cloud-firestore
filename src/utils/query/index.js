@@ -24,6 +24,21 @@ function filterByCursor(data, prop, value, cursor) {
   return filteredData;
 }
 
+function getPathValue(data, field) {
+  const keys = field.split('.');
+  let pathValue;
+
+  keys.forEach((key) => {
+    if (pathValue) {
+      pathValue = pathValue[key];
+    } else {
+      pathValue = data[key];
+    }
+  });
+
+  return pathValue;
+}
+
 export function endAt(data, prop, value) {
   return filterByCursor(data, prop, value, 'endAt');
 }
@@ -90,34 +105,31 @@ export function startAt(data, prop, value) {
   return filterByCursor(data, prop, value, 'startAt');
 }
 
-const getPath = (p, o) => p.reduce((xs, x) => (xs && xs[x]) ? xs[x] : null, o);
-
 export function where(data = {}, key, operator, value) {
   const filteredData = {};
   const ids = Object.keys(data).filter((id) => {
-    //Allow us to handle nested values
-    const path = [id].concat(key.split('.'));
-    const foundValue = getPath(path, data);
+    // Allow us to handle nested values
+    const pathValue = getPathValue(data[id], key);
 
     if (operator === '<') {
-      return foundValue < value;
+      return pathValue < value;
     } else if (operator === '<=') {
-      return foundValue <= value;
+      return pathValue <= value;
     } else if (operator === '==') {
       if (value instanceof DocumentReference) {
         return (
-          foundValue
-          && foundValue.startsWith('__ref__:')
-          && foundValue === buildPathFromReference(value)
+          pathValue
+          && pathValue.startsWith('__ref__:')
+          && pathValue === buildPathFromReference(value)
         );
       }
 
-      return foundValue === value;
+      return pathValue === value;
     } else if (operator === '>=') {
-      return foundValue >= value;
+      return pathValue >= value;
     }
 
-    return foundValue > value;
+    return pathValue > value;
   });
 
   for (const id of ids) {

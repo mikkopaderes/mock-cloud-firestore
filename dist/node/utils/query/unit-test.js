@@ -286,17 +286,17 @@ QUnit.module('Unit | Util | query', () => {
     QUnit.test('should match a nested key using the == filter', assert => {
       assert.expect(1);
 
-      //Arrange
+      // Arrange
       const records = {
         user_a: { age: 10, preferences: { enjoysIcecream: true } },
         user_b: { age: 15, preferences: { enjoysIcecream: false } },
         user_c: { age: 20 }
       };
 
-      //Act
+      // Act
       const result = (0, _.where)(records, 'preferences.enjoysIcecream', '==', true);
 
-      //Assert
+      // Assert
       assert.deepEqual(result, {
         user_a: { age: 10, preferences: { enjoysIcecream: true } }
       });
