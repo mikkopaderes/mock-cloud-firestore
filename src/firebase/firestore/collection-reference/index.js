@@ -99,7 +99,7 @@ export default class CollectionReference {
       }
     });
 
-    validateReference(ref);
+    validateReference(ref, 'doc');
 
     return ref;
   }

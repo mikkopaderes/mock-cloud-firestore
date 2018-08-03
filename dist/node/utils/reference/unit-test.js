@@ -44,7 +44,7 @@ QUnit.module('Unit | Util | reference', () => {
             id: 'users'
           }
         }, 'collection');
-      }, new Error('Invalid collection reference. Collection references must have an odd number of segments, but users/user_a has 2'));
+      }, new Error('Invalid collection reference. Collection references must have an odd number of segments, but users/user_a has 2.'));
     });
 
     QUnit.test('should throw an error path to document does not refer to a document', assert => {
@@ -53,7 +53,7 @@ QUnit.module('Unit | Util | reference', () => {
       // Act & Assert
       assert.throws(() => {
         (0, _2.default)({ id: 'users' }, 'doc');
-      }, new Error('Invalid document reference. Document references must have an even number of segments, but users has 1'));
+      }, new Error('Invalid document reference. Document references must have an even number of segments, but users has 1.'));
     });
   });
 });

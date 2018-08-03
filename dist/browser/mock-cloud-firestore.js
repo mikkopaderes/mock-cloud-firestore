@@ -163,9 +163,9 @@ function validateReference(ref, type) {
   const pathNodes = path.split('/');
 
   if (type === 'collection' && pathNodes.length % 2 !== 1) {
-    throw new Error(`Invalid collection reference. Collection references must have an odd number of segments, but ${path} has ${pathNodes.length}`);
+    throw new Error(`Invalid collection reference. Collection references must have an odd number of segments, but ${path} has ${pathNodes.length}.`);
   } else if (type === 'doc' && pathNodes.length % 2 !== 0) {
-    throw new Error(`Invalid document reference. Document references must have an even number of segments, but ${path} has ${pathNodes.length}`);
+    throw new Error(`Invalid document reference. Document references must have an even number of segments, but ${path} has ${pathNodes.length}.`);
   }
 }
 module.exports = exports['default'];
@@ -306,7 +306,7 @@ class CollectionReference {
       }
     });
 
-    (0, _reference2.default)(ref);
+    (0, _reference2.default)(ref, 'doc');
 
     return ref;
   }
@@ -653,7 +653,7 @@ class DocumentReference {
       }
     });
 
-    (0, _reference2.default)(ref);
+    (0, _reference2.default)(ref, 'collection');
 
     return ref;
   }
@@ -875,11 +875,11 @@ class Firestore {
   }
 
   collection(id) {
-    return this._getReference(id);
+    return this._getReference(id, 'collection');
   }
 
   doc(id) {
-    return this._getReference(id);
+    return this._getReference(id, 'doc');
   }
 
   settings(settings) {
@@ -892,7 +892,7 @@ class Firestore {
     return new _collectionReference2.default(id, data, null, this);
   }
 
-  _getReference(path) {
+  _getReference(path, type) {
     (0, _path.validatePath)(path);
 
     const cleanedPath = (0, _path.cleanPath)(path);
@@ -911,7 +911,7 @@ class Firestore {
       }
     });
 
-    (0, _reference2.default)(ref);
+    (0, _reference2.default)(ref, type);
 
     return ref;
   }
