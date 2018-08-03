@@ -1,6 +1,6 @@
 {
   "name": "mock-cloud-firestore",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Mock library for Cloud Firestore",
   "main": "dist/node/index.js",
   "repository": "https://github.com/rmmmp/mock-cloud-firestore",
