@@ -46,7 +46,7 @@ export default class DocumentReference {
   onSnapshot(onNext) {
     const documentSnapshot = new DocumentSnapshot(this._id, this._data, this);
 
-    onNext(documentSnapshot);
+    setTimeout(() => onNext(documentSnapshot), 10);
 
     return () => {};
   }

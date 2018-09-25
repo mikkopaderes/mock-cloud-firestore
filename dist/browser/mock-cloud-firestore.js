@@ -264,7 +264,7 @@ class CollectionReference {
   }
 
   onSnapshot(onNext) {
-    onNext((0, _query.querySnapshot)(this._data, this));
+    setTimeout(() => onNext((0, _query.querySnapshot)(this._data, this)), 10);
 
     return () => {};
   }
@@ -575,7 +575,7 @@ class DocumentReference {
   onSnapshot(onNext) {
     const documentSnapshot = new _documentSnapshot2.default(this._id, this._data, this);
 
-    onNext(documentSnapshot);
+    setTimeout(() => onNext(documentSnapshot), 10);
 
     return () => {};
   }
@@ -1013,7 +1013,7 @@ class Query {
   }
 
   onSnapshot(onNext) {
-    onNext((0, _query.querySnapshot)(this._data, this._collection));
+    setTimeout(() => onNext((0, _query.querySnapshot)(this._data, this._collection)), 10);
 
     return () => {};
   }

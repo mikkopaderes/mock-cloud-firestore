@@ -66,7 +66,7 @@ class DocumentReference {
   onSnapshot(onNext) {
     const documentSnapshot = new _documentSnapshot2.default(this._id, this._data, this);
 
-    onNext(documentSnapshot);
+    setTimeout(() => onNext(documentSnapshot), 10);
 
     return () => {};
   }
