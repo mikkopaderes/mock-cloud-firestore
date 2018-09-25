@@ -70,8 +70,8 @@ export default class DocumentReference {
 
         if (
           typeof parsedData[field] === 'object'
-          && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName')
-          && parsedData[field].methodName === 'FieldValue.serverTimestamp'
+          && Object.prototype.hasOwnProperty.call(parsedData[field], '_methodName')
+          && parsedData[field]._methodName === 'FieldValue.serverTimestamp'
         ) {
           parsedData[field] = new Date();
         }
@@ -98,8 +98,8 @@ export default class DocumentReference {
 
         if (
           typeof parsedData[field] === 'object'
-          && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName')
-          && parsedData[field].methodName === 'FieldValue.serverTimestamp'
+          && Object.prototype.hasOwnProperty.call(parsedData[field], '_methodName')
+          && parsedData[field]._methodName === 'FieldValue.serverTimestamp'
         ) {
           parsedData[field] = new Date();
         }

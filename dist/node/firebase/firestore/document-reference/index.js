@@ -88,7 +88,7 @@ class DocumentReference {
           parsedData[field] = (0, _path.buildPathFromReference)(parsedData[field]);
         }
 
-        if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName') && parsedData[field].methodName === 'FieldValue.serverTimestamp') {
+        if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], '_methodName') && parsedData[field]._methodName === 'FieldValue.serverTimestamp') {
           parsedData[field] = new Date();
         }
       }
@@ -112,7 +112,7 @@ class DocumentReference {
           parsedData[field] = (0, _path.buildPathFromReference)(parsedData[field]);
         }
 
-        if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName') && parsedData[field].methodName === 'FieldValue.serverTimestamp') {
+        if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], '_methodName') && parsedData[field]._methodName === 'FieldValue.serverTimestamp') {
           parsedData[field] = new Date();
         }
       }
