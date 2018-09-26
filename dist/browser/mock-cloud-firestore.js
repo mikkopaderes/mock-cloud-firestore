@@ -264,7 +264,7 @@ class CollectionReference {
   }
 
   onSnapshot(onNext) {
-    onNext((0, _query.querySnapshot)(this._data, this));
+    setTimeout(() => onNext((0, _query.querySnapshot)(this._data, this)), 10);
 
     return () => {};
   }
@@ -575,7 +575,7 @@ class DocumentReference {
   onSnapshot(onNext) {
     const documentSnapshot = new _documentSnapshot2.default(this._id, this._data, this);
 
-    onNext(documentSnapshot);
+    setTimeout(() => onNext(documentSnapshot), 10);
 
     return () => {};
   }
@@ -597,7 +597,7 @@ class DocumentReference {
           parsedData[field] = (0, _path.buildPathFromReference)(parsedData[field]);
         }
 
-        if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName') && parsedData[field].methodName === 'FieldValue.serverTimestamp') {
+        if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], '_methodName') && parsedData[field]._methodName === 'FieldValue.serverTimestamp') {
           parsedData[field] = new Date();
         }
       }
@@ -621,7 +621,7 @@ class DocumentReference {
           parsedData[field] = (0, _path.buildPathFromReference)(parsedData[field]);
         }
 
-        if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], 'methodName') && parsedData[field].methodName === 'FieldValue.serverTimestamp') {
+        if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], '_methodName') && parsedData[field]._methodName === 'FieldValue.serverTimestamp') {
           parsedData[field] = new Date();
         }
       }
@@ -1013,7 +1013,7 @@ class Query {
   }
 
   onSnapshot(onNext) {
-    onNext((0, _query.querySnapshot)(this._data, this._collection));
+    setTimeout(() => onNext((0, _query.querySnapshot)(this._data, this._collection)), 10);
 
     return () => {};
   }

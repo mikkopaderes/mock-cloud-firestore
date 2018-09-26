@@ -51,7 +51,7 @@ class Query {
   }
 
   onSnapshot(onNext) {
-    onNext((0, _query.querySnapshot)(this._data, this._collection));
+    setTimeout(() => onNext((0, _query.querySnapshot)(this._data, this._collection)), 10);
 
     return () => {};
   }

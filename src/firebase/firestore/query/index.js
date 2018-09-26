@@ -54,7 +54,7 @@ export default class Query {
   }
 
   onSnapshot(onNext) {
-    onNext(querySnapshot(this._data, this._collection));
+    setTimeout(() => onNext(querySnapshot(this._data, this._collection)), 10);
 
     return () => {};
   }

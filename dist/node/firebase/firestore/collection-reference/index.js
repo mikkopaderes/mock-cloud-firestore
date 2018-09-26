@@ -87,7 +87,7 @@ class CollectionReference {
   }
 
   onSnapshot(onNext) {
-    onNext((0, _query.querySnapshot)(this._data, this));
+    setTimeout(() => onNext((0, _query.querySnapshot)(this._data, this)), 10);
 
     return () => {};
   }
