@@ -32,6 +32,31 @@ const firebase = new MockFirebase(fixtureData);
 
 > Replacing the Firebase instance depends on how your app consumes it. As an example, you could do `window.firebase = new MockFirebase(fixtureData)` on a browser environment.
 
+### Using in test environment
+
+If you're using firebase as-is like a global variable you could do:
+
+```javascript
+window.firebase = new MockFirebase(fixtureData);
+const db = firebase.firestore();
+
+db.collection('users').add({ ... });
+```
+
+If you're passing firebase as a param in a function (dependency injection) you could do:
+
+```javascript
+function initialiseApp(firebaseDependency) {
+  const db = firebaseDependency.firestore();
+
+  db.collection('users').add({ ... });
+}
+
+// then in your test file
+const firebaseDependency = new MockFirebase(fixtureData);
+initialiseApp(firebaseDependency);
+```
+
 ### Fixture Data
 
 Here's a sample fixture data
