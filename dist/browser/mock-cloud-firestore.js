@@ -469,6 +469,8 @@ function where(data = {}, key, operator, value) {
       return pathValue === value;
     } else if (operator === '>=') {
       return pathValue >= value;
+    } else if (operator === 'array-contains') {
+      return pathValue.find(item => item === value);
     }
 
     return pathValue > value;
@@ -582,28 +584,14 @@ class DocumentReference {
 
   set(data, option = {}) {
     if (!option.merge) {
-      for (const key of Object.keys(this._data)) {
+      Object.keys(this._data).forEach(key => {
         if (key !== '__collection__') {
           delete this._data[key];
         }
-      }
+      });
     }
 
-    const parsedData = Object.assign({}, data);
-
-    for (const field of Object.keys(parsedData)) {
-      if (parsedData[field]) {
-        if (parsedData[field] instanceof DocumentReference) {
-          parsedData[field] = (0, _path.buildPathFromReference)(parsedData[field]);
-        }
-
-        if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], '_methodName') && parsedData[field]._methodName === 'FieldValue.serverTimestamp') {
-          parsedData[field] = new Date();
-        }
-      }
-    }
-
-    Object.assign(this._data, parsedData, { __isDirty__: false });
+    Object.assign(this._data, this._parseData(data), { __isDirty__: false });
 
     return Promise.resolve();
   }
@@ -613,21 +601,7 @@ class DocumentReference {
       throw new Error('Document doesn\'t exist');
     }
 
-    const parsedData = Object.assign({}, data);
-
-    for (const field of Object.keys(parsedData)) {
-      if (parsedData[field]) {
-        if (parsedData[field] instanceof DocumentReference) {
-          parsedData[field] = (0, _path.buildPathFromReference)(parsedData[field]);
-        }
-
-        if (typeof parsedData[field] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[field], '_methodName') && parsedData[field]._methodName === 'FieldValue.serverTimestamp') {
-          parsedData[field] = new Date();
-        }
-      }
-    }
-
-    Object.assign(this._data, parsedData);
+    Object.assign(this._data, this._parseData(data));
 
     return Promise.resolve();
   }
@@ -656,6 +630,54 @@ class DocumentReference {
     (0, _reference2.default)(ref, 'collection');
 
     return ref;
+  }
+
+  _parseData(newData) {
+    const parsedData = Object.assign({}, newData);
+
+    Object.keys(parsedData).forEach(key => {
+      if (parsedData[key]) {
+        if (parsedData[key] instanceof DocumentReference) {
+          parsedData[key] = (0, _path.buildPathFromReference)(parsedData[key]);
+        }
+
+        if (typeof parsedData[key] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[key], '_methodName')) {
+          const { _methodName: methodName } = parsedData[key];
+
+          if (methodName === 'FieldValue.serverTimestamp') {
+            parsedData[key] = new Date();
+          } else if (methodName === 'FieldValue.arrayUnion') {
+            parsedData[key] = this._processArrayUnion(key, parsedData[key]);
+          } else if (methodName === 'FieldValue.arrayRemove') {
+            parsedData[key] = this._processArrayRemove(key, parsedData[key]);
+          }
+        }
+      }
+    });
+
+    return parsedData;
+  }
+
+  _processArrayUnion(key, arrayUnion) {
+    const newArray = [...this._data[key]];
+
+    arrayUnion._elements.forEach(unionItem => {
+      if (!newArray.find(item => item === unionItem)) {
+        newArray.push(unionItem);
+      }
+    });
+
+    return newArray;
+  }
+
+  _processArrayRemove(key, arrayRemove) {
+    let newArray = [...this._data[key]];
+
+    arrayRemove._elements.forEach(unionItem => {
+      newArray = newArray.filter(item => item !== unionItem);
+    });
+
+    return newArray;
   }
 }
 exports.default = DocumentReference;
@@ -827,12 +849,26 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 class FieldValue {
+  arrayUnion(...args) {
+    return {
+      _methodName: 'FieldValue.arrayUnion',
+      _elements: [...args]
+    };
+  }
+
+  arrayRemove(...args) {
+    return {
+      _methodName: 'FieldValue.arrayRemove',
+      _elements: [...args]
+    };
+  }
+
   serverTimestamp() {
-    return new Date();
+    return { _methodName: 'FieldValue.serverTimestamp' };
   }
 }
 exports.default = FieldValue;
-module.exports = exports["default"];
+module.exports = exports['default'];
 
 /***/ }),
 /* 10 */
