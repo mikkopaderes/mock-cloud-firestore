@@ -10,6 +10,8 @@ export default function fixtureData() {
             },
             age: 15,
             createdOn: new Date('2017-01-01'),
+            pinnedBooks: ['book_1', 'book_2'],
+            pinnedFoods: ['food_1', 'food_2', 'food_1'],
             username: 'user_a',
 
             __collection__: {

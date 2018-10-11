@@ -650,7 +650,7 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
                 QUnit.module('function: update', () => {
                         QUnit.test('should update the data', (() => {
                                 var _ref10 = _asyncToGenerator(function* (assert) {
-                                        assert.expect(7);
+                                        assert.expect(9);
 
                                         // Arrange
                                         const db = mockFirebase.firestore();
@@ -660,6 +660,8 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
                                         yield ref.update({
                                                 dad: db.collection('users').doc('user_b'),
                                                 modifiedOn: _firebase2.default.firestore.FieldValue.serverTimestamp(),
+                                                pinnedBooks: _firebase2.default.firestore.FieldValue.arrayUnion('book_100'),
+                                                pinnedFoods: _firebase2.default.firestore.FieldValue.arrayRemove('food_1'),
                                                 name: 'user_a'
                                         });
 
@@ -672,6 +674,8 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
                                                 dad,
                                                 modifiedOn,
                                                 name,
+                                                pinnedBooks,
+                                                pinnedFoods,
                                                 username
                                         } = snapshot.data();
 
@@ -681,6 +685,8 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
                                         assert.deepEqual(dad, db.collection('users').doc('user_b'));
                                         assert.ok(modifiedOn.toDate() instanceof Date);
                                         assert.equal(name, 'user_a');
+                                        assert.deepEqual(pinnedBooks, ['book_1', 'book_2', 'book_100']);
+                                        assert.deepEqual(pinnedFoods, ['food_2']);
                                         assert.equal(username, 'user_a');
                                 });
 
@@ -964,15 +970,45 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
         });
 
         QUnit.module('FieldValue', () => {
+                QUnit.module('function: arrayUnion', () => {
+                        QUnit.test('should return an array union representation', assert => {
+                                assert.expect(1);
+
+                                // Act
+                                const result = mockFirebase.firestore.FieldValue.arrayUnion('foo', 'bar');
+
+                                // Assert
+                                assert.deepEqual(result, {
+                                        _methodName: 'FieldValue.arrayUnion',
+                                        _elements: ['foo', 'bar']
+                                });
+                        });
+                });
+
+                QUnit.module('function: arrayRemove', () => {
+                        QUnit.test('should return an array union representation', assert => {
+                                assert.expect(1);
+
+                                // Act
+                                const result = mockFirebase.firestore.FieldValue.arrayRemove('foo', 'bar');
+
+                                // Assert
+                                assert.deepEqual(result, {
+                                        _methodName: 'FieldValue.arrayRemove',
+                                        _elements: ['foo', 'bar']
+                                });
+                        });
+                });
+
                 QUnit.module('function: serverTimestamp', () => {
-                        QUnit.test('should return a new date', assert => {
+                        QUnit.test('should return a server timestamp representation', assert => {
                                 assert.expect(1);
 
                                 // Act
                                 const result = mockFirebase.firestore.FieldValue.serverTimestamp();
 
                                 // Assert
-                                assert.ok(result instanceof Date);
+                                assert.deepEqual(result, { _methodName: 'FieldValue.serverTimestamp' });
                         });
                 });
         });

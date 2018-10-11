@@ -425,6 +425,26 @@ QUnit.module('Unit | Util | query', () => {
         user_c: { age: 20 },
       });
     });
+
+    QUnit.test('should return records matching the array-contains filter', (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const records = {
+        user_a: { books: [10] },
+        user_b: { books: [15] },
+        user_c: { books: [10] },
+      };
+
+      // Act
+      const result = where(records, 'books', 'array-contains', 10);
+
+      // Assert
+      assert.deepEqual(result, {
+        user_a: { books: [10] },
+        user_c: { books: [10] },
+      });
+    });
   });
 
   QUnit.module('function: querySnapshot', () => {

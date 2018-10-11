@@ -148,6 +148,8 @@ function where(data = {}, key, operator, value) {
       return pathValue === value;
     } else if (operator === '>=') {
       return pathValue >= value;
+    } else if (operator === 'array-contains') {
+      return pathValue.find(item => item === value);
     }
 
     return pathValue > value;
