@@ -644,6 +644,9 @@ class DocumentReference {
             parsedData[key] = this._processArrayUnion(key, parsedData[key]);
           } else if (methodName === 'FieldValue.arrayRemove') {
             parsedData[key] = this._processArrayRemove(key, parsedData[key]);
+          } else if (methodName === 'FieldValue.delete') {
+            delete parsedData[key];
+            delete this._data[key];
           }
         }
       }
@@ -855,6 +858,10 @@ class FieldValue {
       _methodName: 'FieldValue.arrayRemove',
       _elements: [...args]
     };
+  }
+
+  delete() {
+    return { _methodName: 'FieldValue.delete' };
   }
 
   serverTimestamp() {
