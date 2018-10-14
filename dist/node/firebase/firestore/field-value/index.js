@@ -18,6 +18,10 @@ class FieldValue {
     };
   }
 
+  delete() {
+    return { _methodName: 'FieldValue.delete' };
+  }
+
   serverTimestamp() {
     return { _methodName: 'FieldValue.serverTimestamp' };
   }

@@ -569,6 +569,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
 
         // Act
         await ref.update({
+          age: firebase.firestore.FieldValue.delete(),
           dad: db.collection('users').doc('user_b'),
           modifiedOn: firebase.firestore.FieldValue.serverTimestamp(),
           pinnedBooks: firebase.firestore.FieldValue.arrayUnion('book_100'),
@@ -591,7 +592,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         } = snapshot.data();
 
         assert.deepEqual(address, { home: 'San Francisco', work: 'Silicon Valley' });
-        assert.equal(age, 15);
+        assert.equal(age, undefined);
         assert.deepEqual(createdOn.toDate(), new Date('2017-01-01'));
         assert.deepEqual(dad, db.collection('users').doc('user_b'));
         assert.ok(modifiedOn.toDate() instanceof Date);
@@ -841,6 +842,18 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
           _methodName: 'FieldValue.arrayRemove',
           _elements: ['foo', 'bar'],
         });
+      });
+    });
+
+    QUnit.module('function: delete', () => {
+      QUnit.test('should return a delete field representation', (assert) => {
+        assert.expect(1);
+
+        // Act
+        const result = mockFirebase.firestore.FieldValue.delete();
+
+        // Assert
+        assert.deepEqual(result, { _methodName: 'FieldValue.delete' });
       });
     });
 
