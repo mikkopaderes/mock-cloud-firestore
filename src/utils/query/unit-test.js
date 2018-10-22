@@ -448,7 +448,7 @@ QUnit.module('Unit | Util | query', () => {
   });
 
   QUnit.module('function: querySnapshot', () => {
-    QUnit.test('should return QuerySnapshot of undeleted documents', (assert) => {
+    QUnit.test('should return QuerySnapshot of undeleted and undirty documents', (assert) => {
       assert.expect(1);
 
       // Arrange
@@ -463,6 +463,9 @@ QUnit.module('Unit | Util | query', () => {
           },
           user_c: {
             name: 'User C',
+          },
+          user_d: {
+            __isDirty__: true,
           },
         },
       };
