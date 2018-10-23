@@ -509,53 +509,7 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
                 });
 
                 QUnit.module('function: set', () => {
-                        QUnit.test('should set the data using the default options when it exist', async assert => {
-                                assert.expect(3);
-
-                                // Arrange
-                                const db = mockFirebase.firestore();
-                                const ref = db.collection('users').doc('user_a');
-
-                                // Act
-                                await ref.set({
-                                        name: 'user_a',
-                                        dad: db.collection('users').doc('user_b'),
-                                        modifiedOn: _firebase2.default.firestore.FieldValue.serverTimestamp()
-                                });
-
-                                // Assert
-                                const snapshot = await ref.get();
-                                const { dad, modifiedOn, name } = snapshot.data();
-
-                                assert.deepEqual(dad, db.collection('users').doc('user_b'));
-                                assert.ok(modifiedOn.toDate() instanceof Date);
-                                assert.equal(name, 'user_a');
-                        });
-
-                        QUnit.test('should set the data using the default options when it does not exists', async assert => {
-                                assert.expect(3);
-
-                                // Arrange
-                                const db = mockFirebase.firestore();
-                                const ref = db.collection('users').doc('user_100');
-
-                                // Act
-                                await ref.set({
-                                        dad: db.collection('users').doc('user_b'),
-                                        modifiedOn: _firebase2.default.firestore.FieldValue.serverTimestamp(),
-                                        username: 'user_100'
-                                });
-
-                                // Assert
-                                const snapshot = await ref.get();
-                                const { dad, modifiedOn, username } = snapshot.data();
-
-                                assert.deepEqual(dad, db.collection('users').doc('user_b'));
-                                assert.ok(modifiedOn.toDate() instanceof Date);
-                                assert.equal(username, 'user_100');
-                        });
-
-                        QUnit.test('should set the data using the merge option', async assert => {
+                        QUnit.test('should set the data using the non-merge option', async assert => {
                                 assert.expect(7);
 
                                 // Arrange
@@ -564,36 +518,97 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
 
                                 // Act
                                 await ref.set({
+                                        'address.home': 'San Francisco',
+                                        name: 'user_a',
                                         dad: db.collection('users').doc('user_b'),
                                         modifiedOn: _firebase2.default.firestore.FieldValue.serverTimestamp(),
-                                        name: 'user_a'
+                                        pinnedBooks: _firebase2.default.firestore.FieldValue.arrayUnion('book_100'),
+                                        pinnedFoods: _firebase2.default.firestore.FieldValue.arrayRemove('food_1')
+                                });
+
+                                // Assert
+                                const snapshot = await ref.get();
+                                const data = snapshot.data();
+
+                                assert.equal(Object.keys(data).length, 6);
+                                assert.equal(data['address.home'], 'San Francisco');
+                                assert.deepEqual(data.dad, db.collection('users').doc('user_b'));
+                                assert.ok(data.modifiedOn.toDate() instanceof Date);
+                                assert.deepEqual(data.pinnedBooks, ['book_100']);
+                                assert.deepEqual(data.pinnedFoods, []);
+                                assert.equal(data.name, 'user_a');
+                        });
+
+                        QUnit.test('should set the data using the merge option', async assert => {
+                                assert.expect(11);
+
+                                // Arrange
+                                const db = mockFirebase.firestore();
+                                const ref = db.collection('users').doc('user_a');
+
+                                // Act
+                                await ref.set({
+                                        'address.home': 'San Francisco',
+                                        name: 'user_a',
+                                        dad: db.collection('users').doc('user_b'),
+                                        modifiedOn: _firebase2.default.firestore.FieldValue.serverTimestamp(),
+                                        pinnedBooks: _firebase2.default.firestore.FieldValue.arrayUnion('book_100'),
+                                        pinnedFoods: _firebase2.default.firestore.FieldValue.arrayRemove('food_1')
                                 }, { merge: true });
 
                                 // Assert
                                 const snapshot = await ref.get();
-                                const {
-                                        address,
-                                        age,
-                                        createdOn,
-                                        dad,
-                                        modifiedOn,
-                                        name,
-                                        username
-                                } = snapshot.data();
+                                const data = snapshot.data();
 
-                                assert.deepEqual(address, { home: 'San Francisco', work: 'Silicon Valley' });
-                                assert.equal(age, 15);
-                                assert.deepEqual(createdOn.toDate(), new Date('2017-01-01'));
-                                assert.deepEqual(dad, db.collection('users').doc('user_b'));
-                                assert.ok(modifiedOn.toDate() instanceof Date);
-                                assert.equal(name, 'user_a');
-                                assert.equal(username, 'user_a');
+                                assert.equal(Object.keys(data).length, 10);
+                                assert.deepEqual(data.address, { home: 'San Francisco', work: 'Silicon Valley' });
+                                assert.equal(data['address.home'], 'San Francisco');
+                                assert.equal(data.age, 15);
+                                assert.deepEqual(data.createdOn.toDate(), new Date('2017-01-01'));
+                                assert.deepEqual(data.dad, db.collection('users').doc('user_b'));
+                                assert.ok(data.modifiedOn.toDate() instanceof Date);
+                                assert.deepEqual(data.pinnedBooks, ['book_1', 'book_2', 'book_100']);
+                                assert.deepEqual(data.pinnedFoods, ['food_2']);
+                                assert.equal(data.name, 'user_a');
+                                assert.equal(data.username, 'user_a');
+                        });
+
+                        QUnit.test('should throw error when setting data with an undefined value', async assert => {
+                                assert.expect(1);
+
+                                // Arrange
+                                const db = mockFirebase.firestore();
+                                const ref = db.collection('users').doc('user_a');
+
+                                try {
+                                        // Act
+                                        await ref.set({ name: undefined });
+                                } catch (e) {
+                                        // Assert
+                                        assert.ok(true);
+                                }
+                        });
+
+                        QUnit.test('should throw error when setting data with a FieldValue.delete() value', async assert => {
+                                assert.expect(1);
+
+                                // Arrange
+                                const db = mockFirebase.firestore();
+                                const ref = db.collection('users').doc('user_a');
+
+                                try {
+                                        // Act
+                                        await ref.set({ name: _firebase2.default.firestore.FieldValue.delete() });
+                                } catch (e) {
+                                        // Assert
+                                        assert.ok(true);
+                                }
                         });
                 });
 
                 QUnit.module('function: update', () => {
                         QUnit.test('should update the data', async assert => {
-                                assert.expect(9);
+                                assert.expect(10);
 
                                 // Arrange
                                 const db = mockFirebase.firestore();
@@ -601,6 +616,8 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
 
                                 // Act
                                 await ref.update({
+                                        'address.work': 'Bay Area',
+                                        'contact.mobile': 12345,
                                         age: _firebase2.default.firestore.FieldValue.delete(),
                                         dad: db.collection('users').doc('user_b'),
                                         modifiedOn: _firebase2.default.firestore.FieldValue.serverTimestamp(),
@@ -614,6 +631,7 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
                                 const {
                                         address,
                                         age,
+                                        contact,
                                         createdOn,
                                         dad,
                                         modifiedOn,
@@ -623,8 +641,9 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
                                         username
                                 } = snapshot.data();
 
-                                assert.deepEqual(address, { home: 'San Francisco', work: 'Silicon Valley' });
+                                assert.deepEqual(address, { home: 'San Francisco', work: 'Bay Area' });
                                 assert.equal(age, undefined);
+                                assert.deepEqual(contact, { mobile: 12345 });
                                 assert.deepEqual(createdOn.toDate(), new Date('2017-01-01'));
                                 assert.deepEqual(dad, db.collection('users').doc('user_b'));
                                 assert.ok(modifiedOn.toDate() instanceof Date);
@@ -644,6 +663,22 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
                                 try {
                                         // Act
                                         await ref.update({ name: 'user_100' });
+                                } catch (e) {
+                                        // Assert
+                                        assert.ok(true);
+                                }
+                        });
+
+                        QUnit.test('should throw error when updating data with an undefined value', async assert => {
+                                assert.expect(1);
+
+                                // Arrange
+                                const db = mockFirebase.firestore();
+                                const ref = db.collection('users').doc('user_a');
+
+                                try {
+                                        // Act
+                                        await ref.update({ name: undefined });
                                 } catch (e) {
                                         // Assert
                                         assert.ok(true);

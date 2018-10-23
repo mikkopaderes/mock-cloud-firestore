@@ -585,7 +585,7 @@ class DocumentReference {
       });
     }
 
-    Object.assign(this._data, this._parseData(data), { __isDirty__: false });
+    Object.assign(this._data, this._parseDataForSet(data, option), { __isDirty__: false });
 
     return Promise.resolve();
   }
@@ -595,7 +595,7 @@ class DocumentReference {
       throw new Error('Document doesn\'t exist');
     }
 
-    Object.assign(this._data, this._parseData(data));
+    Object.assign(this._data, this._parseDataForUpdate(data));
 
     return Promise.resolve();
   }
@@ -626,37 +626,8 @@ class DocumentReference {
     return ref;
   }
 
-  _parseData(newData) {
-    const parsedData = Object.assign({}, newData);
-
-    Object.keys(parsedData).forEach(key => {
-      if (parsedData[key]) {
-        if (parsedData[key] instanceof DocumentReference) {
-          parsedData[key] = (0, _path.buildPathFromReference)(parsedData[key]);
-        }
-
-        if (typeof parsedData[key] === 'object' && Object.prototype.hasOwnProperty.call(parsedData[key], '_methodName')) {
-          const { _methodName: methodName } = parsedData[key];
-
-          if (methodName === 'FieldValue.serverTimestamp') {
-            parsedData[key] = new Date();
-          } else if (methodName === 'FieldValue.arrayUnion') {
-            parsedData[key] = this._processArrayUnion(key, parsedData[key]);
-          } else if (methodName === 'FieldValue.arrayRemove') {
-            parsedData[key] = this._processArrayRemove(key, parsedData[key]);
-          } else if (methodName === 'FieldValue.delete') {
-            delete parsedData[key];
-            delete this._data[key];
-          }
-        }
-      }
-    });
-
-    return parsedData;
-  }
-
-  _processArrayUnion(key, arrayUnion) {
-    const newArray = [...this._data[key]];
+  _processArrayUnion(arrayUnion, oldArray = []) {
+    const newArray = [...oldArray];
 
     arrayUnion._elements.forEach(unionItem => {
       if (!newArray.find(item => item === unionItem)) {
@@ -667,14 +638,108 @@ class DocumentReference {
     return newArray;
   }
 
-  _processArrayRemove(key, arrayRemove) {
-    let newArray = [...this._data[key]];
+  _processArrayRemove(arrayRemove, oldArray = []) {
+    let newArray = [...oldArray];
 
     arrayRemove._elements.forEach(unionItem => {
       newArray = newArray.filter(item => item !== unionItem);
     });
 
     return newArray;
+  }
+
+  _parseValue(newValue, oldValue) {
+    let parsedValue = newValue;
+
+    if (newValue instanceof DocumentReference) {
+      parsedValue = (0, _path.buildPathFromReference)(newValue);
+    } else if (typeof newValue === 'object' && Object.prototype.hasOwnProperty.call(newValue, '_methodName')) {
+      const { _methodName: methodName } = newValue;
+
+      if (methodName === 'FieldValue.serverTimestamp') {
+        parsedValue = new Date();
+      } else if (methodName === 'FieldValue.arrayUnion') {
+        parsedValue = this._processArrayUnion(newValue, oldValue);
+      } else if (methodName === 'FieldValue.arrayRemove') {
+        parsedValue = this._processArrayRemove(newValue, oldValue);
+      } else if (methodName === 'FieldValue.delete') {
+        parsedValue = undefined;
+      }
+    }
+
+    return parsedValue;
+  }
+
+  _processNestedField(keys, value) {
+    let currentNewDataNode = {};
+    let currentOldDataNode;
+    let rootDataNode;
+
+    keys.forEach((key, index) => {
+      if (index === 0) {
+        currentNewDataNode[key] = Object.assign({}, this._data[key]);
+        currentNewDataNode = currentNewDataNode[key];
+        currentOldDataNode = this._data[key] || {};
+        rootDataNode = currentNewDataNode;
+      } else if (index < keys.length - 1) {
+        currentNewDataNode[key] = Object.assign({}, currentOldDataNode[key]);
+        currentNewDataNode = currentNewDataNode[key];
+        currentOldDataNode = currentOldDataNode[key];
+      } else {
+        currentNewDataNode[key] = this._parseValue(value, currentOldDataNode[key]);
+      }
+    });
+
+    return rootDataNode;
+  }
+
+  _parseDataForSet(newData, option) {
+    const parsedData = {};
+
+    Object.keys(newData).forEach(key => {
+      if (newData[key] === undefined) {
+        throw new Error(`Error: Function DocumentReference.set() called with invalid data. Unsupported field value: undefined (found in field ${key})`);
+      } else if (typeof newData[key] === 'object' && Object.prototype.hasOwnProperty.call(newData[key], '_methodName') && newData[key]._methodName === 'FieldValue.delete' && !option.merge) {
+        throw new Error(`Error: Function DocumentReference.set() called with invalid data. FieldValue.delete() cannot be used with set() unless you pass {merge:true} (found in field ${key})`);
+      }
+
+      const value = this._parseValue(newData[key], this._data[key]);
+
+      if (value === undefined) {
+        delete this._data[key];
+      } else {
+        parsedData[key] = value;
+      }
+    });
+
+    return parsedData;
+  }
+
+  _parseDataForUpdate(newData) {
+    const parsedData = {};
+
+    Object.keys(newData).forEach(key => {
+      if (newData[key] === undefined) {
+        throw new Error(`Error: Function DocumentReference.update() called with invalid data. Unsupported field value: undefined (found in field ${key})`);
+      }
+
+      const keyNodes = key.split('.');
+      let value;
+
+      if (keyNodes.length > 1) {
+        value = Object.assign({}, this._data[keyNodes[0]], this._processNestedField(keyNodes, newData[key]));
+      } else {
+        value = this._parseValue(newData[key], this._data[key]);
+      }
+
+      if (value === undefined) {
+        delete this._data[keyNodes[0]];
+      } else {
+        parsedData[keyNodes[0]] = value;
+      }
+    });
+
+    return parsedData;
   }
 }
 exports.default = DocumentReference;
