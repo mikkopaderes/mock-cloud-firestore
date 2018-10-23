@@ -148,7 +148,7 @@ class DocumentReference {
 
     if (newValue instanceof DocumentReference) {
       parsedValue = (0, _path.buildPathFromReference)(newValue);
-    } else if (typeof newValue === 'object' && Object.prototype.hasOwnProperty.call(newValue, '_methodName')) {
+    } else if (typeof newValue === 'object' && newValue !== null && Object.prototype.hasOwnProperty.call(newValue, '_methodName')) {
       const { _methodName: methodName } = newValue;
 
       if (methodName === 'FieldValue.serverTimestamp') {
@@ -194,7 +194,7 @@ class DocumentReference {
     Object.keys(newData).forEach(key => {
       if (newData[key] === undefined) {
         throw new Error(`Error: Function DocumentReference.set() called with invalid data. Unsupported field value: undefined (found in field ${key})`);
-      } else if (typeof newData[key] === 'object' && Object.prototype.hasOwnProperty.call(newData[key], '_methodName') && newData[key]._methodName === 'FieldValue.delete' && !option.merge) {
+      } else if (typeof newData[key] === 'object' && newData[key] !== null && Object.prototype.hasOwnProperty.call(newData[key], '_methodName') && newData[key]._methodName === 'FieldValue.delete' && !option.merge) {
         throw new Error(`Error: Function DocumentReference.set() called with invalid data. FieldValue.delete() cannot be used with set() unless you pass {merge:true} (found in field ${key})`);
       }
 
