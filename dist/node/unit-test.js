@@ -510,7 +510,7 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
 
                 QUnit.module('function: set', () => {
                         QUnit.test('should set the data using the non-merge option', async assert => {
-                                assert.expect(7);
+                                assert.expect(8);
 
                                 // Arrange
                                 const db = mockFirebase.firestore();
@@ -519,6 +519,7 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
                                 // Act
                                 await ref.set({
                                         'address.home': 'San Francisco',
+                                        age: null,
                                         name: 'user_a',
                                         dad: db.collection('users').doc('user_b'),
                                         modifiedOn: _firebase2.default.firestore.FieldValue.serverTimestamp(),
@@ -530,8 +531,9 @@ QUnit.module('Unit | mock-cloud-firestore', hooks => {
                                 const snapshot = await ref.get();
                                 const data = snapshot.data();
 
-                                assert.equal(Object.keys(data).length, 6);
+                                assert.equal(Object.keys(data).length, 7);
                                 assert.equal(data['address.home'], 'San Francisco');
+                                assert.equal(data.age, null);
                                 assert.deepEqual(data.dad, db.collection('users').doc('user_b'));
                                 assert.ok(data.modifiedOn.toDate() instanceof Date);
                                 assert.deepEqual(data.pinnedBooks, ['book_100']);

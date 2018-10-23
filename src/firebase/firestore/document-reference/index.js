@@ -130,6 +130,7 @@ export default class DocumentReference {
       parsedValue = buildPathFromReference(newValue);
     } else if (
       typeof newValue === 'object'
+      && newValue !== null
       && Object.prototype.hasOwnProperty.call(newValue, '_methodName')
     ) {
       const { _methodName: methodName } = newValue;
@@ -179,6 +180,7 @@ export default class DocumentReference {
         throw new Error(`Error: Function DocumentReference.set() called with invalid data. Unsupported field value: undefined (found in field ${key})`);
       } else if (
         typeof newData[key] === 'object'
+        && newData[key] !== null
         && Object.prototype.hasOwnProperty.call(newData[key], '_methodName')
         && newData[key]._methodName === 'FieldValue.delete'
         && !option.merge
