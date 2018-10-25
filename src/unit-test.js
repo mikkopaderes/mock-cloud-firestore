@@ -14,6 +14,7 @@ import fixtureData from './utils/test-helpers/fixture-data';
 let mockFirebase;
 
 QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
+  QUnit.config.testTimeout = 3000;
   hooks.beforeEach(() => {
     mockFirebase = new MockFirebase(fixtureData());
   });
@@ -238,6 +239,47 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
           assert.ok(snapshot instanceof QuerySnapshot);
           done();
         });
+      });
+
+      QUnit.test('should listen for changes in the data', (assert) => {
+        assert.expect(5);
+
+        // Arrange
+        const db = mockFirebase.firestore();
+
+        const snapshots = [];
+
+        const snapshotDone = assert.async();
+        const unsubscribe = db.collection('users').onSnapshot((snapshot) => {
+          snapshots.push(snapshot.docs.map(doc => doc.data()));
+          if (snapshots.length === 2) {
+            assert.equal(snapshots[0].length, 3);
+            assert.equal(snapshots[0][1].username, 'user_b');
+            assert.equal(snapshots[0][1].age, 10);
+            assert.equal(snapshots[1][1].username, 'user_b');
+            assert.equal(snapshots[1][1].age, 2);
+
+            snapshotDone();
+          }
+
+          if (snapshots.length > 2) {
+            assert.ok(false, 'Should not be called more than twice');
+          }
+        });
+
+        setTimeout(() => {
+          const unsubscribeDone = assert.async();
+          db.collection('users').doc('user_b').update({
+            age: 2,
+          });
+          unsubscribe();
+          setTimeout(() => {
+            db.collection('users').doc('user_b').update({
+              age: 3,
+            });
+            unsubscribeDone();
+          }, 100);
+        }, 100);
       });
     });
 
@@ -473,6 +515,45 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
           assert.ok(snapshot instanceof DocumentSnapshot);
           done();
         });
+      });
+
+      QUnit.test('should listen for changes in the data', (assert) => {
+        assert.expect(4);
+
+        // Arrange
+        const onSnapshotDone = assert.async();
+        const db = mockFirebase.firestore();
+
+        const snapshots = [];
+        // Act
+        const unsubscribe = db.collection('users').doc('user_a').onSnapshot((snapshot) => {
+          // Assert
+          assert.ok(snapshot instanceof DocumentSnapshot);
+          snapshots.push(snapshot.data());
+          if (snapshots.length === 2) {
+            assert.equal(snapshots[0].age, 15);
+            assert.equal(snapshots[1].age, 10);
+            onSnapshotDone();
+          }
+
+          if (snapshots.length > 2) {
+            assert.ok(false, 'Should not be called more than twice');
+          }
+        });
+
+        const unsubscribeDone = assert.async();
+        setTimeout(() => {
+          db.collection('users').doc('user_a').update({
+            age: 10,
+          });
+          unsubscribe();
+          setTimeout(() => {
+            db.collection('users').doc('user_b').update({
+              age: 2,
+            });
+            unsubscribeDone();
+          }, 100);
+        }, 100);
       });
     });
 
@@ -1175,6 +1256,47 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         // Assert
         assert.ok(typeof result === 'function');
       });
+
+      QUnit.test('should listen for changes in the data', (assert) => {
+        assert.expect(1);
+
+        // Arrange
+        const db = mockFirebase.firestore();
+
+        const snapshots = [];
+
+        // Act
+        const snapshotDone = assert.async();
+        const unsubscribe = db.collection('users').orderBy('age').onSnapshot((snapshot) => {
+          snapshots.push(snapshot.docs.map(doc => [doc.data().age, doc.data().username]));
+          if (snapshots.length === 2) {
+            assert.deepEqual(snapshots, [
+              [[10, 'user_b'], [15, 'user_a'], [20, 'user_c']],
+              [[15, 'user_a'], [16, 'user_b'], [20, 'user_c']],
+            ]);
+            snapshotDone();
+          }
+
+          if (snapshots.length > 2) {
+            assert.ok(false, 'Should not be called more than twice');
+          }
+        });
+
+        setTimeout(() => {
+          const unsubscribeDone = assert.async();
+          db.collection('users').doc('user_b').update({
+            age: 16,
+          });
+          unsubscribe();
+          setTimeout(() => {
+            db.collection('users').doc('user_b').update({
+              age: 2,
+            });
+            unsubscribeDone();
+          }, 100);
+        }, 100);
+      });
+
 
       QUnit.test('should fire callback', (assert) => {
         assert.expect(1);

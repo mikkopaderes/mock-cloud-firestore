@@ -27,6 +27,21 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 class Firestore {
   constructor(data) {
     this._data = data;
+    this._listeners = [];
+  }
+
+  _dataChanged() {
+    const listeners = this._listeners.splice(0);
+    setTimeout(() => listeners.forEach(listener => listener()), 10);
+  }
+
+  _onSnapshot(listener) {
+    this._listeners.push(listener);
+    return () => {
+      if (this._listeners.indexOf(listener) > -1) {
+        this._listeners.splice(this._listeners.indexOf(listener), 1);
+      }
+    };
   }
 
   batch() {
