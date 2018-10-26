@@ -888,8 +888,9 @@ var _firestore2 = _interopRequireDefault(_firestore);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class MockFirebase {
-  constructor(data) {
+  constructor(data, options) {
     this._data = data;
+    this._options = options;
     this.firestore.FieldValue = new _fieldValue2.default();
   }
 
@@ -898,7 +899,7 @@ class MockFirebase {
   }
 
   firestore() {
-    return new _firestore2.default(this._data);
+    return new _firestore2.default(this._data, this._options);
   }
 }
 exports.default = MockFirebase;
@@ -972,23 +973,30 @@ var _reference2 = _interopRequireDefault(_reference);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class Firestore {
-  constructor(data) {
+  constructor(data, options) {
     this._data = data;
+    this._options = options || {};
     this._listeners = [];
   }
 
   _dataChanged() {
-    const listeners = this._listeners.splice(0);
-    setTimeout(() => listeners.forEach(listener => listener()), 10);
+    if (this._options.isNaiveSnapshotListenerEnabled) {
+      const listeners = this._listeners.splice(0);
+      setTimeout(() => listeners.forEach(listener => listener()), 10);
+    }
   }
 
   _onSnapshot(listener) {
-    this._listeners.push(listener);
-    return () => {
-      if (this._listeners.indexOf(listener) > -1) {
-        this._listeners.splice(this._listeners.indexOf(listener), 1);
-      }
-    };
+    if (this._options.isNaiveSnapshotListenerEnabled) {
+      this._listeners.push(listener);
+      return () => {
+        if (this._listeners.indexOf(listener) > -1) {
+          this._listeners.splice(this._listeners.indexOf(listener), 1);
+        }
+      };
+    }
+
+    return () => {};
   }
 
   batch() {

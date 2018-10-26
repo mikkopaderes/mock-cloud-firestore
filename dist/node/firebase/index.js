@@ -15,8 +15,9 @@ var _firestore2 = _interopRequireDefault(_firestore);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class MockFirebase {
-  constructor(data) {
+  constructor(data, options) {
     this._data = data;
+    this._options = options;
     this.firestore.FieldValue = new _fieldValue2.default();
   }
 
@@ -25,7 +26,7 @@ class MockFirebase {
   }
 
   firestore() {
-    return new _firestore2.default(this._data);
+    return new _firestore2.default(this._data, this._options);
   }
 }
 exports.default = MockFirebase;

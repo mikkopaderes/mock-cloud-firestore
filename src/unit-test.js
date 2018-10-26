@@ -16,7 +16,7 @@ let mockFirebase;
 QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
   QUnit.config.testTimeout = 3000;
   hooks.beforeEach(() => {
-    mockFirebase = new MockFirebase(fixtureData());
+    mockFirebase = new MockFirebase(fixtureData(), { isNaiveSnapshotListenerEnabled: true });
   });
 
   QUnit.module('CollectionReference', () => {
