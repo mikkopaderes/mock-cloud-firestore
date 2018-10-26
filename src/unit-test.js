@@ -1375,7 +1375,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
 
         assert.deepEqual(snapshot1b.data(), { nested: { prop: {} } });
         assert.deepEqual(snapshot2b.data(), { nested: { prop: { deep: 'updated' } } });
-        assert.deepEqual(snapshot2c.data(), { 'other-nested': { prop: { deep: true } } });
+        assert.deepEqual(snapshot3b.data(), { 'other-nested': { prop: { deep: true } } });
       });
     });
   });
