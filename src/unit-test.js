@@ -1334,4 +1334,49 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
       });
     });
   });
+  QUnit.module('WriteBatch | nested values', () => {
+    QUnit.module('function: commit', () => {
+      QUnit.test('should commit all of the writes in the write batch', async (assert) => {
+        assert.expect(7);
+
+        // Arrange
+        const db = mockFirebase.firestore();
+        const batch = db.batch();
+        const ref1 = db.collection('users').doc('_1');
+        const ref2 = db.collection('users').doc('_2');
+        const ref3 = db.collection('users').doc('_3');
+        const ref4 = db.collection('users').doc('_4');
+
+        batch.set(ref1, { 'nested.prop.deep': true });
+        batch.set(ref2, { 'nested.prop.deep': true });
+        batch.set(ref3, { 'nested.prop.deep': true });
+        // Act
+        await batch.commit();
+        const snapshot1 = await ref1.get();
+        const snapshot2 = await ref2.get();
+        const snapshot3 = await ref3.get();
+
+        assert.deepEqual(snapshot1.data(), { nested: { prop: { deep: true } } });
+        assert.deepEqual(snapshot2.data(), { nested: { prop: { deep: true } } });
+        assert.deepEqual(snapshot3.data(), { nested: { prop: { deep: true } } });
+
+        const batch2 = db.batch();
+        batch2.update(ref1, { 'nested.prop.deep': mockFirebase.firestore.FieldValue.delete() });
+        batch2.update(ref2, { 'nested.prop.deep': 'updated' });
+        batch2.set(ref3, { 'other-nested.prop.deep': true });
+
+        // Act
+        await batch2.commit();
+
+        // Assert
+        const snapshot1b = await ref1.get();
+        const snapshot2b = await ref2.get();
+        const snapshot3b = await ref3.get();
+
+        assert.deepEqual(snapshot1b.data(), { nested: { prop: {} } });
+        assert.deepEqual(snapshot2b.data(), { nested: { prop: { deep: 'updated' } } });
+        assert.deepEqual(snapshot2c.data(), { 'other-nested': { prop: { deep: true } } });
+      });
+    });
+  });
 });
