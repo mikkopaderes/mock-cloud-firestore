@@ -230,7 +230,7 @@ class CollectionReference {
   async add(data) {
     const id = (0, _generateIdForRecord2.default)();
     const dataNode = (0, _getOrSetDataNode2.default)(this._data, '__doc__', id);
-    const ref = new _documentReference2.default(id, dataNode, this);
+    const ref = new _documentReference2.default(id, dataNode, this, this._firestore);
 
     await ref.set(data);
 
@@ -260,7 +260,9 @@ class CollectionReference {
   onSnapshot(onNext) {
     setTimeout(() => onNext((0, _query.querySnapshot)(this._data, this)), 10);
 
-    return () => {};
+    return this._firestore._onSnapshot(() => {
+      onNext((0, _query.querySnapshot)(this._data, this));
+    });
   }
 
   orderBy(...args) {
@@ -282,7 +284,7 @@ class CollectionReference {
   _doc(id) {
     const data = (0, _getOrSetDataNode2.default)(this._data, '__doc__', id);
 
-    return new _documentReference2.default(id, data, this, this.firestore);
+    return new _documentReference2.default(id, data, this, this._firestore);
   }
 
   _getDocumentReference(path) {
@@ -573,7 +575,9 @@ class DocumentReference {
 
     setTimeout(() => onNext(documentSnapshot), 10);
 
-    return () => {};
+    return this._firestore._onSnapshot(() => {
+      onNext(documentSnapshot);
+    });
   }
 
   set(data, option = {}) {
@@ -586,7 +590,7 @@ class DocumentReference {
     }
 
     Object.assign(this._data, this._parseDataForSet(data, option), { __isDirty__: false });
-
+    this._firestore._dataChanged();
     return Promise.resolve();
   }
 
@@ -596,7 +600,7 @@ class DocumentReference {
     }
 
     Object.assign(this._data, this._parseDataForUpdate(data));
-
+    this._firestore._dataChanged();
     return Promise.resolve();
   }
 
@@ -884,8 +888,9 @@ var _firestore2 = _interopRequireDefault(_firestore);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class MockFirebase {
-  constructor(data) {
+  constructor(data, options) {
     this._data = data;
+    this._options = options;
     this.firestore.FieldValue = new _fieldValue2.default();
   }
 
@@ -894,7 +899,7 @@ class MockFirebase {
   }
 
   firestore() {
-    return new _firestore2.default(this._data);
+    return new _firestore2.default(this._data, this._options);
   }
 }
 exports.default = MockFirebase;
@@ -968,8 +973,30 @@ var _reference2 = _interopRequireDefault(_reference);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class Firestore {
-  constructor(data) {
+  constructor(data, options) {
     this._data = data;
+    this._options = options || {};
+    this._listeners = [];
+  }
+
+  _dataChanged() {
+    if (this._options.isNaiveSnapshotListenerEnabled) {
+      const listeners = this._listeners.splice(0);
+      setTimeout(() => listeners.forEach(listener => listener()), 10);
+    }
+  }
+
+  _onSnapshot(listener) {
+    if (this._options.isNaiveSnapshotListenerEnabled) {
+      this._listeners.push(listener);
+      return () => {
+        if (this._listeners.indexOf(listener) > -1) {
+          this._listeners.splice(this._listeners.indexOf(listener), 1);
+        }
+      };
+    }
+
+    return () => {};
   }
 
   batch() {
@@ -1072,9 +1099,46 @@ var _query = __webpack_require__(4);
 
 class Query {
   constructor(data, collection) {
-    this._data = Object.assign({}, data);
+    this._data = data;
     this._collection = collection;
     this._option = {};
+  }
+
+  _querySnapshot() {
+    const data = Object.assign({}, this._data);
+
+    if (this._option.orderBy) {
+      data.__doc__ = (0, _query.orderBy)(data.__doc__, this._option.orderBy, this._option.orderByDirection);
+    }
+
+    if (this._option.endAt) {
+      data.__doc__ = (0, _query.endAt)(data.__doc__, this._option.orderBy, this._option.endAt);
+    }
+
+    if (this._option.endBefore) {
+      data.__doc__ = (0, _query.endBefore)(data.__doc__, this._option.orderBy, this._option.endBefore);
+    }
+
+    if (this._option.limit) {
+      data.__doc__ = (0, _query.limit)(data.__doc__, this._option.limit);
+    }
+
+    if (this._option.startAt) {
+      data.__doc__ = (0, _query.startAt)(data.__doc__, this._option.orderBy, this._option.startAt);
+    }
+
+    if (this._option.startAfter) {
+      data.__doc__ = (0, _query.startAfter)(data.__doc__, this._option.orderBy, this._option.startAfter);
+    }
+
+    if (this._option.where) {
+      Object.keys(this._option.where).forEach(prop => {
+        const { operator, value } = this._option.where[prop];
+        data.__doc__ = (0, _query.where)(data.__doc__, prop, operator, value);
+      });
+    }
+
+    return data;
   }
 
   get firestore() {
@@ -1086,7 +1150,6 @@ class Query {
       throw new Error('endAt() queries requires orderBy()');
     }
 
-    this._data.__doc__ = (0, _query.endAt)(this._data.__doc__, this._option.orderBy, value);
     this._option.endAt = value;
 
     return this;
@@ -1097,32 +1160,31 @@ class Query {
       throw new Error('endBefore() queries requires orderBy()');
     }
 
-    this._data.__doc__ = (0, _query.endBefore)(this._data.__doc__, this._option.orderBy, value);
     this._option.endBefore = value;
 
     return this;
   }
 
   get() {
-    return Promise.resolve((0, _query.querySnapshot)(this._data, this._collection));
+    return Promise.resolve((0, _query.querySnapshot)(this._querySnapshot(), this._collection));
   }
 
   limit(threshold) {
-    this._data.__doc__ = (0, _query.limit)(this._data.__doc__, threshold);
     this._option.limit = threshold;
-
     return this;
   }
 
   onSnapshot(onNext) {
-    setTimeout(() => onNext((0, _query.querySnapshot)(this._data, this._collection)), 10);
+    setTimeout(() => onNext((0, _query.querySnapshot)(this._querySnapshot(), this._collection)), 10);
 
-    return () => {};
+    return this.firestore._onSnapshot(() => {
+      onNext((0, _query.querySnapshot)(this._querySnapshot(), this._collection));
+    });
   }
 
   orderBy(key, order) {
-    this._data.__doc__ = (0, _query.orderBy)(this._data.__doc__, key, order);
     this._option.orderBy = key;
+    this._option.orderByDirection = order;
 
     return this;
   }
@@ -1132,7 +1194,6 @@ class Query {
       throw new Error('startAfter queries requires orderBy()');
     }
 
-    this._data.__doc__ = (0, _query.startAfter)(this._data.__doc__, this._option.orderBy, value);
     this._option.startAfter = value;
 
     return this;
@@ -1143,16 +1204,13 @@ class Query {
       throw new Error('startAt() queries requires orderBy()');
     }
 
-    this._data.__doc__ = (0, _query.startAt)(this._data.__doc__, this._option.orderBy, value);
     this._option.startAt = value;
 
     return this;
   }
 
   where(prop, operator, value) {
-    this._data.__doc__ = (0, _query.where)(this._data.__doc__, prop, operator, value);
-    this._option.where = { prop: { operator, value } };
-
+    this._option.where = { [prop]: { operator, value } };
     return this;
   }
 

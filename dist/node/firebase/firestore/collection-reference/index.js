@@ -53,7 +53,7 @@ class CollectionReference {
   async add(data) {
     const id = (0, _generateIdForRecord2.default)();
     const dataNode = (0, _getOrSetDataNode2.default)(this._data, '__doc__', id);
-    const ref = new _documentReference2.default(id, dataNode, this);
+    const ref = new _documentReference2.default(id, dataNode, this, this._firestore);
 
     await ref.set(data);
 
@@ -83,7 +83,9 @@ class CollectionReference {
   onSnapshot(onNext) {
     setTimeout(() => onNext((0, _query.querySnapshot)(this._data, this)), 10);
 
-    return () => {};
+    return this._firestore._onSnapshot(() => {
+      onNext((0, _query.querySnapshot)(this._data, this));
+    });
   }
 
   orderBy(...args) {
@@ -105,7 +107,7 @@ class CollectionReference {
   _doc(id) {
     const data = (0, _getOrSetDataNode2.default)(this._data, '__doc__', id);
 
-    return new _documentReference2.default(id, data, this, this.firestore);
+    return new _documentReference2.default(id, data, this, this._firestore);
   }
 
   _getDocumentReference(path) {

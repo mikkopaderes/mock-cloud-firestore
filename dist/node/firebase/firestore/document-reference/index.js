@@ -68,7 +68,9 @@ class DocumentReference {
 
     setTimeout(() => onNext(documentSnapshot), 10);
 
-    return () => {};
+    return this._firestore._onSnapshot(() => {
+      onNext(documentSnapshot);
+    });
   }
 
   set(data, option = {}) {
@@ -81,7 +83,7 @@ class DocumentReference {
     }
 
     Object.assign(this._data, this._parseDataForSet(data, option), { __isDirty__: false });
-
+    this._firestore._dataChanged();
     return Promise.resolve();
   }
 
@@ -91,7 +93,7 @@ class DocumentReference {
     }
 
     Object.assign(this._data, this._parseDataForUpdate(data));
-
+    this._firestore._dataChanged();
     return Promise.resolve();
   }
 
