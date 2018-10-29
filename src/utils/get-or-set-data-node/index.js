@@ -1,6 +1,6 @@
 /* eslint no-param-reassign: 'off' */
 
-export default function getOrSetDataNode(data = {}, path, id) {
+export default function getOrSetDataNode(data, path, id) {
   if (!Object.prototype.hasOwnProperty.call(data, path)) {
     data[path] = {};
   }
