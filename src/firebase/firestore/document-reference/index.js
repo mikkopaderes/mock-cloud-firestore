@@ -63,7 +63,15 @@ export default class DocumentReference {
     }
 
     Object.assign(this._data, this._parseDataForSet(data, option), { __isDirty__: false });
+
+    Object.keys(this._data).forEach((key) => {
+      if (this._data[key] === undefined) {
+        delete this._data[key];
+      }
+    });
+
     this._firestore._dataChanged();
+
     return Promise.resolve();
   }
 
@@ -73,7 +81,15 @@ export default class DocumentReference {
     }
 
     Object.assign(this._data, this._parseDataForUpdate(data));
+
+    Object.keys(this._data).forEach((key) => {
+      if (this._data[key] === undefined) {
+        delete this._data[key];
+      }
+    });
+
     this._firestore._dataChanged();
+
     return Promise.resolve();
   }
 
@@ -151,23 +167,29 @@ export default class DocumentReference {
     return parsedValue;
   }
 
-  _processNestedField(keys, value) {
+  _processNestedField(keys, value, currentData) {
     let currentNewDataNode = {};
     let currentOldDataNode;
     let rootDataNode;
 
     keys.forEach((key, index) => {
       if (index === 0) {
-        currentNewDataNode[key] = Object.assign({}, this._data[key]);
+        currentNewDataNode[key] = currentData[key] || {};
         currentNewDataNode = currentNewDataNode[key];
-        currentOldDataNode = this._data[key] || {};
+        currentOldDataNode = currentData[key] || {};
         rootDataNode = currentNewDataNode;
       } else if (index < keys.length - 1) {
-        currentNewDataNode[key] = Object.assign({}, currentOldDataNode[key]);
+        currentNewDataNode[key] = currentOldDataNode[key] || {};
         currentNewDataNode = currentNewDataNode[key];
         currentOldDataNode = currentOldDataNode[key];
       } else {
-        currentNewDataNode[key] = this._parseValue(value, currentOldDataNode[key]);
+        const newValue = this._parseValue(value, currentOldDataNode[key]);
+
+        if (newValue === undefined) {
+          delete currentNewDataNode[key];
+        } else {
+          currentNewDataNode[key] = newValue;
+        }
       }
     });
 
@@ -175,7 +197,7 @@ export default class DocumentReference {
   }
 
   _parseDataForSet(newData, option) {
-    const parsedData = {};
+    const parsedData = Object.assign({}, this._data);
 
     Object.keys(newData).forEach((key) => {
       if (newData[key] === undefined) {
@@ -190,20 +212,14 @@ export default class DocumentReference {
         throw new Error(`Error: Function DocumentReference.set() called with invalid data. FieldValue.delete() cannot be used with set() unless you pass {merge:true} (found in field ${key})`);
       }
 
-      const value = this._parseValue(newData[key], this._data[key]);
-
-      if (value === undefined) {
-        delete this._data[key];
-      } else {
-        parsedData[key] = value;
-      }
+      parsedData[key] = this._parseValue(newData[key], parsedData[key]);
     });
 
     return parsedData;
   }
 
   _parseDataForUpdate(newData) {
-    const parsedData = {};
+    const parsedData = Object.assign({}, this._data);
 
     Object.keys(newData).forEach((key) => {
       if (newData[key] === undefined) {
@@ -211,22 +227,14 @@ export default class DocumentReference {
       }
 
       const keyNodes = key.split('.');
-      let value;
 
       if (keyNodes.length > 1) {
-        value = Object.assign(
+        parsedData[keyNodes[0]] = Object.assign(
           {},
-          this._data[keyNodes[0]],
-          this._processNestedField(keyNodes, newData[key]),
+          this._processNestedField(keyNodes, newData[key], parsedData),
         );
       } else {
-        value = this._parseValue(newData[key], this._data[key]);
-      }
-
-      if (value === undefined) {
-        delete this._data[keyNodes[0]];
-      } else {
-        parsedData[keyNodes[0]] = value;
+        parsedData[keyNodes[0]] = this._parseValue(newData[key], parsedData[key]);
       }
     });
 
