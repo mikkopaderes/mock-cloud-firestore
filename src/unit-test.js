@@ -1,14 +1,14 @@
 import sinon from 'sinon';
 
+import firebase from 'firebase';
 import CollectionReference from './firebase/firestore/collection-reference';
 import DocumentReference from './firebase/firestore/document-reference';
 import DocumentSnapshot from './firebase/firestore/document-snapshot';
 import FieldValue from './firebase/firestore/field-value';
 import Firestore from './firebase/firestore';
-import MockFirebase from './';
+import MockFirebase from '.';
 import QuerySnapshot from './firebase/firestore/query-snapshot';
 import Query from './firebase/firestore/query';
-import firebase from 'firebase';
 import fixtureData from './utils/test-helpers/fixture-data';
 
 let mockFirebase;
