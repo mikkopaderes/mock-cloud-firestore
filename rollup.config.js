@@ -9,6 +9,7 @@ export default [
     output: { file: 'lib/mock-cloud-firestore.js', format: 'cjs' },
     plugins: [
       resolve(),
+      commonjs(),
       babel({
         exclude: 'node_modules/**',
       }),
@@ -21,6 +22,7 @@ export default [
     output: { file: 'es/mock-cloud-firestore.js', format: 'es' },
     plugins: [
       resolve(),
+      commonjs(),
       babel({
         exclude: 'node_modules/**',
       }),
