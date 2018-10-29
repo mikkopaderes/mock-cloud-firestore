@@ -600,7 +600,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         // Act
         await ref.set({
           'address.home': 'San Francisco',
-          name: 'user_a',
+          name: firebase.firestore.FieldValue.delete(),
           dad: db.collection('users').doc('user_b'),
           modifiedOn: firebase.firestore.FieldValue.serverTimestamp(),
           pinnedBooks: firebase.firestore.FieldValue.arrayUnion('book_100'),
@@ -611,7 +611,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         const snapshot = await ref.get();
         const data = snapshot.data();
 
-        assert.equal(Object.keys(data).length, 10);
+        assert.equal(Object.keys(data).length, 9);
         assert.deepEqual(data.address, { home: 'San Francisco', work: 'Silicon Valley' });
         assert.equal(data['address.home'], 'San Francisco');
         assert.equal(data.age, 15);
@@ -620,7 +620,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         assert.ok(data.modifiedOn.toDate() instanceof Date);
         assert.deepEqual(data.pinnedBooks, ['book_1', 'book_2', 'book_100']);
         assert.deepEqual(data.pinnedFoods, ['food_2']);
-        assert.equal(data.name, 'user_a');
+        assert.equal(data.name, undefined);
         assert.equal(data.username, 'user_a');
       });
 
@@ -659,7 +659,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
 
     QUnit.module('function: update', () => {
       QUnit.test('should update the data', async (assert) => {
-        assert.expect(10);
+        assert.expect(11);
 
         // Arrange
         const db = mockFirebase.firestore();
@@ -668,6 +668,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         // Act
         await ref.update({
           'address.work': 'Bay Area',
+          'address.home': firebase.firestore.FieldValue.delete(),
           'contact.mobile': 12345,
           age: firebase.firestore.FieldValue.delete(),
           dad: db.collection('users').doc('user_b'),
@@ -692,7 +693,8 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
           username,
         } = snapshot.data();
 
-        assert.deepEqual(address, { home: 'San Francisco', work: 'Bay Area' });
+        assert.equal(Object.keys(snapshot.data()).length, 9);
+        assert.deepEqual(address, { work: 'Bay Area' });
         assert.equal(age, undefined);
         assert.deepEqual(contact, { mobile: 12345 });
         assert.deepEqual(createdOn.toDate(), new Date('2017-01-01'));
