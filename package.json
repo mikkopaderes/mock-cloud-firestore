@@ -2,15 +2,25 @@
   "name": "mock-cloud-firestore",
   "version": "0.7.0",
   "description": "Mock library for Cloud Firestore",
-  "main": "dist/node/index.js",
-  "repository": "https://github.com/rmmmp/mock-cloud-firestore",
+  "main": "lib/mock-cloud-firestore.js",
+  "module": "es/mock-cloud-firestore.js",
+  "files": [
+    "dist",
+    "es",
+    "lib",
+    "src"
+  ],
   "scripts": {
-    "build-browser": "webpack",
-    "build-node": "del-cli dist/**/* && babel src -d dist/node",
-    "build": "npm-run-all build-node build-browser",
-    "lint": "eslint src/**/*.js",
-    "qunit": "qunit dist/node/**/*-test.js",
-    "test": "npm-run-all --continue-on-error build lint qunit"
+    "clean": "rimraf dist es lib tmp",
+    "build": "rollup -c",
+    "lint": "eslint *.js src/**/*.js",
+    "qunit": "babel src --out-dir tmp && qunit tmp/**/*-test.js",
+    "test": "npm-run-all --continue-on-error lint qunit",
+    "prepare": "npm run clean && npm test && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rmmmp/mock-cloud-firestore.git"
   },
   "keywords": [
     "firebase",
@@ -19,19 +29,26 @@
   ],
   "author": "Mikko Paderes",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rmmmp/mock-cloud-firestore/issues"
+  },
+  "homepage": "https://github.com/rmmmp/mock-cloud-firestore#readme",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-preset-env": "^1.7.0",
-    "del-cli": "^1.1.0",
-    "eslint": "^4.17.0",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-config-rmmmp": "^0.2.2",
-    "eslint-plugin-import": "^2.7.0",
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "eslint": "^5.3.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-rmmmp": "^0.3.0",
+    "eslint-plugin-import": "^2.14.0",
     "firebase": "^5.5.1",
-    "npm-run-all": "^4.1.2",
-    "qunit": "^2.5.0",
-    "sinon": "^4.3.0",
-    "webpack": "^3.11.0"
+    "npm-run-all": "^4.1.3",
+    "qunit": "^2.7.1",
+    "rimraf": "^2.6.2",
+    "rollup": "^0.66.6",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "sinon": "^7.1.0"
   }
 }

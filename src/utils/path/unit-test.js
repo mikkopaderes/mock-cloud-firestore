@@ -1,4 +1,4 @@
-import { buildPathFromReference, cleanPath, validatePath } from './';
+import { buildPathFromReference, cleanPath, validatePath } from '.';
 
 QUnit.module('Unit | Util | path', () => {
   QUnit.module('function: buildPathFromReference', () => {

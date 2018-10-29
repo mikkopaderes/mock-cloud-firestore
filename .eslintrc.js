@@ -14,6 +14,8 @@ module.exports = {
     'require-jsdoc': 'off',
     'no-underscore-dangle': 'off',
     'class-methods-use-this': 'off',
-    'import/first': 'off',
+
+    // FIXME: Ideally this should be turned on
+    'import/no-cycle': 'off',
   },
 };

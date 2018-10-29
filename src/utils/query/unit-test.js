@@ -7,8 +7,8 @@ import {
   startAfter,
   startAt,
   where,
-} from './';
-import MockFirebase from '../../';
+} from '.';
+import MockFirebase from '../..';
 
 QUnit.module('Unit | Util | query', () => {
   QUnit.module('function: endAt', () => {

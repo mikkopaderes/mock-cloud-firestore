@@ -4,57 +4,57 @@ Mock library for Cloud Firestore
 
 ## Installation
 
-Install the library by running this command:
+Assuming that you're using [npm](https://www.npmjs.com/) as your package manager:
 
-```bash
+```
 npm install --save-dev mock-cloud-firestore
 ```
 
-### Importing
+If you're not using any module bundler, you can use the precompiled [UMD](https://github.com/umdjs/umd) builds in the `dist` folder. For this build, `MockFirebase` would be available as a `window.MockFirebase` global variable. You can download the files at [unpkg](https://unpkg.com/mock-cloud-firestore/).
 
-#### Browsers
-
-Import the `mock-cloud-firestore.js` file from the `dist/browser` folder in your app
-
-#### Node.js
-
-Import the library by using `require('mock-cloud-firestore')`
-
-## Usage
+## API
 
 ### `MockFirebase`
 
-`MockFirebase` class is provided to replace your app's Firebase instance
+This accepts the following option:
+
+- `isNaiveSnapshotListenerEnabled` - When true, changes to **any** data would cause the `onSnapshot()` to fire. Otherwise, `onSnapshot()` won't get realtime updates.
+
+#### Params:
+
+| Name        | Type   | Attributes | Description |
+| ----------- | -------| ---------- | ----------- |
+| fixtureData | Object |            |             |
+| option      | Object | optional   |             |
+
+## Usage
+
+You'll need to replace the Firebase instance that you're app is using. That would depend on how you use it. Below are some sample use-cases:
+
+**Example 1 - Overriding the Firebase global variable**
 
 ```javascript
-const firebase = new MockFirebase(fixtureData);
-```
+import MockFirebase from 'mock-cloud-firestore';
 
-> Replacing the Firebase instance depends on how your app consumes it. As an example, you could do `window.firebase = new MockFirebase(fixtureData)` on a browser environment.
-
-### Using in test environment
-
-If you're using firebase as-is like a global variable you could do:
-
-```javascript
 window.firebase = new MockFirebase(fixtureData);
+
 const db = firebase.firestore();
 
 db.collection('users').add({ ... });
 ```
 
-If you're passing firebase as a param in a function (dependency injection) you could do:
+**Example 2 - Dependency injection**
 
 ```javascript
-function initialiseApp(firebaseDependency) {
-  const db = firebaseDependency.firestore();
+import MockFirebase from 'mock-cloud-firestore';
 
-  db.collection('users').add({ ... });
+function addUser(firebase) {
+  return firebase.firestore.collection('users').add({ ... });
 }
 
-// then in your test file
-const firebaseDependency = new MockFirebase(fixtureData);
-initialiseApp(firebaseDependency);
+const firebase = new MockFirebase(fixtureData);
+
+addUser(firebase);
 ```
 
 ### Fixture Data
@@ -119,7 +119,8 @@ Here's whats going on with the example above
 Not all APIs are supported. Here are some unsupported major ones
 
 - Transaction
-- `onSnapshot()` is supported but doesn't get realtime updates
+- `onSnapshot()` is supported but doesn't get realtime updates by default.
+  - A naive listener is available in that changes to **any** data would cause it to fire.
 
 > You can look into the source code to see if an API you're using is supported. I've written it in a way that you could quickly scan the APIs.
 

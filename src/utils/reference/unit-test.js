@@ -1,4 +1,4 @@
-import validateReference from './';
+import validateReference from '.';
 
 QUnit.module('Unit | Util | reference', () => {
   QUnit.module('function: validateReference', () => {

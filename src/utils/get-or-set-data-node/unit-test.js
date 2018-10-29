@@ -1,4 +1,4 @@
-import getOrSetDataNode from './';
+import getOrSetDataNode from '.';
 
 QUnit.module('Unit | Util | get-or-set-data-node', () => {
   QUnit.module('function: getOrSetDataNode', () => {
