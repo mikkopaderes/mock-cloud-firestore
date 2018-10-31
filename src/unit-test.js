@@ -669,7 +669,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         await ref.update({
           'address.work': 'Bay Area',
           'address.home': firebase.firestore.FieldValue.delete(),
-          'contact.mobile': 12345,
+          'contact.mobile.personal': 67890,
           age: firebase.firestore.FieldValue.delete(),
           dad: db.collection('users').doc('user_b'),
           modifiedOn: firebase.firestore.FieldValue.serverTimestamp(),
@@ -696,7 +696,9 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         assert.equal(Object.keys(snapshot.data()).length, 9);
         assert.deepEqual(address, { work: 'Bay Area' });
         assert.equal(age, undefined);
-        assert.deepEqual(contact, { mobile: 12345 });
+        assert.deepEqual(contact, {
+          mobile: { personal: 67890 },
+        });
         assert.deepEqual(createdOn.toDate(), new Date('2017-01-01'));
         assert.deepEqual(dad, db.collection('users').doc('user_b'));
         assert.ok(modifiedOn.toDate() instanceof Date);

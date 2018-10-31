@@ -181,7 +181,7 @@ export default class DocumentReference {
       } else if (index < keys.length - 1) {
         currentNewDataNode[key] = currentOldDataNode[key] || {};
         currentNewDataNode = currentNewDataNode[key];
-        currentOldDataNode = currentOldDataNode[key];
+        currentOldDataNode = currentOldDataNode[key] || {};
       } else {
         const newValue = this._parseValue(value, currentOldDataNode[key]);
 
