@@ -3,8 +3,13 @@ import CollectionReference from './collection-reference';
 import WriteBatch from './write-batch';
 import getOrSetDataNode from '../../utils/get-or-set-data-node';
 import validateReference from '../../utils/reference';
+import DocumentSnapshot from './document-snapshot';
+import QuerySnapshot from './query-snapshot';
 
 export default class Firestore {
+  static DocumentSnapshot = DocumentSnapshot;
+  static QuerySnapshot = QuerySnapshot;
+
   constructor(data, options) {
     this._data = data;
     this._options = options || {};
