@@ -1491,6 +1491,33 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         assert.equal(snapshot3Username, 'user_b');
         assert.deepEqual(snapshot4.data(), { username: 'user_100' });
       });
+
+      QUnit.test('should commit all of the writes in order', async (assert) => {
+        assert.expect(2);
+
+        // Arrange
+        const db = mockFirebase.firestore();
+        const batch = db.batch();
+        const ref1 = db.collection('users').doc();
+        const ref2 = db.collection('users').doc('user_a');
+
+        batch.set(ref1, { username: 'new_user' });
+        batch.delete(ref1);
+
+        batch.delete(ref2);
+        batch.set(ref2, { username: 'new_user_2' });
+        batch.update(ref2, { username: 'new_user_3' });
+
+        // Act
+        await batch.commit();
+
+        // Assert
+        const snapshot1 = await ref1.get();
+        const snapshot2 = await ref2.get();
+
+        assert.equal(snapshot1.data(), undefined);
+        assert.deepEqual(snapshot2.data(), { username: 'new_user_3' });
+      });
     });
   });
 });
