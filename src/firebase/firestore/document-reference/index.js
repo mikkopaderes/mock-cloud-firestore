@@ -39,6 +39,10 @@ export default class DocumentReference {
     return Promise.resolve(collectionReferences);
   }
 
+  listCollections() {
+    return this.getCollections();
+  }
+
   delete() {
     if (this._data) {
       this._data.__isDirty__ = false;
