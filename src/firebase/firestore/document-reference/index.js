@@ -28,6 +28,17 @@ export default class DocumentReference {
     return this._getCollectionReference(id);
   }
 
+  getCollections() {
+    if (this._data.__collection__ === undefined) {
+      return Promise.resolve([]);
+    }
+
+    const collectionIds = Object.keys(this._data.__collection__);
+    const collectionReferences = collectionIds.map(id => this._getCollectionReference(id));
+
+    return Promise.resolve(collectionReferences);
+  }
+
   delete() {
     if (this._data) {
       this._data.__isDirty__ = false;

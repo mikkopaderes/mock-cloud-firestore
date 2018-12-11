@@ -22,6 +22,13 @@ export default function fixtureData() {
                   },
                 },
               },
+              enemies: {
+                __doc__: {
+                  user_c: {
+                    reference: '__ref__:users/user_c',
+                  },
+                },
+              },
             },
           },
           user_b: {

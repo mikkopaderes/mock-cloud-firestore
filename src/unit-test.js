@@ -1036,6 +1036,39 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
       });
     });
 
+    QUnit.module('function: getCollections', () => {
+      QUnit.test('should return all the subcollection references of the document', async (assert) => {
+        assert.expect(6);
+
+        // Arrange
+        const db = mockFirebase.firestore();
+
+        // Act
+        const result = await db.doc('users/user_a').getCollections();
+
+        // Assert
+        assert.ok(result instanceof Array);
+        assert.equal(result.length, 2);
+        assert.ok(result[0] instanceof CollectionReference);
+        assert.equal(result[0].id, 'friends');
+        assert.ok(result[1] instanceof CollectionReference);
+        assert.equal(result[1].id, 'enemies');
+      });
+
+      QUnit.test('should not throw when document doesn\'t exist', async (assert) => {
+        assert.expect(1);
+
+        // Arrange
+        const db = mockFirebase.firestore();
+
+        // Act
+        const result = await db.doc('users/user_unknown').getCollections();
+
+        // Assert
+        assert.deepEqual(result, []);
+      });
+    });
+
     QUnit.module('function: doc', () => {
       QUnit.test('should return the document reference using a path', (assert) => {
         assert.expect(2);
