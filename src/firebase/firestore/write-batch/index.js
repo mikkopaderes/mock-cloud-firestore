@@ -1,3 +1,5 @@
+/* eslint no-await-in-loop: off */
+
 export default class WriteBatch {
   constructor() {
     this._writeBatch = [];
@@ -15,6 +17,8 @@ export default class WriteBatch {
         case 'delete':
           await write.ref.delete();
           break;
+        default:
+          break;
       }
     }
   }
@@ -24,7 +28,12 @@ export default class WriteBatch {
   }
 
   set(ref, data, option = {}) {
-    this._writeBatch.push({ type: 'set', ref, data, option });
+    this._writeBatch.push({
+      ref,
+      data,
+      option,
+      type: 'set',
+    });
   }
 
   update(ref, data) {
