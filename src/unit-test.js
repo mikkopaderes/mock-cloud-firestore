@@ -648,6 +648,29 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         });
       });
 
+      QUnit.test('should replace nested objects when not merging', async (assert) => {
+        assert.expect(1);
+
+        // Arrange
+        const db = mockFirebase.firestore();
+        const ref = db.collection('users').doc('user_a');
+
+        // Act
+        await ref.set({
+          address: {
+            home: 'San Francisco',
+          },
+        });
+
+        // Assert
+        const snapshot = await ref.get();
+        const data = snapshot.data();
+
+        assert.deepEqual(data.address, {
+          home: 'San Francisco',
+        });
+      });
+
       QUnit.test('should throw error when setting data with an undefined value', async (assert) => {
         assert.expect(1);
 
@@ -730,6 +753,31 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         assert.deepEqual(pinnedBooks, ['book_1', 'book_2', 'book_100']);
         assert.deepEqual(pinnedFoods, ['food_2']);
         assert.equal(username, 'user_a');
+      });
+
+      QUnit.test('should overwrite nested objects', async (assert) => {
+        assert.expect(1);
+
+        // Arrange
+        const db = mockFirebase.firestore();
+        const ref = db.collection('users').doc('user_a');
+
+        // Act
+        await ref.update({
+          address: {
+            home: 'San Francisco',
+          },
+        });
+
+        // Assert
+        const snapshot = await ref.get();
+        const {
+          address,
+        } = snapshot.data();
+
+        assert.deepEqual(address, {
+          home: 'San Francisco',
+        });
       });
 
       QUnit.test('should throw error when updating data that does not exist', async (assert) => {
