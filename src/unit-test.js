@@ -624,6 +624,30 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         assert.equal(data.username, 'user_a');
       });
 
+      QUnit.test('should merge nested objects', async (assert) => {
+        assert.expect(1);
+
+        // Arrange
+        const db = mockFirebase.firestore();
+        const ref = db.collection('users').doc('user_a');
+
+        // Act
+        await ref.set({
+          address: {
+            home: 'San Francisco',
+          },
+        }, { merge: true });
+
+        // Assert
+        const snapshot = await ref.get();
+        const data = snapshot.data();
+
+        assert.deepEqual(data.address, {
+          home: 'San Francisco',
+          work: 'Silicon Valley',
+        });
+      });
+
       QUnit.test('should throw error when setting data with an undefined value', async (assert) => {
         assert.expect(1);
 
