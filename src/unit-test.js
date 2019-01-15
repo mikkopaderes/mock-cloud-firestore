@@ -599,7 +599,8 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
 
         // Act
         await ref.set({
-          'address.home': 'San Francisco',
+          'address.home': 'Seattle',
+          address: { home: 'Seattle' },
           name: firebase.firestore.FieldValue.delete(),
           dad: db.collection('users').doc('user_b'),
           modifiedOn: firebase.firestore.FieldValue.serverTimestamp(),
@@ -612,8 +613,8 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         const data = snapshot.data();
 
         assert.equal(Object.keys(data).length, 9);
-        assert.deepEqual(data.address, { home: 'San Francisco', work: 'Silicon Valley' });
-        assert.equal(data['address.home'], 'San Francisco');
+        assert.deepEqual(data.address, { home: 'Seattle', work: 'Silicon Valley' });
+        assert.equal(data['address.home'], 'Seattle');
         assert.equal(data.age, 15);
         assert.deepEqual(data.createdOn.toDate(), new Date('2017-01-01'));
         assert.deepEqual(data.dad, db.collection('users').doc('user_b'));
@@ -622,38 +623,6 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         assert.deepEqual(data.pinnedFoods, ['food_2']);
         assert.equal(data.name, undefined);
         assert.equal(data.username, 'user_a');
-      });
-
-      QUnit.test('should throw error when setting data with an undefined value', async (assert) => {
-        assert.expect(1);
-
-        // Arrange
-        const db = mockFirebase.firestore();
-        const ref = db.collection('users').doc('user_a');
-
-        try {
-          // Act
-          await ref.set({ name: undefined });
-        } catch (e) {
-          // Assert
-          assert.ok(true);
-        }
-      });
-
-      QUnit.test('should throw error when setting data with a FieldValue.delete() value', async (assert) => {
-        assert.expect(1);
-
-        // Arrange
-        const db = mockFirebase.firestore();
-        const ref = db.collection('users').doc('user_a');
-
-        try {
-          // Act
-          await ref.set({ name: firebase.firestore.FieldValue.delete() });
-        } catch (e) {
-          // Assert
-          assert.ok(true);
-        }
       });
     });
 
@@ -667,6 +636,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
 
         // Act
         await ref.update({
+          address: { temp: 'Seattle' },
           'address.work': 'Bay Area',
           'address.home': firebase.firestore.FieldValue.delete(),
           'contact.mobile.personal': 67890,
@@ -694,7 +664,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         } = snapshot.data();
 
         assert.equal(Object.keys(snapshot.data()).length, 9);
-        assert.deepEqual(address, { work: 'Bay Area' });
+        assert.deepEqual(address, { work: 'Bay Area', temp: 'Seattle' });
         assert.equal(age, undefined);
         assert.deepEqual(contact, {
           mobile: { personal: 67890 },
