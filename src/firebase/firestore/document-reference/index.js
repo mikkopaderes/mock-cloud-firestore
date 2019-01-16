@@ -1,7 +1,8 @@
-import { buildPathFromReference, cleanPath, validatePath } from '../../../utils/path';
+import { cleanPath, validatePath } from '../../../utils/path';
 import CollectionReference from '../collection-reference';
 import DocumentSnapshot from '../document-snapshot';
 import getOrSetDataNode from '../../../utils/get-or-set-data-node';
+import parseValue from '../../../utils/parse-value';
 import validateReference from '../../../utils/reference';
 
 export default class DocumentReference {
@@ -78,13 +79,6 @@ export default class DocumentReference {
     }
 
     Object.assign(this._data, this._parseDataForSet(data, option), { __isDirty__: false });
-
-    Object.keys(this._data).forEach((key) => {
-      if (this._data[key] === undefined) {
-        delete this._data[key];
-      }
-    });
-
     this._firestore._dataChanged();
 
     return Promise.resolve();
@@ -96,13 +90,6 @@ export default class DocumentReference {
     }
 
     Object.assign(this._data, this._parseDataForUpdate(data));
-
-    Object.keys(this._data).forEach((key) => {
-      if (this._data[key] === undefined) {
-        delete this._data[key];
-      }
-    });
-
     this._firestore._dataChanged();
 
     return Promise.resolve();
@@ -134,54 +121,6 @@ export default class DocumentReference {
     return ref;
   }
 
-  _processArrayUnion(arrayUnion, oldArray = []) {
-    const newArray = [...oldArray];
-
-    arrayUnion._elements.forEach((unionItem) => {
-      if (!newArray.find(item => item === unionItem)) {
-        newArray.push(unionItem);
-      }
-    });
-
-    return newArray;
-  }
-
-  _processArrayRemove(arrayRemove, oldArray = []) {
-    let newArray = [...oldArray];
-
-    arrayRemove._elements.forEach((unionItem) => {
-      newArray = newArray.filter(item => item !== unionItem);
-    });
-
-    return newArray;
-  }
-
-  _parseValue(newValue, oldValue) {
-    let parsedValue = newValue;
-
-    if (newValue instanceof DocumentReference) {
-      parsedValue = buildPathFromReference(newValue);
-    } else if (
-      typeof newValue === 'object'
-      && newValue !== null
-      && Object.prototype.hasOwnProperty.call(newValue, '_methodName')
-    ) {
-      const { _methodName: methodName } = newValue;
-
-      if (methodName === 'FieldValue.serverTimestamp') {
-        parsedValue = new Date();
-      } else if (methodName === 'FieldValue.arrayUnion') {
-        parsedValue = this._processArrayUnion(newValue, oldValue);
-      } else if (methodName === 'FieldValue.arrayRemove') {
-        parsedValue = this._processArrayRemove(newValue, oldValue);
-      } else if (methodName === 'FieldValue.delete') {
-        parsedValue = undefined;
-      }
-    }
-
-    return parsedValue;
-  }
-
   _processNestedField(keys, value, currentData) {
     let currentNewDataNode = {};
     let currentOldDataNode;
@@ -198,7 +137,7 @@ export default class DocumentReference {
         currentNewDataNode = currentNewDataNode[key];
         currentOldDataNode = currentOldDataNode[key] || {};
       } else {
-        const newValue = this._parseValue(value, currentOldDataNode[key]);
+        const newValue = parseValue(value, currentOldDataNode[key], { type: 'update' });
 
         if (newValue === undefined) {
           delete currentNewDataNode[key];
@@ -215,32 +154,18 @@ export default class DocumentReference {
     const parsedData = Object.assign({}, this._data);
 
     Object.keys(newData).forEach((key) => {
-      if (newData[key] === undefined) {
-        throw new Error(`Error: Function DocumentReference.set() called with invalid data. Unsupported field value: undefined (found in field ${key})`);
-      } else if (
-        typeof newData[key] === 'object'
-        && newData[key] !== null
-        && Object.prototype.hasOwnProperty.call(newData[key], '_methodName')
-        && newData[key]._methodName === 'FieldValue.delete'
-        && !option.merge
-      ) {
-        throw new Error(`Error: Function DocumentReference.set() called with invalid data. FieldValue.delete() cannot be used with set() unless you pass {merge:true} (found in field ${key})`);
-      }
-
-      parsedData[key] = this._parseValue(newData[key], parsedData[key]);
+      parsedData[key] = parseValue(newData[key], parsedData[key], {
+        type: `set:merge-${option.merge || false}`,
+      });
     });
 
-    return parsedData;
+    return this._removeDeletedFields(parsedData);
   }
 
   _parseDataForUpdate(newData) {
     const parsedData = Object.assign({}, this._data);
 
     Object.keys(newData).forEach((key) => {
-      if (newData[key] === undefined) {
-        throw new Error(`Error: Function DocumentReference.update() called with invalid data. Unsupported field value: undefined (found in field ${key})`);
-      }
-
       const keyNodes = key.split('.');
 
       if (keyNodes.length > 1) {
@@ -249,10 +174,27 @@ export default class DocumentReference {
           this._processNestedField(keyNodes, newData[key], parsedData),
         );
       } else {
-        parsedData[keyNodes[0]] = this._parseValue(newData[key], parsedData[key]);
+        parsedData[keyNodes[0]] = parseValue(newData[key], parsedData[key], { type: 'update' });
       }
     });
 
-    return parsedData;
+    return this._removeDeletedFields(parsedData);
+  }
+
+  _removeDeletedFields(data) {
+    const newData = Object.assign({}, data);
+
+    Object.keys(data).forEach((key) => {
+      const field = newData[key];
+
+      if (field === '__FieldValue.delete__') {
+        delete newData[key];
+        delete this._data[key];
+      } else if (Object.prototype.toString.call(field) === '[object Object]') {
+        newData[key] = this._removeDeletedFields(field);
+      }
+    });
+
+    return newData;
   }
 }
