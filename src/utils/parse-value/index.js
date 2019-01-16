@@ -4,7 +4,7 @@ import { buildPathFromReference } from '../path';
 import DocumentReference from '../../firebase/firestore/document-reference';
 
 function isObject(value) {
-  return typeof value === 'object' && value !== null;
+  return Object.prototype.toString.call(value) === '[object Object]';
 }
 
 function isFieldValue(value) {
