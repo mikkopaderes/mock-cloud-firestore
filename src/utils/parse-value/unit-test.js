@@ -92,6 +92,62 @@ QUnit.module('Unit | Util | parse-value', () => {
       }
     });
 
+    QUnit.test('should return as-is when parsing a string', (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const newValue = 'foo';
+      const oldValue = undefined;
+
+      // Act
+      const result = parseValue(newValue, oldValue, { type: 'set:merge-false' });
+
+      // Assert
+      assert.equal(result, 'foo');
+    });
+
+    QUnit.test('should return as-is when parsing a number', (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const newValue = 1;
+      const oldValue = undefined;
+
+      // Act
+      const result = parseValue(newValue, oldValue, { type: 'set:merge-false' });
+
+      // Assert
+      assert.equal(result, 1);
+    });
+
+    QUnit.test('should return as-is when parsing a boolean', (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const newValue = true;
+      const oldValue = undefined;
+
+      // Act
+      const result = parseValue(newValue, oldValue, { type: 'set:merge-false' });
+
+      // Assert
+      assert.equal(result, true);
+    });
+
+    QUnit.test('should return as-is when parsing an array', (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const newValue = ['foo'];
+      const oldValue = undefined;
+
+      // Act
+      const result = parseValue(newValue, oldValue, { type: 'set:merge-false' });
+
+      // Assert
+      assert.deepEqual(result, ['foo']);
+    });
+
     QUnit.test('should return path when parsing a DocumentReference', (assert) => {
       assert.expect(1);
 
