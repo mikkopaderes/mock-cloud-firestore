@@ -124,14 +124,8 @@ Not all APIs are supported. Here are some unsupported major ones
 
 > You can look into the source code to see if an API you're using is supported. I've written it in a way that you could quickly scan the APIs.
 
-## Developing
+## Support the project
 
-### Installation
+Help me out for a couple of :beers:!
 
-* `git clone <repository-url>` this repository
-* `cd mock-cloud-firestore`
-* `npm install`
-
-### Running Tests
-
-* `npm test`
+[![Donate](https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg)](https://paypal.me/mikkopaderes)
