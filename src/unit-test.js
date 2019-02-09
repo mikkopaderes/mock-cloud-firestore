@@ -1409,11 +1409,11 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         const db = mockFirebase.firestore();
 
         // Act
-        const snapshot = await db.collection('users').where('age', '==', 15).get();
+        const snapshot = await db.collection('users').where('age', '==', 10).limit(1).get();
 
         // Assert
         assert.equal(snapshot.docs.length, 1);
-        assert.equal(snapshot.docs[0].id, 'user_a');
+        assert.equal(snapshot.docs[0].id, 'user_b');
       });
     });
   });
