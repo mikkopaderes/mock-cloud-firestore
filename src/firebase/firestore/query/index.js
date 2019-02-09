@@ -13,70 +13,46 @@ export default class Query {
   constructor(data, collection) {
     this._data = data;
     this._collection = collection;
-    this._option = {};
+    this._operations = [];
   }
 
   _querySnapshot() {
     const data = Object.assign({}, this._data);
 
-    if (this._option.orderBy) {
-      data.__doc__ = orderBy(
-        data.__doc__,
-        this._option.orderBy,
-        this._option.orderByDirection,
-      );
-    }
+    this._operations.forEach((operation) => {
+      if (operation.type === 'orderBy') {
+        data.__doc__ = orderBy(data.__doc__, operation.param.key, operation.param.sorting);
+      }
 
-    if (this._option.endAt) {
-      data.__doc__ = endAt(
-        data.__doc__,
-        this._option.orderBy,
-        this._option.endAt,
-      );
-    }
+      if (operation.type === 'startAt') {
+        data.__doc__ = startAt(data.__doc__, operation.param.order.key, operation.param.value);
+      }
 
-    if (this._option.endBefore) {
-      data.__doc__ = endBefore(
-        data.__doc__,
-        this._option.orderBy,
-        this._option.endBefore,
-      );
-    }
+      if (operation.type === 'startAfter') {
+        data.__doc__ = startAfter(data.__doc__, operation.param.order.key, operation.param.value);
+      }
 
-    if (this._option.limit) {
-      data.__doc__ = limit(
-        data.__doc__,
-        this._option.limit,
-      );
-    }
+      if (operation.type === 'endAt') {
+        data.__doc__ = endAt(data.__doc__, operation.param.order.key, operation.param.value);
+      }
 
-    if (this._option.startAt) {
-      data.__doc__ = startAt(
-        data.__doc__,
-        this._option.orderBy,
-        this._option.startAt,
-      );
-    }
+      if (operation.type === 'endBefore') {
+        data.__doc__ = endBefore(data.__doc__, operation.param.order.key, operation.param.value);
+      }
 
-    if (this._option.startAfter) {
-      data.__doc__ = startAfter(
-        data.__doc__,
-        this._option.orderBy,
-        this._option.startAfter,
-      );
-    }
+      if (operation.type === 'limit') {
+        data.__doc__ = limit(data.__doc__, operation.param.value);
+      }
 
-    if (this._option.where) {
-      Object.keys(this._option.where).forEach((prop) => {
-        const { operator, value } = this._option.where[prop];
+      if (operation.type === 'where') {
         data.__doc__ = where(
           data.__doc__,
-          prop,
-          operator,
-          value,
+          operation.param.key,
+          operation.param.operator,
+          operation.param.value,
         );
-      });
-    }
+      }
+    });
 
     return data;
   }
@@ -86,21 +62,31 @@ export default class Query {
   }
 
   endAt(value) {
-    if (!this._isOrdered()) {
+    const order = this._getOrder();
+
+    if (!order) {
       throw new Error('endAt() queries requires orderBy()');
     }
 
-    this._option.endAt = value;
+    this._operations.push({
+      type: 'endAt',
+      param: { value, order },
+    });
 
     return this;
   }
 
   endBefore(value) {
-    if (!this._isOrdered()) {
+    const order = this._getOrder();
+
+    if (!order) {
       throw new Error('endBefore() queries requires orderBy()');
     }
 
-    this._option.endBefore = value;
+    this._operations.push({
+      type: 'endBefore',
+      param: { value, order },
+    });
 
     return this;
   }
@@ -109,8 +95,12 @@ export default class Query {
     return Promise.resolve(querySnapshot(this._querySnapshot(), this._collection));
   }
 
-  limit(threshold) {
-    this._option.limit = threshold;
+  limit(value) {
+    this._operations.push({
+      type: 'limit',
+      param: { value },
+    });
+
     return this;
   }
 
@@ -122,39 +112,55 @@ export default class Query {
     });
   }
 
-  orderBy(key, order) {
-    this._option.orderBy = key;
-    this._option.orderByDirection = order;
+  orderBy(key, sorting) {
+    this._operations.push({
+      type: 'orderBy',
+      param: { key, sorting },
+    });
 
     return this;
   }
 
   startAfter(value) {
-    if (!this._isOrdered()) {
-      throw new Error('startAfter queries requires orderBy()');
+    const order = this._getOrder();
+
+    if (!order) {
+      throw new Error('startAfter() queries requires orderBy()');
     }
 
-    this._option.startAfter = value;
+    this._operations.push({
+      type: 'startAfter',
+      param: { value, order },
+    });
 
     return this;
   }
 
   startAt(value) {
-    if (!this._isOrdered()) {
+    const order = this._getOrder();
+
+    if (!order) {
       throw new Error('startAt() queries requires orderBy()');
     }
 
-    this._option.startAt = value;
+    this._operations.push({
+      type: 'startAt',
+      param: { value, order },
+    });
 
     return this;
   }
 
-  where(prop, operator, value) {
-    this._option.where = { [prop]: { operator, value } };
+  where(key, operator, value) {
+    this._operations.push({
+      type: 'where',
+      param: { key, operator, value },
+    });
+
     return this;
   }
 
-  _isOrdered() {
-    return this._option.orderBy;
+  _getOrder() {
+    return this._operations.find(operation => operation.type === 'orderBy').param;
   }
 }
