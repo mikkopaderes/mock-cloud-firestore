@@ -17,11 +17,11 @@ export default class Query {
   }
 
   _querySnapshot() {
-    const data = Object.assign({}, this._data);
+    const data = Object.assign({ __doc__: {} }, this._data);
 
     this._operations.forEach((operation) => {
       if (operation.type === 'orderBy') {
-        data.__doc__ = orderBy(data.__doc__ || {}, operation.param.key, operation.param.sorting);
+        data.__doc__ = orderBy(data.__doc__, operation.param.key, operation.param.sorting);
       }
 
       if (operation.type === 'startAt') {
