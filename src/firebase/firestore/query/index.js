@@ -17,7 +17,7 @@ export default class Query {
   }
 
   _querySnapshot() {
-    const data = Object.assign({}, this._data);
+    const data = Object.assign({ __doc__: {} }, this._data);
 
     this._operations.forEach((operation) => {
       if (operation.type === 'orderBy') {

@@ -1336,6 +1336,19 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         assert.equal(snapshot.docs[1].id, 'user_a');
         assert.equal(snapshot.docs[2].id, 'user_c');
       });
+
+      QUnit.test('should return empty array with empty collection', async (assert) => {
+        assert.expect(1);
+
+        // Arrange
+        const db = mockFirebase.firestore();
+
+        // Act
+        const snapshot = await db.collection('unknown').orderBy('age').get();
+
+        // Assert
+        assert.equal(snapshot.docs.length, 0);
+      });
     });
 
     QUnit.module('function: startAfter', () => {
