@@ -20,7 +20,7 @@ If you're not using any module bundler, you can use the precompiled [UMD](https:
 
 ## Usage
 
-You'll need to replace the Firebase instance that you're app is using. That would depend on how you use it. Below are some sample use-cases:
+You'll need to replace the Firebase instance that your app is using. That would depend on how you use it. Below are some sample use-cases:
 
 ### Example 1 - Overriding the Firebase Global Variable
 
