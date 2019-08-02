@@ -22,7 +22,7 @@ If you're not using any module bundler, you can use the precompiled [UMD](https:
 
 You'll need to replace the Firebase instance that your app is using. That would depend on how you use it. Below are some sample use-cases:
 
-### Example 1 - Overriding the Firebase Global Variable
+### 1. Overriding the Firebase Global Variable
 
 ```javascript
 import MockFirebase from 'mock-cloud-firestore';
@@ -47,7 +47,7 @@ const db = firebase.firestore();
 db.collection('users').add({ ... });
 ```
 
-### Example 2 - Dependency Injection
+### 2. Dependency Injection
 
 ```javascript
 import MockFirebase from 'mock-cloud-firestore';
