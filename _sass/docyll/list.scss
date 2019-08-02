@@ -1,0 +1,97 @@
+.list {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  list-style-type: none;
+}
+
+.list__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.list__action {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.list__action:hover {
+  background-color: $hover-color !important;
+}
+
+.list__action:active,
+.list__action--active,
+.list__action.active {
+  background-color: $active-color !important;
+}
+
+.list__action:disabled {
+  color: $disabled-color !important;
+}
+
+a.list__action {
+  color: inherit;
+  text-decoration: none;
+}
+
+button.list__action {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  background: none;
+  border: none;
+}
+
+.list__single-line-content {
+  flex: 1;
+  padding: 12px 16px;
+  overflow: hidden;
+  color: $font-primary-color;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list__multi-line-content {
+  flex: 1;
+  padding: 14px 16px;
+  overflow: hidden;
+}
+
+.list__primary-text {
+  font-size: $font-size-16;
+  color: $font-primary-color;
+}
+
+.list__secondary-text {
+  font-size: $font-size-14;
+  color: $font-secondary-color;
+}
+
+.list__wrap-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list__primary-text,
+.list__secondary-text {
+  flex: 1;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-weight: $font-weight-regular;
+  line-height: 1.25rem;
+}
+
+.list__meta {
+  padding-right: 16px;
+  font-size: $font-size-12;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-12;
+  color: $font-secondary-color;
+}

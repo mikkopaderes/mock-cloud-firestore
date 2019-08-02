@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+  {%- include head.html -%}
+
+  <body class="layout">
+    {%- include header.html -%}
+
+    <main class="layout__main">
+      {{ content }}
+    </main>
+
+    {%- include footer.html -%}
+
+    {%- if site.cenchat.id -%}
+      <script src="https://widget.cenchat.com/embeds/1.0.0/universal.js"></script>
+    {%- endif -%}
+
+    <script src="{{ "/assets/js/main.js" | relative_url }}"></script>
+  </body>
+</html>

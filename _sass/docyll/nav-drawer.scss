@@ -1,0 +1,117 @@
+.nav-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1600;
+  pointer-events: none;
+}
+
+.nav-drawer::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1625;
+  content: '';
+  background-color: #000;
+  opacity: 0;
+  transition-timing-function: $motion-standard-curve;
+  transition-duration: $motion-medium-expand-duration;
+  transition-property: opacity;
+}
+
+.nav-drawer--visible {
+  pointer-events: auto;
+}
+
+.nav-drawer--visible::before {
+  opacity: 0.32;
+}
+
+@media (min-width: 1024px) {
+  .nav-drawer {
+    top: 64px;
+    left: 0;
+    z-index: 10;
+    width: 256px;
+    pointer-events: auto;
+  }
+
+  .nav-drawer::before {
+    content: none;
+  }
+}
+
+.nav-drawer__sheet {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1650;
+  width: calc(100vw - 56px);
+  height: 100%;
+  max-width: 320px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  overflow: auto;
+  background-color: $surface-color;
+  box-shadow: $elevation-16;
+  transition-timing-function: $motion-acceleration-curve;
+  transition-duration: $motion-medium-collapse-duration;
+  transition-property: transform;
+  transform: translateX(-120%);
+}
+
+@media (min-width: 1024px) {
+  .nav-drawer__sheet {
+    top: 24px;
+    z-index: 50;
+    width: 100%;
+    padding-right: 8px;
+    padding-left: 8px;
+    box-shadow: none;
+    transition-duration: 0ms;
+    transform: translateX(0);
+  }
+}
+
+.nav-drawer--visible .nav-drawer__sheet {
+  transition-timing-function: $motion-deceleration-curve;
+  transition-duration: $motion-medium-expand-duration;
+  transform: translateX(0);
+}
+
+.nav-drawer__list {
+  padding-right: 16px;
+  padding-left: 16px;
+  margin-top: 0;
+  margin-bottom: 0;
+  list-style-type: none;
+}
+
+.nav-drawer__list-item:not(:last-child) {
+  padding-bottom: 16px;
+}
+
+.nav-drawer__list-item .nav-drawer__list-item:first-child {
+  padding-top: 16px;
+}
+
+.nav-drawer__link {
+  font-size: $font-size-14;
+  line-height: $line-height-14;
+  color: $font-primary-color;
+}
+
+.nav-drawer__heading {
+  margin-top: 0;
+  margin-bottom: 0;
+  overflow: hidden;
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier, monospace, $font-family;
+  font-size: $font-size-16;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-16;
+}

@@ -1,0 +1,47 @@
+<nav class="nav-drawer">
+  <div class="nav-drawer__sheet">
+    <ul class="nav-drawer__list">
+      {%- if page.layout == 'doc' -%}
+        {%- for category in site.doc_categories -%}
+          <li class="nav-drawer__list-item">
+            <h2 class="nav-drawer__heading">{{ category }}</h2>
+    
+            <ul class="nav-drawer__list">
+              {%- assign docs = site.docs | sort: 'order' -%}
+    
+              {%- for doc in docs -%}
+                {%- if doc.category == category -%}
+                  <li class="nav-drawer__list-item">
+                    <a class="nav-drawer__link" href="{{ doc.url | relative_url }}">{{ doc.title }}</a>
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          </li>
+        {%- endfor -%}
+
+        {%- assign docs = site.docs | sort: 'order' -%}
+
+        {%- for doc in docs -%}
+          {%- unless doc.category -%}
+            <li class="nav-drawer__list-item">
+              <a class="nav-drawer__link nav-drawer__heading" href="{{ doc.url | relative_url }}">{{ doc.title }}</a>
+            </li>
+          {%- endunless -%}
+        {%- endfor -%}
+      {%- else -%}
+        <li class="nav-drawer__list-item">
+          <h2 class="nav-drawer__heading">Recent posts</h2>
+
+          <ul class="nav-drawer__list">
+            {%- for post in site.posts -%}
+              <li class="nav-drawer__list-item">
+                <a class="nav-drawer__link" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </li>
+      {%- endif -%}
+    </ul>
+  </div>
+</nav>

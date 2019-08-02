@@ -1,0 +1,20 @@
+.icon-button {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+  color: $font-primary-color;
+  background: none;
+  border: none;
+  transition-timing-function: $motion-standard-curve;
+  transition-duration: $motion-tiny-expand-duration;
+  transition-property: transform;
+}
+
+.icon-button:disabled {
+  color: $disabled-color;
+}
+
+.icon-button:hover:not(:disabled) {
+  transform: scale(1.16);
+}

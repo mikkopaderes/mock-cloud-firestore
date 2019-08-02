@@ -1,0 +1,19 @@
+<footer class="layout__footer">
+  <div class="layout__footer-group">
+    <div class="layout__footer-column">
+      <h2 class="layout__footer-title">{{ site.title }}</h2>
+  
+      <ul class="layout__footer-author">
+        {%- if site.author -%}
+          <li class="layout__footer-author-detail">{{ site.author }}</li>
+        {%- endif -%}
+  
+        {%- if site.email -%}
+          <li class="layout__footer-author-detail">{{ site.email }}</li>
+        {%- endif -%}
+      </ul>
+    </div>
+
+    <p class="layout__footer-description layout__footer-column">{{ site.description }}</p>
+  </div>
+</footer>

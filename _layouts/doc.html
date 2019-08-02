@@ -1,0 +1,27 @@
+---
+layout: default
+---
+
+{%- include nav-bar.html -%}
+{%- include nav-drawer.html -%}
+{%- include toc.html html=content -%}
+
+<article class="article">
+  <h1 class="article__header">{{ page.title | escape }}</h1>
+  <div>{{ content }}</div>
+</article>
+
+{%- if site.cenchat.id and page.cenchat.id -%}
+  <button
+    class="article__cenchat-button"
+    id="cenchat-widget-button"
+    data-site-id="{{ site.cenchat.id }}"
+    data-page-id="{{ page.cenchat.id }}"
+  >
+    {%- if page.cenchat.text -%}
+      {{ page.cenchat.text }}
+    {% else %}
+      Share your thoughts
+    {%- endif -%}
+  </button>
+{%- endif -%}

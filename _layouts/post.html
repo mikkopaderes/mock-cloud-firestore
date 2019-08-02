@@ -1,0 +1,45 @@
+---
+layout: default
+---
+
+{%- include nav-bar.html -%}
+{%- include nav-drawer.html -%}
+{%- include toc.html html=content -%}
+
+<article class="article" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="article__header">
+    <h1 itemprop="name headline">{{ page.title | escape }}</h1>
+
+    <p class="article__meta">
+      <time class="article__meta-time" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+        {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+        {{ page.date | date: date_format }}
+      </time>
+
+      {%- if page.author -%}
+        <span class="article__meta-divider"> - </span>
+
+        <span class="article__meta-author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <span itemprop="name">{{ page.author | escape }}</span>
+        </span>
+      {%- endif -%}
+    </p>
+  </header>
+
+  <div itemprop="articleBody">{{ content }}</div>
+</article>
+
+{%- if site.cenchat.id and page.cenchat.id -%}
+  <button
+    class="article__cenchat-button"
+    id="cenchat-widget-button"
+    data-site-id="{{ site.cenchat.id }}"
+    data-page-id="{{ page.cenchat.id }}"
+  >
+    {%- if page.cenchat.text -%}
+      {{ page.cenchat.text }}
+    {% else %}
+      Share your thoughts
+    {%- endif -%}
+  </button>
+{%- endif -%}

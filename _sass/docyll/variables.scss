@@ -1,0 +1,62 @@
+// Colors
+$dark-4: rgba(0, 0, 0, 0.04);
+$dark-5: rgba(0, 0, 0, 0.05);
+$dark-12: rgba(0, 0, 0, 0.12);
+$dark-38: rgba(0, 0, 0, 0.38);
+$dark-60: rgba(0, 0, 0, 0.6);
+$dark-87: rgba(0, 0, 0, 0.87);
+
+// Scaffolding
+$brand-color: #00a8ff;
+$surface-color: #fff;
+$disabled-color: $dark-38;
+$divider-color: $dark-12;
+$hover-color: $dark-4;
+$active-color: $dark-12;
+$danger-color: #b00020;
+
+// Bar
+$bar-text-color: rgba(0, 0, 0, 0.87);
+$bar-background-color: #fff;
+
+// Borders
+$border-radius-circle: 50%;
+$border-radius-square: 4px;
+
+// Elevation
+$elevation-8: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+$elevation-16: 0 8px 10px -5px rgba(0, 0, 0, 0.2), 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12);
+
+// Motion duration
+$motion-tiny-expand-duration: 100ms;
+$motion-small-expand-duration: 150ms;
+$motion-medium-expand-duration: 250ms;
+$motion-large-expand-duration: 300ms;
+$motion-tiny-collapse-duration: 100ms;
+$motion-small-collapse-duration: 75ms;
+$motion-medium-collapse-duration: 200ms;
+$motion-large-collapse-duration: 250ms;
+
+// Motion easing
+$motion-standard-curve: cubic-bezier(0.4, 0, 0.2, 1);
+$motion-deceleration-curve: cubic-bezier(0, 0, 0.2, 1);
+$motion-acceleration-curve: cubic-bezier(0.4, 0, 1, 1);
+$motion-sharp-curve: cubic-bezier(0.4, 0, 0.6, 1);
+
+// Typography
+$font-primary-color: $dark-87;
+$font-secondary-color: $dark-60;
+$font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue;
+$font-size-12: 0.75rem;
+$font-size-14: 0.875rem;
+$font-size-16: 1rem;
+$font-size-20: 1.25rem;
+$font-size-24: 1.5rem;
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$line-height-12: 1.25rem;
+$line-height-14: 1.25rem;
+$line-height-16: 1.5rem;
+$line-height-20: 2rem;
+$line-height-24: 2rem;

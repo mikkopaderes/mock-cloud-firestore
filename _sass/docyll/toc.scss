@@ -1,0 +1,135 @@
+.toc {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 800;
+  pointer-events: none;
+}
+
+.toc::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 825;
+  content: '';
+  background-color: #000;
+  opacity: 0;
+  transition-timing-function: $motion-standard-curve;
+  transition-duration: $motion-medium-expand-duration;
+  transition-property: opacity;
+}
+
+.toc--visible {
+  pointer-events: auto;
+}
+
+.toc--visible::before {
+  opacity: 0.32;
+}
+
+@media (min-width: 1024px) {
+  .toc {
+    top: 64px;
+    bottom: 0;
+    left: auto;
+    z-index: 10;
+    width: 240px;
+    overflow: auto;
+    pointer-events: auto;
+  }
+
+  .toc::before {
+    content: none;
+  }
+}
+
+.toc > ul {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 850;
+  max-height: calc(100vh / 2);
+  padding: 8px;
+  margin-top: 0;
+  margin-bottom: 0;
+  overflow: auto;
+  list-style-type: none;
+  background-color: $surface-color;
+  box-shadow: $elevation-8;
+  transition-timing-function: $motion-acceleration-curve;
+  transition-duration: $motion-medium-collapse-duration;
+  transition-property: transform;
+  transform: translateY(120%);
+}
+
+@media (min-width: 1024px) {
+  .toc > ul {
+    top: 24px;
+    bottom: auto;
+    z-index: 50;
+    width: 100%;
+    max-height: initial;
+    padding-right: 16px;
+    padding-left: 16px;
+    margin-top: 16px;
+    border-left: 1px solid $divider-color;
+    box-shadow: none;
+    transition-duration: 0ms;
+    transform: translateX(0);
+  }
+}
+
+.toc--visible > ul {
+  transition-timing-function: $motion-deceleration-curve;
+  transition-duration: $motion-medium-expand-duration;
+  transform: translateY(0);
+}
+
+.toc > ul ul {
+  padding: 8px 8px 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  list-style-type: none;
+}
+
+@media (min-width: 1024px) {
+  .toc > ul ul  {
+    padding-top: 4px;
+    padding-right: 4px;
+    padding-left: 4px;
+  }
+}
+
+.toc li {
+  padding: 8px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+@media (min-width: 1024px) {
+  .toc li {
+    padding: 4px;
+  }
+}
+
+.toc a {
+  font-size: $font-size-14;
+  line-height: $line-height-14;
+  color: $font-primary-color;
+}
+
+@media (min-width: 1024px) {
+  .toc a {
+    font-size: $font-size-12;
+    line-height: $line-height-12;
+  }
+}
+
+.toc a:hover {
+  color: $brand-color;
+}

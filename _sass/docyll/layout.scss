@@ -1,0 +1,140 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.layout__header {
+  position: sticky;
+  top: 0;
+  z-index: 400;
+  background-color: $bar-background-color;
+}
+
+@media (min-width: 960px) {
+  .layout__header {
+    display: flex;
+    align-items: center;
+    height: 64px;
+    padding-right: 8px;
+    padding-left: 8px;
+    border-bottom: 1px solid $divider-color;
+  }
+
+  .layout__header > .bar:first-child {
+    flex: 1;
+  }
+
+  .layout__header .bar--small {
+    height: 56px;
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+}
+
+.layout__header-title {
+  color: $font-primary-color;
+}
+
+.layout__header svg {
+  width: auto;
+  height: 20px;
+}
+
+.layout__main {
+  flex: 1;
+}
+
+@media (min-width: 1024px) {
+  .layout__main {
+    padding: 24px;
+  }
+}
+
+.layout__footer {
+  padding: 16px;
+  background-color: #fafafa;
+}
+
+@media (min-width: 1024px) {
+  .layout__footer {
+    width: 100%;
+    max-width: calc(100vw - 256px - 240px - 34px);
+    padding: 56px;
+    margin-right: auto;
+    margin-left: auto;
+    border-top-right-radius: $border-radius-square;
+    border-top-left-radius: $border-radius-square;
+  }
+}
+
+.layout__footer-group {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .layout__footer-group {
+    flex-direction: row;
+  }
+}
+
+.layout__footer-column {
+  flex: 1;
+}
+
+@media (min-width: 1024px) {
+  .layout__footer-column:not(:last-child) {
+    margin-right: 16px;
+  }
+}
+
+.layout__footer-title {
+  margin-top: 0;
+  margin-bottom: 16px;
+  overflow: hidden;
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier, monospace, $font-family;
+  font-size: $font-size-16;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-16;
+}
+
+.layout__footer-author {
+  padding-left: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: $font-size-14;
+  line-height: $line-height-14;
+  list-style-type: none;
+}
+
+.layout__footer-author-detail {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  font-size: $font-size-14;
+  line-height: $line-height-14;
+  color: $font-secondary-color;
+}
+
+.layout__footer-description {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  font-size: $font-size-14;
+  line-height: $line-height-14;
+  color: $font-secondary-color;
+}
+
+@media (min-width: 1024px) {
+  .layout__footer-description {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+.layout__footer-credits {
+  margin-top: 16px;
+  margin-bottom: 0;
+  font-size: $font-size-12;
+  line-height: $line-height-12;
+  color: $font-secondary-color;
+}

@@ -1,0 +1,77 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+body {
+  font-family: $font-family;
+  font-size: 1rem;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier, monospace, $font-family;
+}
+
+a {
+  color: $brand-color;
+  text-decoration: none;
+}
+
+a:hover {
+  color: $brand-color;
+}
+
+/**
+ * Remove appearance for Safari
+ */
+input,
+textarea {
+  -webkit-appearance: none;
+}
+
+/**
+ * Remove appearance for Firefox and Webkit/Blink browsers
+ */
+select {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+}
+
+/**
+ * Reset Segoe UI font to include font-weight 500 for Firefox
+ */
+@font-face {
+  font-family: "Segoe UI";
+  font-weight: 300;
+  src: local("Segoe UI Light");
+}
+
+@font-face {
+  font-family: "Segoe UI";
+  font-weight: 400;
+  src: local("Segoe UI");
+}
+
+@font-face {
+  font-family: "Segoe UI";
+  font-weight: 500;
+  src: local("Segoe UI Semibold");
+}
+
+@font-face {
+  font-family: "Segoe UI";
+  font-style: italic;
+  font-weight: 400;
+  src: local("Segoe UI Italic");
+}
