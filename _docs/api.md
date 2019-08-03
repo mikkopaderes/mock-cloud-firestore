@@ -14,7 +14,7 @@ This accepts the following option:
 
 - `isNaiveSnapshotListenerEnabled` - When true, changes to **any** data would cause the `onSnapshot()` to fire. Otherwise, `onSnapshot()` won't get realtime updates.
 
-#### Params:
+**Params:**
 
 | Name        | Type   | Attributes | Description |
 | ----------- | -------| ---------- | ----------- |
