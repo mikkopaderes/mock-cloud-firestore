@@ -1503,4 +1503,112 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
       });
     });
   });
+
+  QUnit.module('Transactions', () => {
+    QUnit.test('transaction.get: should be able to get references', async (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const db = mockFirebase.firestore();
+      const ref = db.collection('users').doc('user_a');
+
+
+      await ref.set({ username: 'new_user' });
+
+      // Act
+      let user = null;
+      await db.runTransaction(async (tran) => {
+        user = await tran.get(ref);
+      });
+
+      // Assert
+      assert.deepEqual(user.data(), { username: 'new_user' });
+    });
+
+    QUnit.test('transaction.set: should be able to set references', async (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const db = mockFirebase.firestore();
+      const ref = db.collection('users').doc('user_a');
+
+
+      await ref.set({ username: 'new_user' });
+
+      // Act
+      await db.runTransaction(async (tran) => {
+        await tran.set(ref, { username: 'new_user2' });
+      });
+
+      // Assert
+      const user = await db.collection('users').doc('user_a').get();
+      assert.deepEqual(user.data(), { username: 'new_user2' });
+    });
+
+    QUnit.test('transaction.update: should be able to update references', async (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const db = mockFirebase.firestore();
+      const ref = db.collection('users').doc('user_a');
+
+
+      await ref.set({ username: 'new_user' });
+
+      // Act
+      await db.runTransaction(async (tran) => {
+        await tran.update(ref, { username: 'new_user2' });
+      });
+
+      // Assert
+      const user = await db.collection('users').doc('user_a').get();
+      assert.deepEqual(user.data(), { username: 'new_user2' });
+    });
+
+    QUnit.test('transaction.delete: should be able to delete references', async (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const db = mockFirebase.firestore();
+      const ref = db.collection('users').doc('user_a');
+
+
+      await ref.set({ username: 'new_user' });
+
+      // Act
+      await db.runTransaction(async (tran) => {
+        await tran.delete(ref);
+      });
+
+      // Assert
+      const user = await db.collection('users').doc('user_a').get();
+      assert.deepEqual(user.data(), undefined);
+    });
+
+    QUnit.test('transaction.getAll: should be able to getAll references', async (assert) => {
+      assert.expect(3);
+
+      // Arrange
+      const db = mockFirebase.firestore();
+      const ref = db.collection('users').doc('user_a');
+      const ref2 = db.collection('users').doc('user_b');
+      const ref3 = db.collection('users').doc('user_c');
+
+
+      await ref.set({ username: 'new_user' });
+      await ref2.set({ username: 'new_user2' });
+      await ref3.set({ username: 'new_user3' });
+
+      // Act
+      let users = null;
+      await db.runTransaction(async (tran) => {
+        users = await tran.getAll(ref, ref2, ref3);
+      });
+
+      // Assert
+      assert.deepEqual(users[0].data(), { username: 'new_user' });
+      assert.deepEqual(users[1].data(), { username: 'new_user2' });
+      assert.deepEqual(users[2].data(), { username: 'new_user3' });
+    });
+  });
 });
