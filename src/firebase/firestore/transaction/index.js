@@ -14,8 +14,4 @@ export default class TransactionWriteBatch {
   get(ref) {
     return ref.get();
   }
-
-  getAll(...refs) {
-    return Promise.all(refs.map(r => r.get()));
-  }
 }
