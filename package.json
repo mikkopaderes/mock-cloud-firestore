@@ -1,6 +1,6 @@
 {
   "name": "mock-cloud-firestore",
-  "version": "0.9.3",
+  "version": "0.10.0",
   "description": "Mock library for Cloud Firestore",
   "main": "lib/mock-cloud-firestore.js",
   "module": "es/mock-cloud-firestore.js",
