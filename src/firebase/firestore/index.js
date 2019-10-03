@@ -3,6 +3,7 @@ import CollectionReference from './collection-reference';
 import WriteBatch from './write-batch';
 import getOrSetDataNode from '../../utils/get-or-set-data-node';
 import validateReference from '../../utils/reference';
+import TransactionWriteBatch from './transaction';
 
 export default class Firestore {
   constructor(data, options) {
@@ -33,6 +34,10 @@ export default class Firestore {
 
   batch() {
     return new WriteBatch();
+  }
+
+  runTransaction(executor) {
+    return executor(new TransactionWriteBatch());
   }
 
   collection(id) {

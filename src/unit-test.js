@@ -1503,4 +1503,86 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
       });
     });
   });
+
+  QUnit.module('Transactions', () => {
+    QUnit.test('transaction.get: should be able to get references', async (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const db = mockFirebase.firestore();
+      const ref = db.collection('users').doc('user_a');
+
+
+      await ref.set({ username: 'new_user' });
+
+      // Act
+      let user = null;
+      await db.runTransaction(async (tran) => {
+        user = await tran.get(ref);
+      });
+
+      // Assert
+      assert.deepEqual(user.data(), { username: 'new_user' });
+    });
+
+    QUnit.test('transaction.set: should be able to set references', async (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const db = mockFirebase.firestore();
+      const ref = db.collection('users').doc('user_a');
+
+
+      await ref.set({ username: 'new_user' });
+
+      // Act
+      await db.runTransaction(async (tran) => {
+        await tran.set(ref, { username: 'new_user2' });
+      });
+
+      // Assert
+      const user = await db.collection('users').doc('user_a').get();
+      assert.deepEqual(user.data(), { username: 'new_user2' });
+    });
+
+    QUnit.test('transaction.update: should be able to update references', async (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const db = mockFirebase.firestore();
+      const ref = db.collection('users').doc('user_a');
+
+
+      await ref.set({ username: 'new_user' });
+
+      // Act
+      await db.runTransaction(async (tran) => {
+        await tran.update(ref, { username: 'new_user2' });
+      });
+
+      // Assert
+      const user = await db.collection('users').doc('user_a').get();
+      assert.deepEqual(user.data(), { username: 'new_user2' });
+    });
+
+    QUnit.test('transaction.delete: should be able to delete references', async (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const db = mockFirebase.firestore();
+      const ref = db.collection('users').doc('user_a');
+
+
+      await ref.set({ username: 'new_user' });
+
+      // Act
+      await db.runTransaction(async (tran) => {
+        await tran.delete(ref);
+      });
+
+      // Assert
+      const user = await db.collection('users').doc('user_a').get();
+      assert.deepEqual(user.data(), undefined);
+    });
+  });
 });
