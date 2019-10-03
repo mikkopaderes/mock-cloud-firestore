@@ -16,7 +16,6 @@ It aims to support the APIs of the JavaScript SDK for the browsers. For Node use
 
 Not all APIs are supported. Here are some unsupported major ones
 
-  - Transaction
   - `onSnapshot()` is supported but doesn't get realtime updates by default.
     - A naive listener is available in that changes to any data would cause it to fire.
 
