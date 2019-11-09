@@ -31,10 +31,6 @@ doc_categories:
   - Introduction
   - Essentials
 
-# Cenchat settings
-cenchat:
-  id: DMKsAph3drjqz5rz2gjx
-
 # Build settings
 markdown: kramdown
 plugins:
