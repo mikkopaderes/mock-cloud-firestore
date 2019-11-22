@@ -129,6 +129,10 @@ export function where(data = {}, key, operator, value) {
       return pathValue >= value;
     } if (operator === 'array-contains') {
       return pathValue.find(item => item === value);
+    } if (operator === 'array-contains-any') {
+      return pathValue.find(item => value.includes(item));
+    } if (operator === 'in') {
+      return value.includes(pathValue);
     }
 
     return pathValue > value;
