@@ -434,6 +434,7 @@ QUnit.module('Unit | Util | query', () => {
         user_a: { books: [10] },
         user_b: { books: [15] },
         user_c: { books: [10] },
+        user_d: {},
       };
 
       // Act
@@ -443,6 +444,49 @@ QUnit.module('Unit | Util | query', () => {
       assert.deepEqual(result, {
         user_a: { books: [10] },
         user_c: { books: [10] },
+      });
+    });
+
+    QUnit.test('should return records matching the array-contains-any filter', (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const records = {
+        user_a: { books: [10] },
+        user_b: { books: [15] },
+        user_c: { books: [10] },
+        user_d: { books: [20] },
+        user_e: {},
+      };
+
+      // Act
+      const result = where(records, 'books', 'array-contains-any', [10, 20]);
+
+      // Assert
+      assert.deepEqual(result, {
+        user_a: { books: [10] },
+        user_c: { books: [10] },
+        user_d: { books: [20] },
+      });
+    });
+
+    QUnit.test('should return records matching the in filter', (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const records = {
+        user_a: { name: 'User A' },
+        user_b: { name: 'User B' },
+        user_c: { name: 'User C' },
+      };
+
+      // Act
+      const result = where(records, 'name', 'in', ['User A', 'User C']);
+
+      // Assert
+      assert.deepEqual(result, {
+        user_a: { name: 'User A' },
+        user_c: { name: 'User C' },
       });
     });
 
