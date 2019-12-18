@@ -10,6 +10,10 @@ import {
 } from '.';
 import MockFirebase from '../..';
 
+function isEqualAndSameOrder(a, b) {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
 QUnit.module('Unit | Util | query', () => {
   QUnit.module('function: endAt', () => {
     QUnit.test('should return records <= to the numerical value', (assert) => {
@@ -131,11 +135,11 @@ QUnit.module('Unit | Util | query', () => {
       const result = orderBy(records, 'age');
 
       // Assert
-      assert.deepEqual(result, {
+      assert.ok(isEqualAndSameOrder(result, {
         user_a: { age: 10 },
         user_c: { age: 15 },
         user_b: { age: 20 },
-      });
+      }));
     });
 
     QUnit.test('should return numerical ordered records in descending order', (assert) => {
@@ -152,11 +156,11 @@ QUnit.module('Unit | Util | query', () => {
       const result = orderBy(records, 'age', 'desc');
 
       // Assert
-      assert.deepEqual(result, {
+      assert.ok(isEqualAndSameOrder(result, {
         user_b: { age: 20 },
         user_c: { age: 15 },
         user_a: { age: 10 },
-      });
+      }));
     });
 
     QUnit.test('should return string ordered records in ascending order', (assert) => {
@@ -173,11 +177,11 @@ QUnit.module('Unit | Util | query', () => {
       const result = orderBy(records, 'name');
 
       // Assert
-      assert.deepEqual(result, {
+      assert.ok(isEqualAndSameOrder(result, {
         user_b: { name: 'Bar' },
         user_c: { name: 'Faw' },
         user_a: { name: 'Foo' },
-      });
+      }));
     });
 
     QUnit.test('should return string ordered records in descending order', (assert) => {
@@ -194,11 +198,11 @@ QUnit.module('Unit | Util | query', () => {
       const result = orderBy(records, 'name', 'desc');
 
       // Assert
-      assert.deepEqual(result, {
+      assert.ok(isEqualAndSameOrder(result, {
         user_a: { name: 'Foo' },
         user_c: { name: 'Faw' },
         user_b: { name: 'Bar' },
-      });
+      }));
     });
 
     QUnit.test('should return timestamp ordered records in descending order', (assert) => {
@@ -206,41 +210,41 @@ QUnit.module('Unit | Util | query', () => {
 
       // Arrange
       const records = {
-        user_a: { name: 'Foo', updatede_at: { seconds: 110, nanoseconds: 1 } },
-        user_b: { name: 'Bar', updatede_at: { seconds: 112, nanoseconds: 1 } },
-        user_c: { name: 'Faw', updatede_at: { seconds: 111, nanoseconds: 1 } },
+        user_a: { name: 'book1', updatede_at: { seconds: 110, nanoseconds: 1 } },
+        user_b: { name: 'book2', updatede_at: { seconds: 112, nanoseconds: 1 } },
+        user_c: { name: 'book3', updatede_at: { seconds: 111, nanoseconds: 1 } },
       };
 
       // Act
       const result = orderBy(records, 'updatede_at', 'desc');
 
       // Assert
-      assert.deepEqual(result, {
-        user_b: { name: 'Bar', updatede_at: { seconds: 112, nanoseconds: 1 } },
-        user_c: { name: 'Faw', updatede_at: { seconds: 111, nanoseconds: 1 } },
-        user_a: { name: 'Foo', updatede_at: { seconds: 110, nanoseconds: 1 } },
-      });
+      assert.ok(isEqualAndSameOrder(result, {
+        user_b: { name: 'book2', updatede_at: { seconds: 112, nanoseconds: 1 } },
+        user_c: { name: 'book3', updatede_at: { seconds: 111, nanoseconds: 1 } },
+        user_a: { name: 'book1', updatede_at: { seconds: 110, nanoseconds: 1 } },
+      }));
     });
 
-    QUnit.test('should return timestamp ordered records in descending order', (assert) => {
+    QUnit.test('should return timestamp ordered records in ascending order', (assert) => {
       assert.expect(1);
 
       // Arrange
       const records = {
-        user_a: { name: 'Foo', updatede_at: { seconds: 110, nanoseconds: 1 } },
-        user_b: { name: 'Bar', updatede_at: { seconds: 112, nanoseconds: 1 } },
-        user_c: { name: 'Faw', updatede_at: { seconds: 111, nanoseconds: 1 } },
+        user_a: { name: 'book1', updatede_at: { seconds: 110, nanoseconds: 1 } },
+        user_b: { name: 'book2', updatede_at: { seconds: 112, nanoseconds: 1 } },
+        user_c: { name: 'book3', updatede_at: { seconds: 111, nanoseconds: 1 } },
       };
 
       // Act
       const result = orderBy(records, 'updatede_at', 'asc');
 
       // Assert
-      assert.deepEqual(result, {
-        user_a: { name: 'Foo', updatede_at: { seconds: 110, nanoseconds: 1 } },
-        user_c: { name: 'Faw', updatede_at: { seconds: 111, nanoseconds: 1 } },
-        user_b: { name: 'Bar', updatede_at: { seconds: 112, nanoseconds: 1 } },
-      });
+      assert.ok(isEqualAndSameOrder(result, {
+        user_a: { name: 'book1', updatede_at: { seconds: 110, nanoseconds: 1 } },
+        user_c: { name: 'book3', updatede_at: { seconds: 111, nanoseconds: 1 } },
+        user_b: { name: 'book2', updatede_at: { seconds: 112, nanoseconds: 1 } },
+      }));
     });
   });
 
