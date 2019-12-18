@@ -200,6 +200,48 @@ QUnit.module('Unit | Util | query', () => {
         user_b: { name: 'Bar' },
       });
     });
+
+    QUnit.test('should return timestamp ordered records in descending order', (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const records = {
+        user_a: { name: 'Foo', updatede_at: { seconds: 110, nanoseconds: 1 } },
+        user_b: { name: 'Bar', updatede_at: { seconds: 112, nanoseconds: 1 } },
+        user_c: { name: 'Faw', updatede_at: { seconds: 111, nanoseconds: 1 } },
+      };
+
+      // Act
+      const result = orderBy(records, 'updatede_at', 'desc');
+
+      // Assert
+      assert.deepEqual(result, {
+        user_b: { name: 'Bar', updatede_at: { seconds: 112, nanoseconds: 1 } },
+        user_c: { name: 'Faw', updatede_at: { seconds: 111, nanoseconds: 1 } },
+        user_a: { name: 'Foo', updatede_at: { seconds: 110, nanoseconds: 1 } },
+      });
+    });
+
+    QUnit.test('should return timestamp ordered records in descending order', (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const records = {
+        user_a: { name: 'Foo', updatede_at: { seconds: 110, nanoseconds: 1 } },
+        user_b: { name: 'Bar', updatede_at: { seconds: 112, nanoseconds: 1 } },
+        user_c: { name: 'Faw', updatede_at: { seconds: 111, nanoseconds: 1 } },
+      };
+
+      // Act
+      const result = orderBy(records, 'updatede_at', 'asc');
+
+      // Assert
+      assert.deepEqual(result, {
+        user_a: { name: 'Foo', updatede_at: { seconds: 110, nanoseconds: 1 } },
+        user_c: { name: 'Faw', updatede_at: { seconds: 111, nanoseconds: 1 } },
+        user_b: { name: 'Bar', updatede_at: { seconds: 112, nanoseconds: 1 } },
+      });
+    });
   });
 
   QUnit.module('function: startAfter', () => {

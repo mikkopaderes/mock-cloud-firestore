@@ -39,6 +39,17 @@ function getPathValue(data, field) {
   return pathValue;
 }
 
+function isFireStoreTimeStamp(v) {
+  return Object.prototype.hasOwnProperty.call(v, 'seconds') && Object.prototype.hasOwnProperty.call(v, 'nanoseconds');
+}
+
+function sortByTimeStamp(a, b, order) {
+  return order === 'desc'
+    ? a.seconds - b.seconds
+    : b.seconds - a.seconds;
+}
+
+
 export function endAt(data, prop, value) {
   return filterByCursor(data, prop, value, 'endAt');
 }
@@ -64,6 +75,10 @@ export function orderBy(data, key, order) {
 
   if (order === 'desc') {
     ids = Object.keys(data).slice().sort((a, b) => {
+      if (isFireStoreTimeStamp(data[a][key])) {
+        return sortByTimeStamp(data[a][key], data[b][key]);
+      }
+
       if (typeof data[a][key] === 'number') {
         return data[b][key] - data[a][key];
       }
