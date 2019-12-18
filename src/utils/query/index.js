@@ -45,8 +45,8 @@ function isFireStoreTimeStamp(v) {
 
 function sortByTimeStamp(a, b, order) {
   return order === 'desc'
-    ? a.seconds - b.seconds
-    : b.seconds - a.seconds;
+    ? b.seconds - a.seconds
+    : a.seconds - b.seconds;
 }
 
 
@@ -76,7 +76,7 @@ export function orderBy(data, key, order) {
   if (order === 'desc') {
     ids = Object.keys(data).slice().sort((a, b) => {
       if (isFireStoreTimeStamp(data[a][key])) {
-        return sortByTimeStamp(data[a][key], data[b][key]);
+        return sortByTimeStamp(data[a][key], data[b][key], order);
       }
 
       if (typeof data[a][key] === 'number') {
@@ -92,6 +92,9 @@ export function orderBy(data, key, order) {
     });
   } else {
     ids = Object.keys(data).slice().sort((a, b) => {
+      if (isFireStoreTimeStamp(data[a][key])) {
+        return sortByTimeStamp(data[a][key], data[b][key], order);
+      }
       if (typeof data[a][key] === 'number') {
         return data[a][key] - data[b][key];
       }
