@@ -210,9 +210,9 @@ QUnit.module('Unit | Util | query', () => {
 
       // Arrange
       const records = {
-        user_a: { name: 'book1', updatede_at: { seconds: 110, nanoseconds: 1 } },
-        user_b: { name: 'book2', updatede_at: { seconds: 112, nanoseconds: 1 } },
-        user_c: { name: 'book3', updatede_at: { seconds: 111, nanoseconds: 1 } },
+        user_a: { name: 'book1', updatede_at: { _seconds: 110, _nanoseconds: 1 } },
+        user_b: { name: 'book2', updatede_at: { _seconds: 112, _nanoseconds: 1 } },
+        user_c: { name: 'book3', updatede_at: { _seconds: 111, _nanoseconds: 1 } },
       };
 
       // Act
@@ -220,9 +220,9 @@ QUnit.module('Unit | Util | query', () => {
 
       // Assert
       assert.ok(isEqualAndSameOrder(result, {
-        user_b: { name: 'book2', updatede_at: { seconds: 112, nanoseconds: 1 } },
-        user_c: { name: 'book3', updatede_at: { seconds: 111, nanoseconds: 1 } },
-        user_a: { name: 'book1', updatede_at: { seconds: 110, nanoseconds: 1 } },
+        user_b: { name: 'book2', updatede_at: { _seconds: 112, _nanoseconds: 1 } },
+        user_c: { name: 'book3', updatede_at: { _seconds: 111, _nanoseconds: 1 } },
+        user_a: { name: 'book1', updatede_at: { _seconds: 110, _nanoseconds: 1 } },
       }));
     });
 
@@ -231,9 +231,9 @@ QUnit.module('Unit | Util | query', () => {
 
       // Arrange
       const records = {
-        user_a: { name: 'book1', updatede_at: { seconds: 110, nanoseconds: 1 } },
-        user_b: { name: 'book2', updatede_at: { seconds: 112, nanoseconds: 1 } },
-        user_c: { name: 'book3', updatede_at: { seconds: 111, nanoseconds: 1 } },
+        user_a: { name: 'book1', updatede_at: { _seconds: 110, _nanoseconds: 1 } },
+        user_b: { name: 'book2', updatede_at: { _seconds: 112, _nanoseconds: 1 } },
+        user_c: { name: 'book3', updatede_at: { _seconds: 111, _nanoseconds: 1 } },
       };
 
       // Act
@@ -241,9 +241,9 @@ QUnit.module('Unit | Util | query', () => {
 
       // Assert
       assert.ok(isEqualAndSameOrder(result, {
-        user_a: { name: 'book1', updatede_at: { seconds: 110, nanoseconds: 1 } },
-        user_c: { name: 'book3', updatede_at: { seconds: 111, nanoseconds: 1 } },
-        user_b: { name: 'book2', updatede_at: { seconds: 112, nanoseconds: 1 } },
+        user_a: { name: 'book1', updatede_at: { _seconds: 110, _nanoseconds: 1 } },
+        user_c: { name: 'book3', updatede_at: { _seconds: 111, _nanoseconds: 1 } },
+        user_b: { name: 'book2', updatede_at: { _seconds: 112, _nanoseconds: 1 } },
       }));
     });
   });
