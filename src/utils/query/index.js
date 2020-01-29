@@ -40,13 +40,13 @@ function getPathValue(data, field) {
 }
 
 function isFireStoreTimeStamp(v) {
-  return Object.prototype.hasOwnProperty.call(v, 'seconds') && Object.prototype.hasOwnProperty.call(v, 'nanoseconds');
+  return Object.prototype.hasOwnProperty.call(v, '_seconds') && Object.prototype.hasOwnProperty.call(v, '_nanoseconds');
 }
 
 function sortByTimeStamp(a, b, order) {
   return order === 'desc'
-    ? b.seconds - a.seconds
-    : a.seconds - b.seconds;
+    ? b._seconds - a._seconds
+    : a._seconds - b._seconds;
 }
 
 
