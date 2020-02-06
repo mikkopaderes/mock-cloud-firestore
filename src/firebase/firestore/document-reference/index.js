@@ -4,7 +4,7 @@ import DocumentSnapshot from '../document-snapshot';
 import getOrSetDataNode from '../../../utils/get-or-set-data-node';
 import parseValue from '../../../utils/parse-value';
 import validateReference from '../../../utils/reference';
-import WriteResult from '../write-result'
+import WriteResult from '../write-result';
 
 export default class DocumentReference {
   constructor(id, data, parent, firestore) {
