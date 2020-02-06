@@ -4,6 +4,7 @@ import DocumentSnapshot from '../document-snapshot';
 import getOrSetDataNode from '../../../utils/get-or-set-data-node';
 import parseValue from '../../../utils/parse-value';
 import validateReference from '../../../utils/reference';
+import WriteResult from '../write-result'
 
 export default class DocumentReference {
   constructor(id, data, parent, firestore) {
@@ -81,7 +82,7 @@ export default class DocumentReference {
     Object.assign(this._data, this._parseDataForSet(data, option), { __isDirty__: false });
     this._firestore._dataChanged();
 
-    return Promise.resolve();
+    return Promise.resolve(new WriteResult());
   }
 
   update(data) {
