@@ -1,3 +1,4 @@
+import * as firebase from 'firebase';
 import { cleanPath, validatePath } from '../../utils/path';
 import CollectionReference from './collection-reference';
 import WriteBatch from './write-batch';
@@ -80,5 +81,9 @@ export default class Firestore {
     validateReference(ref, type);
 
     return ref;
+  }
+
+  get serverTimestamp() {
+    return this._options.timestamp || firebase.firestore.Timestamp.now();
   }
 }

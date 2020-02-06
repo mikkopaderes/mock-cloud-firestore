@@ -82,7 +82,7 @@ export default class DocumentReference {
     Object.assign(this._data, this._parseDataForSet(data, option), { __isDirty__: false });
     this._firestore._dataChanged();
 
-    return Promise.resolve(new WriteResult());
+    return Promise.resolve(new WriteResult(this._firestore.serverTimestamp));
   }
 
   update(data) {
