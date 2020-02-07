@@ -81,4 +81,8 @@ export default class Firestore {
 
     return ref;
   }
+
+  get serverTimestamp() {
+    return this._options.timestamp || null;
+  }
 }
