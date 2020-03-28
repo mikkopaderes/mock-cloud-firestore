@@ -683,6 +683,24 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         assert.equal(username, 'user_a');
       });
 
+      QUnit.test('should create the field if incrementing a field that is nonexistent', async (assert) => {
+        assert.expect(1);
+
+        // Arrange
+        const db = mockFirebase.firestore();
+        const ref = db.collection('users').doc('user_a');
+
+        // Act
+        await ref.update({
+          nonExistentField: mockFirebase.firestore.FieldValue.increment(1),
+        });
+
+        // Assert
+        const snapshot = await ref.get();
+        const data = snapshot.data();
+        assert.equal(data.nonExistentField, 1);
+      });
+
       QUnit.test('should throw error when updating data that does not exist', async (assert) => {
         assert.expect(1);
 
