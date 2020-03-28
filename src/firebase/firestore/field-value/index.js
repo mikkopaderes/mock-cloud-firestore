@@ -17,6 +17,13 @@ export default class FieldValue {
     return { _methodName: 'FieldValue.delete' };
   }
 
+  increment(operand) {
+    return {
+      _methodName: 'FieldValue.increment',
+      _operand: operand,
+    };
+  }
+
   serverTimestamp() {
     return { _methodName: 'FieldValue.serverTimestamp' };
   }
