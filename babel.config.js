@@ -3,9 +3,10 @@ const presets = [
     '@babel/env',
     {
       targets: {
-        node: '8.12.0',
+        node: '12.16.1',
       },
       useBuiltIns: 'usage',
+      corejs: { version: 3, proposals: true },
     },
   ],
 ];
