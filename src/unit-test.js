@@ -604,7 +604,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
           name: firebase.firestore.FieldValue.delete(),
           dad: db.collection('users').doc('user_b'),
           modifiedOn: firebase.firestore.FieldValue.serverTimestamp(),
-          activeYears: mockFirebase.firestore.FieldValue.increment(-1),
+          activeYears: firebase.firestore.FieldValue.increment(-1),
           pinnedBooks: firebase.firestore.FieldValue.arrayUnion('book_100'),
           pinnedFoods: firebase.firestore.FieldValue.arrayRemove('food_1'),
         }, { merge: true });
@@ -644,7 +644,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
           'contact.mobile.personal': 67890,
           age: firebase.firestore.FieldValue.delete(),
           dad: db.collection('users').doc('user_b'),
-          activeYears: mockFirebase.firestore.FieldValue.increment(1),
+          activeYears: firebase.firestore.FieldValue.increment(1),
           modifiedOn: firebase.firestore.FieldValue.serverTimestamp(),
           pinnedBooks: firebase.firestore.FieldValue.arrayUnion('book_100'),
           pinnedFoods: firebase.firestore.FieldValue.arrayRemove('food_1'),
@@ -692,7 +692,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
 
         // Act
         await ref.update({
-          nonExistentField: mockFirebase.firestore.FieldValue.increment(1),
+          nonExistentField: firebase.firestore.FieldValue.increment(1),
         });
 
         // Assert
