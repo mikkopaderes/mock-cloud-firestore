@@ -41,6 +41,10 @@ function validateValue(value, option) {
       }
     }
 
+    if (methodName === 'FieldValue.increment' && option.type === 'set:merge-false') {
+      throw new Error(`Function DocumentReference.set() called with invalid data. FieldValue.increment() cannot be used with set() unless you pass {merge:true} (found in field ${option.field})`);
+    }
+
     if (option.isInArray) {
       throw new Error(`Function DocumentReference.${option.type}() called with invalid data. ${methodName} is not currently supported inside arrays`);
     }
@@ -69,6 +73,16 @@ function processArrayRemove(arrayRemove, oldArray = []) {
   return newArray;
 }
 
+function processIncrement(incrementOperation, oldValue) {
+  const { _operand: operand } = incrementOperation;
+
+  if (typeof oldValue !== 'number') {
+    return operand;
+  }
+
+  return oldValue + operand;
+}
+
 function processFieldValue(newValue, oldValue) {
   const { _methodName: methodName } = newValue;
 
@@ -82,6 +96,10 @@ function processFieldValue(newValue, oldValue) {
 
   if (methodName === 'FieldValue.arrayRemove') {
     return processArrayRemove(newValue, oldValue);
+  }
+
+  if (methodName === 'FieldValue.increment') {
+    return processIncrement(newValue, oldValue);
   }
 
   return '__FieldValue.delete__';
