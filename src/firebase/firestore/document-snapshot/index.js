@@ -1,3 +1,5 @@
+import { isObject } from '../../../utils/parse-value';
+
 export default class DocumentSnapshot {
   constructor(id, data, ref) {
     this._id = id;
@@ -17,6 +19,10 @@ export default class DocumentSnapshot {
 
   get ref() {
     return this._ref;
+  }
+
+  isReference(value) {
+    return typeof value === 'string' && value.startsWith('__ref__:');
   }
 
   data() {
@@ -44,25 +50,42 @@ export default class DocumentSnapshot {
 
   _getData() {
     const data = Object.assign({}, this._data);
+    this._normalizeData(data);
+    return data;
+  }
+
+  _normalizeData(data) {
+    const normalizedData = data;
+
+    delete normalizedData.__isDirty__;
+    delete normalizedData.__collection__;
 
     for (const key of Object.keys(data)) {
-      if (typeof data[key] === 'string' && data[key].startsWith('__ref__:')) {
-        data[key] = this._buildRefFromPath(this.ref.firestore, data[key].replace('__ref__:', ''));
-      } else if (data[key] instanceof Date) {
-        const date = data[key];
-
-        data[key] = {
-          toDate() {
-            return date;
-          },
-        };
-      }
+      normalizedData[key] = this._normalizeValue(data[key]);
     }
 
-    delete data.__isDirty__;
-    delete data.__collection__;
+    return normalizedData;
+  }
 
-    return data;
+  _normalizeValue(value) {
+    let normalizedValue = value;
+
+    if (this.isReference(value)) {
+      normalizedValue = this._buildRefFromPath(this.ref.firestore, value.replace('__ref__:', ''));
+    } else if (value instanceof Date) {
+      const date = value;
+      normalizedValue = {
+        toDate() {
+          return date;
+        },
+      };
+    } else if (value !== '__collection__' && isObject(value)) {
+      normalizedValue = this._normalizeData(value);
+    } else if (Array.isArray(value)) {
+      normalizedValue = value.map(v => this._normalizeValue(v));
+    }
+
+    return normalizedValue;
   }
 
   _buildRefFromPath(db, path) {

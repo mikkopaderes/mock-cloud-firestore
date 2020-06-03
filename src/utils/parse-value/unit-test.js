@@ -148,6 +148,21 @@ QUnit.module('Unit | Util | parse-value', () => {
       assert.deepEqual(result, ['foo']);
     });
 
+    QUnit.test('should return array of paths when parsing an array of DocumentReferences', (assert) => {
+      assert.expect(1);
+
+      // Arrange
+      const mockFirebase = new MockFirebase(fixtureData());
+      const newValue = [mockFirebase.firestore().doc('users/user_a')];
+      const oldValue = undefined;
+
+      // Act
+      const result = parseValue(newValue, oldValue, { type: 'set:merge-false' });
+
+      // Assert
+      assert.deepEqual(result, ['__ref__:users/user_a']);
+    });
+
     QUnit.test('should return path when parsing a DocumentReference', (assert) => {
       assert.expect(1);
 

@@ -3,12 +3,20 @@
 import { buildPathFromReference } from '../path';
 import DocumentReference from '../../firebase/firestore/document-reference';
 
-function isObject(value) {
+export function isObject(value) {
   return Object.prototype.toString.call(value) === '[object Object]';
 }
 
 function isFieldValue(value) {
   return isObject(value) && Object.prototype.hasOwnProperty.call(value, '_methodName');
+}
+
+function isArrayOfDocumentReferences(array) {
+  return (
+    Array.isArray(array)
+    && array.length > 0
+    && array.map(v => v instanceof DocumentReference).filter(v => !v).length === 0
+  );
 }
 
 function validateValue(value, option) {
@@ -148,6 +156,10 @@ export default function parseValue(newValue, oldValue, option) {
 
   if (isObject(newValue)) {
     return processObject(newValue, oldValue, option);
+  }
+
+  if (isArrayOfDocumentReferences(newValue)) {
+    return newValue.map(v => buildPathFromReference(v));
   }
 
   return newValue;
