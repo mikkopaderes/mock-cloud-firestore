@@ -1,6 +1,14 @@
 export default function fixtureData() {
   return {
     __collection__: {
+      comments: {
+        __doc__: {
+          comment_a: {
+            message: 'Fubar',
+          },
+        },
+      },
+
       users: {
         __doc__: {
           user_a: {
@@ -14,6 +22,7 @@ export default function fixtureData() {
             pinnedBooks: ['book_1', 'book_2'],
             pinnedFoods: ['food_1', 'food_2', 'food_1'],
             username: 'user_a',
+            comments: [],
 
             __collection__: {
               friends: {
