@@ -20,6 +20,10 @@ function isArrayOfDocumentReferences(array) {
 }
 
 function validateValue(value, option) {
+  if (value instanceof DocumentReference) {
+    return;
+  }
+
   if (isObject(value)) {
     const newOption = Object.assign({}, option, { isInObject: true });
 
