@@ -22,7 +22,6 @@ export default function fixtureData() {
             pinnedBooks: ['book_1', 'book_2'],
             pinnedFoods: ['food_1', 'food_2', 'food_1'],
             username: 'user_a',
-            comments: [],
 
             __collection__: {
               friends: {
