@@ -1,6 +1,14 @@
 export default function fixtureData() {
   return {
     __collection__: {
+      comments: {
+        __doc__: {
+          comment_a: {
+            message: 'Fubar',
+          },
+        },
+      },
+
       users: {
         __doc__: {
           user_a: {
