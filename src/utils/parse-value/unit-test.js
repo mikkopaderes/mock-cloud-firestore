@@ -164,7 +164,7 @@ QUnit.module('Unit | Util | parse-value', () => {
       const result = parseValue(newValue, oldValue, { type: 'set:merge-false' });
 
       // Assert
-      assert.equal(result._data.comments, ['__ref__:comments/comment_a']);
+      assert.deepEqual(result._data.comments, ['__ref__:comments/comment_a']);
     });
 
     QUnit.test('should return path when parsing a DocumentReference', (assert) => {
