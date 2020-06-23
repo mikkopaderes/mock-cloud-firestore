@@ -43,7 +43,7 @@ export default class DocumentSnapshot {
   }
 
   _getData() {
-    const data = Object.assign({}, this._data);
+    const data = { ...this._data };
 
     for (const key of Object.keys(data)) {
       if (typeof data[key] === 'string' && data[key].startsWith('__ref__:')) {

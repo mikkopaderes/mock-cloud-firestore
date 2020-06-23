@@ -251,7 +251,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
 
         const snapshotDone = assert.async();
         const unsubscribe = db.collection('users').onSnapshot((snapshot) => {
-          snapshots.push(snapshot.docs.map(doc => doc.data()));
+          snapshots.push(snapshot.docs.map((doc) => doc.data()));
           if (snapshots.length === 2) {
             assert.equal(snapshots[0].length, 3);
             assert.equal(snapshots[0][1].username, 'user_b');
@@ -1310,7 +1310,7 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
         // Act
         const snapshotDone = assert.async();
         const unsubscribe = db.collection('users').orderBy('age').onSnapshot((snapshot) => {
-          snapshots.push(snapshot.docs.map(doc => [doc.data().age, doc.data().username]));
+          snapshots.push(snapshot.docs.map((doc) => [doc.data().age, doc.data().username]));
           if (snapshots.length === 2) {
             assert.deepEqual(snapshots, [
               [[10, 'user_b'], [15, 'user_a'], [20, 'user_c']],
@@ -1338,7 +1338,6 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
           }, 100);
         }, 100);
       });
-
 
       QUnit.test('should fire callback', (assert) => {
         assert.expect(1);
@@ -1547,7 +1546,6 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
       const db = mockFirebase.firestore();
       const ref = db.collection('users').doc('user_a');
 
-
       await ref.set({ username: 'new_user' });
 
       // Act
@@ -1566,7 +1564,6 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
       // Arrange
       const db = mockFirebase.firestore();
       const ref = db.collection('users').doc('user_a');
-
 
       await ref.set({ username: 'new_user' });
 
@@ -1587,7 +1584,6 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
       const db = mockFirebase.firestore();
       const ref = db.collection('users').doc('user_a');
 
-
       await ref.set({ username: 'new_user' });
 
       // Act
@@ -1606,7 +1602,6 @@ QUnit.module('Unit | mock-cloud-firestore', (hooks) => {
       // Arrange
       const db = mockFirebase.firestore();
       const ref = db.collection('users').doc('user_a');
-
 
       await ref.set({ username: 'new_user' });
 

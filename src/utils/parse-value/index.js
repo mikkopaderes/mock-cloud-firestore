@@ -13,15 +13,15 @@ function isFieldValue(value) {
 
 function validateValue(value, option) {
   if (isObject(value)) {
-    const newOption = Object.assign({}, option, { isInObject: true });
+    const newOption = { ...option, isInObject: true };
 
-    Object.keys(value).forEach(key => validateValue(value[key], newOption));
+    Object.keys(value).forEach((key) => validateValue(value[key], newOption));
   }
 
   if (Array.isArray(value)) {
-    const newOption = Object.assign({}, option, { isInArray: true });
+    const newOption = { ...option, isInArray: true };
 
-    value.forEach(item => validateValue(item, newOption));
+    value.forEach((item) => validateValue(item, newOption));
   }
 
   if (value === undefined) {
@@ -55,7 +55,7 @@ function processArrayUnion(arrayUnion, oldArray = []) {
   const newArray = [...oldArray];
 
   arrayUnion._elements.forEach((unionItem) => {
-    if (!newArray.find(item => item === unionItem)) {
+    if (!newArray.find((item) => item === unionItem)) {
       newArray.push(unionItem);
     }
   });
@@ -67,7 +67,7 @@ function processArrayRemove(arrayRemove, oldArray = []) {
   let newArray = [...oldArray];
 
   arrayRemove._elements.forEach((unionItem) => {
-    newArray = newArray.filter(item => item !== unionItem);
+    newArray = newArray.filter((item) => item !== unionItem);
   });
 
   return newArray;
@@ -107,7 +107,7 @@ function processFieldValue(newValue, oldValue) {
 
 function processObject(newValue, oldValue, option) {
   if (option.type === 'set:merge-true') {
-    const mergedValue = Object.assign({}, oldValue, newValue);
+    const mergedValue = { ...oldValue, ...newValue };
 
     Object.keys(newValue).forEach((key) => {
       const oldObjectKeyValue = isObject(oldValue) ? oldValue[key] : undefined;
@@ -122,7 +122,7 @@ function processObject(newValue, oldValue, option) {
     return mergedValue;
   }
 
-  const newObjectValue = Object.assign({}, newValue);
+  const newObjectValue = { ...newValue };
 
   Object.keys(newValue).forEach((key) => {
     newObjectValue[key] = parseValue(newValue[key], undefined, option);
