@@ -5,6 +5,7 @@
 /es/
 /lib/
 /tmp/
+/ts_builds/
 
 # dependencies
 /node_modules

@@ -11,10 +11,11 @@
     "src"
   ],
   "scripts": {
-    "clean": "rimraf dist es lib tmp",
+    "clean": "rimraf dist es lib tmp ts_builds",
     "build": "rollup -c",
-    "lint": "eslint \"*.js\" \"src/**/*.js\"",
+    "lint": "eslint *.js src/**/*.js ts_src/**/*.ts",
     "qunit": "babel src --out-dir tmp && qunit tmp/**/*-test.js",
+    "qunit-ts": "npm run clean && tsc --outDir tmp && qunit tmp/**/*-test.js",
     "test": "npm-run-all --continue-on-error lint qunit",
     "prepare": "npm run clean && npm test && npm run build"
   },
@@ -40,6 +41,11 @@
     "@rollup/plugin-babel": "^5.0.4",
     "@rollup/plugin-commonjs": "^13.0.0",
     "@rollup/plugin-node-resolve": "^8.1.0",
+    "@rollup/plugin-typescript": "^5.0.0",
+    "@types/qunit": "^2.9.1",
+    "@types/sinon": "^9.0.4",
+    "@typescript-eslint/eslint-plugin": "^3.4.0",
+    "@typescript-eslint/parser": "^3.4.0",
     "eslint": "^7.2.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-rmmmp": "^0.3.0",
@@ -49,6 +55,7 @@
     "qunit": "^2.10.0",
     "rimraf": "^3.0.2",
     "rollup": "^2.18.0",
-    "sinon": "^9.0.2"
+    "sinon": "^9.0.2",
+    "typescript": "^3.9.5"
   }
 }
