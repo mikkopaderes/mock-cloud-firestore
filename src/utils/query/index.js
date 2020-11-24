@@ -109,7 +109,10 @@ export function where(data = {}, key, operator, value) {
   const filteredData = {};
   const ids = Object.keys(data).filter((id) => {
     // Allow us to handle nested values
-    const pathValue = getPathValue(data[id], key);
+    const pathValue = key.segments && key.segments[0] && key.segments[0]==='__name__'
+      ? id
+      : getPathValue(data[id], key);
+
 
     if (operator === '<') {
       return pathValue < value;
@@ -128,9 +131,9 @@ export function where(data = {}, key, operator, value) {
     } if (operator === '>=') {
       return pathValue >= value;
     } if (operator === 'array-contains') {
-      return (pathValue || []).find((item) => item === value);
+      return (pathValue.elements || []).find((item) => item === value);
     } if (operator === 'array-contains-any') {
-      return (pathValue || []).find((item) => value.includes(item));
+      return (pathValue.elements || []).find((item) => value.includes(item));
     } if (operator === 'in') {
       return value.includes(pathValue);
     }
