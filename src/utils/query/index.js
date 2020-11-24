@@ -109,7 +109,10 @@ export function where(data = {}, key, operator, value) {
   const filteredData = {};
   const ids = Object.keys(data).filter((id) => {
     // Allow us to handle nested values
-    const pathValue = getPathValue(data[id], key);
+    const pathValue = key.segments && key.segments[0] && key.segments[0]==='__name__'
+      ? id
+      : getPathValue(data[id], key);
+
 
     if (operator === '<') {
       return pathValue < value;
