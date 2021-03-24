@@ -133,6 +133,10 @@ export function where(data = {}, key, operator, value) {
       return (pathValue || []).find((item) => value.includes(item));
     } if (operator === 'in') {
       return value.includes(pathValue);
+    } if (operator === 'not-in') {
+        return !value.includes(pathValue);
+    } if (operator === '!=') {
+        return pathValue !== value;
     }
 
     return pathValue > value;
