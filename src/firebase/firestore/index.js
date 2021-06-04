@@ -15,7 +15,7 @@ export default class Firestore {
   _dataChanged() {
     if (this._options.isNaiveSnapshotListenerEnabled) {
       const listeners = this._listeners.splice(0);
-      setTimeout(() => listeners.forEach(listener => listener()), 10);
+      setTimeout(() => listeners.forEach((listener) => listener()), 10);
     }
   }
 

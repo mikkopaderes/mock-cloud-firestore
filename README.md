@@ -2,6 +2,8 @@
 
 Mock library for Cloud Firestore
 
+Before using this library, try to see first if the [Firestore Emulator](https://firebase.google.com/docs/emulator-suite/connect_firestore) would fit your needs.
+
 ## Installation
 
 Assuming that you're using [npm](https://www.npmjs.com/) as your package manager:

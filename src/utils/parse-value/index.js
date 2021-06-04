@@ -17,15 +17,15 @@ function isFieldValue(value) {
 
 function validateValue(value, option) {
   if (isObject(value)) {
-    const newOption = Object.assign({}, option, { isInObject: true });
+    const newOption = { ...option, isInObject: true };
 
-    Object.keys(value).forEach(key => validateValue(value[key], newOption));
+    Object.keys(value).forEach((key) => validateValue(value[key], newOption));
   }
 
   if (Array.isArray(value)) {
-    const newOption = Object.assign({}, option, { isInArray: true });
+    const newOption = { ...option, isInArray: true };
 
-    value.forEach(item => validateValue(item, newOption));
+    value.forEach((item) => validateValue(item, newOption));
   }
 
   if (value === undefined) {
@@ -45,6 +45,10 @@ function validateValue(value, option) {
       }
     }
 
+    if (methodName === 'FieldValue.increment' && option.type === 'set:merge-false') {
+      throw new Error(`Function DocumentReference.set() called with invalid data. FieldValue.increment() cannot be used with set() unless you pass {merge:true} (found in field ${option.field})`);
+    }
+
     if (option.isInArray) {
       throw new Error(`Function DocumentReference.${option.type}() called with invalid data. ${methodName} is not currently supported inside arrays`);
     }
@@ -55,7 +59,7 @@ function processArrayUnion(arrayUnion, oldArray = []) {
   const newArray = [...oldArray];
 
   arrayUnion._elements.forEach((unionItem) => {
-    if (!newArray.find(item => item === unionItem)) {
+    if (!newArray.find((item) => item === unionItem)) {
       newArray.push(unionItem);
     }
   });
@@ -67,10 +71,20 @@ function processArrayRemove(arrayRemove, oldArray = []) {
   let newArray = [...oldArray];
 
   arrayRemove._elements.forEach((unionItem) => {
-    newArray = newArray.filter(item => item !== unionItem);
+    newArray = newArray.filter((item) => item !== unionItem);
   });
 
   return newArray;
+}
+
+function processIncrement(incrementOperation, oldValue) {
+  const { _operand: operand } = incrementOperation;
+
+  if (typeof oldValue !== 'number') {
+    return operand;
+  }
+
+  return oldValue + operand;
 }
 
 function processFieldValue(newValue, oldValue) {
@@ -88,12 +102,16 @@ function processFieldValue(newValue, oldValue) {
     return processArrayRemove(newValue, oldValue);
   }
 
+  if (methodName === 'FieldValue.increment') {
+    return processIncrement(newValue, oldValue);
+  }
+
   return '__FieldValue.delete__';
 }
 
 function processObject(newValue, oldValue, option) {
   if (option.type === 'set:merge-true') {
-    const mergedValue = Object.assign({}, oldValue, newValue);
+    const mergedValue = { ...oldValue, ...newValue };
 
     Object.keys(newValue).forEach((key) => {
       const oldObjectKeyValue = isObject(oldValue) ? oldValue[key] : undefined;
@@ -108,7 +126,7 @@ function processObject(newValue, oldValue, option) {
     return mergedValue;
   }
 
-  const newObjectValue = Object.assign({}, newValue);
+  const newObjectValue = { ...newValue };
 
   Object.keys(newValue).forEach((key) => {
     newObjectValue[key] = parseValue(newValue[key], undefined, option);

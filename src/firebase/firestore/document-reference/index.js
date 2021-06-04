@@ -36,7 +36,7 @@ export default class DocumentReference {
     }
 
     const collectionIds = Object.keys(this._data.__collection__);
-    const collectionReferences = collectionIds.map(id => this._getCollectionReference(id));
+    const collectionReferences = collectionIds.map((id) => this._getCollectionReference(id));
 
     return Promise.resolve(collectionReferences);
   }
@@ -152,7 +152,7 @@ export default class DocumentReference {
   }
 
   _parseDataForSet(newData, option) {
-    const parsedData = Object.assign({}, this._data);
+    const parsedData = { ...this._data };
 
     Object.keys(newData).forEach((key) => {
       parsedData[key] = parseValue(newData[key], parsedData[key], {
@@ -164,16 +164,15 @@ export default class DocumentReference {
   }
 
   _parseDataForUpdate(newData) {
-    const parsedData = Object.assign({}, this._data);
+    const parsedData = { ...this._data };
 
     Object.keys(newData).forEach((key) => {
       const keyNodes = key.split('.');
 
       if (keyNodes.length > 1) {
-        parsedData[keyNodes[0]] = Object.assign(
-          {},
-          this._processNestedField(keyNodes, newData[key], parsedData),
-        );
+        parsedData[keyNodes[0]] = {
+          ...this._processNestedField(keyNodes, newData[key], parsedData),
+        };
       } else {
         parsedData[keyNodes[0]] = parseValue(newData[key], parsedData[key], { type: 'update' });
       }
@@ -183,7 +182,7 @@ export default class DocumentReference {
   }
 
   _removeDeletedFields(data) {
-    const newData = Object.assign({}, data);
+    const newData = { ...data };
 
     Object.keys(data).forEach((key) => {
       const field = newData[key];

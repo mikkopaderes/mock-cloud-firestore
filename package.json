@@ -1,6 +1,6 @@
 {
   "name": "mock-cloud-firestore",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Mock library for Cloud Firestore",
   "main": "lib/mock-cloud-firestore.js",
   "module": "es/mock-cloud-firestore.js",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rmmmp/mock-cloud-firestore.git"
+    "url": "git+https://github.com/mikkopaderes/mock-cloud-firestore.git"
   },
   "keywords": [
     "firebase",
@@ -30,26 +30,25 @@
   "author": "Mikko Paderes",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rmmmp/mock-cloud-firestore/issues"
+    "url": "https://github.com/mikkopaderes/mock-cloud-firestore/issues"
   },
-  "homepage": "https://github.com/rmmmp/mock-cloud-firestore#readme",
+  "homepage": "https://github.com/mikkopaderes/mock-cloud-firestore#readme",
   "devDependencies": {
-    "@babel/cli": "^7.1.2",
-    "@babel/core": "^7.1.2",
-    "@babel/preset-env": "^7.1.0",
-    "core-js": "^2.5.5",
-    "eslint": "^5.3.0",
-    "eslint-config-airbnb-base": "^13.1.0",
+    "@babel/cli": "^7.10.3",
+    "@babel/core": "^7.10.3",
+    "@babel/preset-env": "^7.10.3",
+    "@rollup/plugin-babel": "^5.0.4",
+    "@rollup/plugin-commonjs": "^13.0.0",
+    "@rollup/plugin-node-resolve": "^8.1.0",
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-rmmmp": "^0.3.0",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-import": "^2.21.2",
+    "firebase": "^7.13.1",
     "npm-run-all": "^4.1.5",
-    "firebase": "^5.11.1",
-    "qunit": "^2.7.1",
-    "rimraf": "^2.6.2",
-    "rollup": "^0.66.6",
-    "rollup-plugin-babel": "^4.0.3",
-    "rollup-plugin-commonjs": "^9.2.0",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "sinon": "^7.1.0"
+    "qunit": "^2.10.0",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.18.0",
+    "sinon": "^9.0.2"
   }
 }

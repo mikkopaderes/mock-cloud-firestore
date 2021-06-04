@@ -17,7 +17,7 @@ export default class Query {
   }
 
   _querySnapshot() {
-    const data = Object.assign({ __doc__: {} }, this._data);
+    const data = { __doc__: {}, ...this._data };
 
     this._operations.forEach((operation) => {
       if (operation.type === 'orderBy') {
@@ -161,6 +161,6 @@ export default class Query {
   }
 
   _getOrder() {
-    return this._operations.find(operation => operation.type === 'orderBy').param;
+    return this._operations.find((operation) => operation.type === 'orderBy').param;
   }
 }
