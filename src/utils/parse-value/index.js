@@ -3,6 +3,10 @@
 import { buildPathFromReference } from '../path';
 import DocumentReference from '../../firebase/firestore/document-reference';
 
+function isTimestamp(value) {
+  return isObject(value) && Object.prototype.hasOwnProperty.call(value, '_seconds');
+}
+
 function isObject(value) {
   return Object.prototype.toString.call(value) === '[object Object]';
 }
@@ -119,6 +123,10 @@ function processObject(newValue, oldValue, option) {
 
 export default function parseValue(newValue, oldValue, option) {
   validateValue(newValue, option);
+
+  if (isTimestamp(newValue)) {
+    return newValue || oldValue;
+  }
 
   if (newValue instanceof DocumentReference) {
     return buildPathFromReference(newValue);

@@ -191,6 +191,8 @@ export default class DocumentReference {
       if (field === '__FieldValue.delete__') {
         delete newData[key];
         delete this._data[key];
+      } else if (Object.prototype.toString.call(field) === '[object Object]' && Object.prototype.hasOwnProperty.call(field, '_seconds')) {
+        //
       } else if (Object.prototype.toString.call(field) === '[object Object]') {
         newData[key] = this._removeDeletedFields(field);
       }
